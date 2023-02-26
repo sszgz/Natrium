@@ -2,6 +2,6 @@
 // license : MIT
 // author : Sean Chen
 
-interface globaldata {
+export interface globaldata {
 
 }

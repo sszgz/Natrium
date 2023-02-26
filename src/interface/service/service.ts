@@ -2,12 +2,14 @@
 // license : MIT
 // author : Sean Chen
 
-interface service {
+import { session } from "../session/session";
 
-    service_name:string;
-    service_id:number;
+export interface service {
 
-    session_count:number;
+    readonly service_name:string;
+    readonly service_id:number;
+
+    readonly session_count:number;
 
     get_session_byid(sid:number):session;
     get_session_bykey(skey:string):session;

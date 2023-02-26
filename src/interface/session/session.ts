@@ -2,12 +2,15 @@
 // license : MIT
 // author : Sean Chen
 
-interface session {
+import { dataobj } from "../data/dataobj";
+import { service } from "../service/service";
 
-    session_id:number;
-    session_key:string;
+export interface session {
 
-    service:null|service;
+    readonly session_id:number;
+    readonly session_key:string;
 
-    session_data:[string:dataobj];
+    readonly service:null|service;
+
+    session_data:Map<string, dataobj>;
 }
