@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "utest": "npx ts-node ./test/test.ts",
+    "testwsconn": "npx ts-node ./test/unittest/test_wsconnecter.ts",
+    "testwslisten": "npx ts-node ./test/unittest/test_wslistener.ts",
     "start:dev": "npx nodemon",
     "build": "rimraf ./build && tsc",
     "start": "npm run build && node build/index.js"

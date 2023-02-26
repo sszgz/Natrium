@@ -11,6 +11,15 @@ import { nat } from "../../src/natrium";
 class handler implements wsconnecter_handler {
     on_connected():void {
         nat.dbglog.log(debug_level_enum.dle_debug, `connecter handler on connected`);
+
+        connecter.shakehand();
+    }
+    on_shakehand(): void {
+        nat.dbglog.log(debug_level_enum.dle_debug, `connecter handler on shakehand`);
+
+        var myInt = setInterval(function () {
+            connecter.ping();
+        }, 2000);
     }
     on_disconnected(reason:string):void {
         nat.dbglog.log(debug_level_enum.dle_debug, `connecter handler on disconnected reason:${reason}`);

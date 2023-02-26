@@ -7,13 +7,15 @@ import { WebSocket, WebSocketServer } from "ws";
 import { debug_level_enum } from "../../interface/debug/debug_logger";
 import { connection_close_code } from "../../interface/network/networkconsts";
 import { wslistener, wslistener_handler } from "../../interface/network/wslistener";
-import { packet } from "../../interface/protocol/packet";
+import { packet, packettype } from "../../interface/protocol/packet";
 import { packetcodec } from "../../interface/protocol/packetcodec";
+import { sys_packet_cmds, shakehand_mark } from "../../interface/protocol/protocolconsts";
 import { natrium_nodeimpl } from "../natrium_nodeimpl";
 
 interface socketCid {
     cid:number;
     socket:WebSocket;
+    lastpkttime:number;
 
     onmsg?:any;
     onclose?:any;
@@ -125,7 +127,7 @@ export class wslistener_nodeimpl implements wslistener {
         
         natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_debug, `wslistener_nodeimpl send cid:${cid} packet:${p}`);
 
-        var data:Uint8Array = this._pcodec.encode_packet(p);
+        var data:Buffer = this._pcodec.encode_packet(p);
         if(data==null){
             return;
         }
@@ -135,7 +137,7 @@ export class wslistener_nodeimpl implements wslistener {
     broadcast_packet(cid:number[], p:packet):void {
         natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_debug, `wslistener_nodeimpl broadcast cids:${cid} packet:${p}`);
 
-        var data:Uint8Array = this._pcodec.encode_packet(p);
+        var data:Buffer = this._pcodec.encode_packet(p);
         if(data==null){
             return;
         }
@@ -152,12 +154,17 @@ export class wslistener_nodeimpl implements wslistener {
             this._send_data(sockcid, data);
         }
     }
+    check_activeconns():void{
+        // TO DO : check & kick not active connections by lastpkttime
+    }
 
-    _send_data(sockcid:socketCid, data:Uint8Array) {
+    _send_data(sockcid:socketCid, data:Buffer) {
 
         sockcid.socket.send(data, err=>{
-            // TO DO : send error
-            natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `wslistener_nodeimpl send packet cid:${sockcid.cid} error:${err?.name}\r\n${err?.message}`);
+            if(err != undefined) {
+                // TO DO : send error
+                natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `wslistener_nodeimpl send packet cid:${sockcid.cid} error:${err?.name}\r\n${err?.message}`);
+            }
         });
     }
 
@@ -166,6 +173,7 @@ export class wslistener_nodeimpl implements wslistener {
         let sockcid = {
             cid:this._cid_seed, 
             socket:socket,
+            lastpkttime:Date.now(),
             onmsg:(data:any)=>{},
             onclose:(code:number, reason:Buffer)=>{},
             onerror:(err:Error)=>{}
@@ -178,7 +186,7 @@ export class wslistener_nodeimpl implements wslistener {
 
         let thisptr = this;
         sockcid.onmsg = (data:any)=>{
-            thisptr._on_socket_message(sockcid, data as Uint8Array);
+            thisptr._on_socket_message(sockcid, data as Buffer);
         };
         sockcid.onclose = (code:number, reason:Buffer)=>{
             thisptr._on_socket_close(sockcid, code, reason);
@@ -200,9 +208,42 @@ export class wslistener_nodeimpl implements wslistener {
         this._handler.on_connected(sockcid.cid);
     }
 
-    _on_socket_message(sockcid:socketCid, data:Uint8Array):void {
+    _handle_sys_cmd(sockcid:socketCid, p:packet):void {
+        switch(p.data.cmdid) {
+            case sys_packet_cmds.spc_shakehand:
+                {
+                    // TO DO : check shakehand msg
+                    if(p.data.mark == shakehand_mark) {
+                        natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_debug, `wslistener_nodeimpl cid:${sockcid.cid} shakehand receive`);
+
+                        this.send_packet(sockcid.cid, natrium_nodeimpl.impl.pktcodec.create_shakehandpkt(natrium_nodeimpl.impl.sys.getTickFromAppStart()));
+                    }
+                    else {
+                        // Endian not same
+                        natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_debug, `wslistener_nodeimpl cid:${sockcid.cid} shakehand edian wrong`);
+                    }
+                }
+                break;
+            case sys_packet_cmds.spc_pingpong:
+                {
+                    natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_debug, 
+                        `wslistener_nodeimpl cid:${sockcid.cid} pingpong client time[${p.data.time}] latency[${natrium_nodeimpl.impl.sys.getTickFromAppStart() - p.data.time}]`);
+
+                    this.send_packet(sockcid.cid, natrium_nodeimpl.impl.pktcodec.create_pingpongpkt(natrium_nodeimpl.impl.sys.getTickFromAppStart()));
+                }
+                break;
+        }
+    }
+
+    _on_socket_message(sockcid:socketCid, data:Buffer):void {
         var p:packet = this._pcodec.decode_packet(data);
-        this._handler.on_packet(sockcid.cid, p);
+        sockcid.lastpkttime = Date.now();
+        if(p.pktp == packettype.pkt_sys){
+            this._handle_sys_cmd(sockcid, p);
+        }
+        else {
+            this._handler.on_packet(sockcid.cid, p);
+        }
     }
 
     _on_socket_close(sockcid:socketCid, code:number, reason:Buffer):void {
