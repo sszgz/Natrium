@@ -42,7 +42,7 @@ export class wsconnecter_nodeimpl implements wsconnecter {
         return this._latency;
     }
     get server_tick() {
-        return this._servertickfromstart + (Date.now() - this._lastpingtm);
+        return this._servertickfromstart + (Date.now() - this._lastpongtm);
     }
     
     connect(host:string):boolean {
@@ -137,7 +137,7 @@ export class wsconnecter_nodeimpl implements wsconnecter {
                         natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_debug, `wsconnecter_nodeimpl shakehand over`);
 
                         this._lastpongtm = Date.now();
-                        this._latency = this._lastpongtm - this._lastpongtm;
+                        this._latency = this._lastpongtm - this._lastpingtm;
                         this._servertickfromstart = p.data.time;
 
                         this._handler.on_shakehand();
@@ -151,7 +151,7 @@ export class wsconnecter_nodeimpl implements wsconnecter {
             case sys_packet_cmds.spc_pingpong:
                 {
                     this._lastpongtm = Date.now();
-                    this._latency = this._lastpongtm - this._lastpongtm;
+                    this._latency = this._lastpongtm - this._lastpingtm;
                     this._servertickfromstart = p.data.time;
 
                     natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_debug, 
