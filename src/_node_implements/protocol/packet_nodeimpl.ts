@@ -46,4 +46,8 @@ export class packet_nodeimpl implements packet {
     set data(v:any) {
         this._data = v;
     }
+
+    set_bitszipped(bodylenbit:bodylenbits, compressed:boolean) {
+        this._header = (this._header & 0xf8) | (bodylenbit << 1) | (compressed?1:0);
+    }
 }

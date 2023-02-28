@@ -19,7 +19,6 @@ export class natrium_nodeimpl implements inatrium  {
 
     _dbg_logger:debug_logger_nodeimpl = new debug_logger_nodeimpl();
     _sys:sys_nodeimpl = new sys_nodeimpl();
-    _pktcodec:packetcodec_nodeimpl = new packetcodec_nodeimpl();
 
     constructor(){
 
@@ -30,9 +29,6 @@ export class natrium_nodeimpl implements inatrium  {
     }
     get sys() {
         return this._sys;
-    }
-    get pktcodec() {
-        return this._pktcodec;
     }
 
     create_wslistener(h:wslistener_handler, p:packetcodec):wslistener {

@@ -16,8 +16,10 @@ class handler implements wslistener_handler {
 
     }
     on_packet(cid:number, p:packet):void {
-        nat.dbglog.log(debug_level_enum.dle_debug, `handler on packet  ${cid}, packet:${p}`);
+        nat.dbglog.log(debug_level_enum.dle_debug, `handler on packet  ${cid}, packet:${p.data}`);
 
+        // send back
+        listener.send_packet(cid, p);
     }
 }
 

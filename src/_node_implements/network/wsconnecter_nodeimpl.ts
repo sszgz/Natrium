@@ -93,7 +93,7 @@ export class wsconnecter_nodeimpl implements wsconnecter {
             return;
         }
         
-        natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_debug, `wsconnecter_nodeimpl send packet:${p}`);
+        //natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_debug, `wsconnecter_nodeimpl send packet:${p}`);
 
         var data:Buffer = this._pcodec.encode_packet(p);
         if(data==null){
@@ -109,14 +109,14 @@ export class wsconnecter_nodeimpl implements wsconnecter {
         });
     }
     shakehand():void{
-        let p = natrium_nodeimpl.impl.pktcodec.create_shakehandpkt(0); // fisrt msg, no servertime saved
+        let p = this._pcodec.create_shakehandpkt(0); // fisrt msg, no servertime saved
 
         this._lastpingtm = Date.now();
         this.send_packet(p);
     }
     ping():void{
 
-        let p = natrium_nodeimpl.impl.pktcodec.create_pingpongpkt(this.server_tick);
+        let p = this._pcodec.create_pingpongpkt(this.server_tick);
 
         this._lastpingtm = Date.now();
         this.send_packet(p);
@@ -154,8 +154,8 @@ export class wsconnecter_nodeimpl implements wsconnecter {
                     this._latency = this._lastpongtm - this._lastpingtm;
                     this._servertickfromstart = p.data.time;
 
-                    natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_debug, 
-                        `wsconnecter_nodeimpl pingpong server time[${p.data.time}] latency[${this._latency}]`);
+                    // natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_debug, 
+                    //     `wsconnecter_nodeimpl pingpong server time[${p.data.time}] latency[${this._latency}]`);
 
                 }
                 break;

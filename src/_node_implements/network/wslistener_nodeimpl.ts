@@ -125,7 +125,7 @@ export class wslistener_nodeimpl implements wslistener {
             return;
         }
         
-        natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_debug, `wslistener_nodeimpl send cid:${cid} packet:${p}`);
+        //natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_debug, `wslistener_nodeimpl send cid:${cid} packet:${p}`);
 
         var data:Buffer = this._pcodec.encode_packet(p);
         if(data==null){
@@ -216,7 +216,7 @@ export class wslistener_nodeimpl implements wslistener {
                     if(p.data.mark == shakehand_mark) {
                         natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_debug, `wslistener_nodeimpl cid:${sockcid.cid} shakehand receive`);
 
-                        this.send_packet(sockcid.cid, natrium_nodeimpl.impl.pktcodec.create_shakehandpkt(natrium_nodeimpl.impl.sys.getTickFromAppStart()));
+                        this.send_packet(sockcid.cid, this._pcodec.create_shakehandpkt(natrium_nodeimpl.impl.sys.getTickFromAppStart()));
                     }
                     else {
                         // Endian not same
@@ -226,10 +226,10 @@ export class wslistener_nodeimpl implements wslistener {
                 break;
             case sys_packet_cmds.spc_pingpong:
                 {
-                    natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_debug, 
-                        `wslistener_nodeimpl cid:${sockcid.cid} pingpong client time[${p.data.time}] latency[${natrium_nodeimpl.impl.sys.getTickFromAppStart() - p.data.time}]`);
+                    // natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_debug, 
+                    //     `wslistener_nodeimpl cid:${sockcid.cid} pingpong client time[${p.data.time}] latency[${natrium_nodeimpl.impl.sys.getTickFromAppStart() - p.data.time}]`);
 
-                    this.send_packet(sockcid.cid, natrium_nodeimpl.impl.pktcodec.create_pingpongpkt(natrium_nodeimpl.impl.sys.getTickFromAppStart()));
+                    this.send_packet(sockcid.cid, this._pcodec.create_pingpongpkt(natrium_nodeimpl.impl.sys.getTickFromAppStart()));
                 }
                 break;
         }

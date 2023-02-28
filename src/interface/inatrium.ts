@@ -12,7 +12,6 @@ export interface inatrium {
 
     readonly dbglog:debug_logger;
     readonly sys:sys;
-    readonly pktcodec:packetcodec;
 
     create_wslistener(h:wslistener_handler, p:packetcodec):wslistener;
     create_wsconnecter(h:wsconnecter_handler, p:packetcodec):wsconnecter;
