@@ -46,10 +46,9 @@ var connecter = nat.create_wsconnecter(h, c);
 connecter.connect("ws://127.0.0.1:4090");
 
 var testcmd = async ()=>{
+    const rl = readline.createInterface({ input, output });
     console.log("Enter test cmd:");
     while(true){
-    
-        const rl = readline.createInterface({ input, output });
         let cmd = await rl.question("");
         let cmds = cmd?.split(" ");
         

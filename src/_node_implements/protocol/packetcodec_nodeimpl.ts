@@ -36,7 +36,7 @@ export class packetcodec_nodeimpl implements packetcodec {
     }
 
     create_stringpkt(data:string):packet {
-        return this.create_packet(packettype.pkt_msg, prototype.proto_json, bodylenbits.bit8, false, data); // bodylenbits & compressed is set in encode_packet
+        return this.create_packet(packettype.pkt_msg, prototype.proto_text, bodylenbits.bit8, false, data); // bodylenbits & compressed is set in encode_packet
     }
 
     create_packet(pktp:packettype, prototp:prototype, bodylenbit:bodylenbits, compressed:boolean, data:any):packet {
