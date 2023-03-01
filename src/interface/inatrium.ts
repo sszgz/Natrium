@@ -6,6 +6,8 @@ import { debug_logger } from "./debug/debug_logger";
 import { wsconnecter, wsconnecter_handler } from "./network/wsconnecter";
 import { wslistener, wslistener_handler } from "./network/wslistener";
 import { packetcodec } from "./protocol/packetcodec";
+import { servicemgr } from "./service/servicemgr";
+import { sessionmgr } from "./session/sessionmgr";
 import { sys } from "./sys/sys";
 
 export interface inatrium {
@@ -17,4 +19,7 @@ export interface inatrium {
     create_wsconnecter(h:wsconnecter_handler, p:packetcodec):wsconnecter;
 
     create_packetcodec():packetcodec;
+
+    create_servicemgr():servicemgr;
+    create_sessionmgr():sessionmgr;
 }
