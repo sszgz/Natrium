@@ -9,7 +9,7 @@ export interface sessionmgr {
 
     readonly session_count:number;
 
-    add_session(sid:number):void;
+    add_session(sid:number):session;
     remove_session(sid:number):void;
 
     get_session_by_sid(sid:number):session;

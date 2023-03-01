@@ -4,8 +4,12 @@
 
 import { session } from "../session/session";
 
-export interface serviceconf {
+export namespace natrium_services {
+    
+}
 
+export interface serviceconf {
+    readonly service_name:string;
 }
 
 export interface service {
@@ -36,7 +40,6 @@ export interface service {
     on_session_rpc_sync(sid:number, cmd:string, data:any):any;
 
     on_service_update():void;
-
 }
 
 // export class service_base implements service {

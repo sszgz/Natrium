@@ -16,9 +16,8 @@ export class sessionmgr_nodeimpl implements sessionmgr {
         return this._session_count;
     }
 
-
-    add_session(sid:number):void {
-
+    add_session(sid:number):session {
+        return new session_nodeimpl();
     }
     remove_session(sid:number):void {
 

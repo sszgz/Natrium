@@ -25,4 +25,8 @@ export class session_nodeimpl implements session {
     get service_index() {
         return this._service_index;
     }
+    
+    send_message(cmd:string, data:any):void{
+
+    }
 }
