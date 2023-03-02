@@ -24,14 +24,14 @@ interface socketCid {
 
 export class wslistener_nodeimpl implements wslistener {
 
-    _host:string = "";
-    _port:number = 0;
-    _handler:wslistener_handler;
-    _pcodec:packetcodec;
-    _wss:WebSocketServer|null = null;
+    protected _host:string = "";
+    protected _port:number = 0;
+    protected _handler:wslistener_handler;
+    protected _pcodec:packetcodec;
+    protected _wss:WebSocketServer|null = null;
 
-    _cid_seed:number = 1;
-    _cid_to_sock:Map<number, socketCid>;
+    protected _cid_seed:number = 1;
+    protected _cid_to_sock:Map<number, socketCid>;
 
     constructor(h:wslistener_handler, p:packetcodec){
         this._handler = h;
@@ -40,20 +40,20 @@ export class wslistener_nodeimpl implements wslistener {
         this._cid_to_sock = new Map<number, socketCid>();
     }
 
-    get host() {
+    public get host() {
         return this._host;
     }
-    get port() {
+    public get port() {
         return this._port;
     }
-    get handler() {
+    public get handler() {
         return this._handler;
     }
-    get pcodec() {
+    public get pcodec() {
         return this._pcodec;
     }
 
-    start(host:string, port:number):boolean{
+    public start(host:string, port:number):boolean{
 
         if(this._pcodec == null)
         {
@@ -100,11 +100,11 @@ export class wslistener_nodeimpl implements wslistener {
         return true;
     }
     
-    shutdown():void {
+    public shutdown():void {
         // TO DO : disconnect all connections and shut down
     }
     
-    disconnect(cid:number, reason:string):void {
+    public disconnect(cid:number, reason:string):void {
         const sockcid = this._cid_to_sock.get(cid);
         if(sockcid == undefined)
         {
@@ -116,7 +116,7 @@ export class wslistener_nodeimpl implements wslistener {
 
         sockcid.socket.close(connection_close_code.server_close, reason);
     }
-    send_packet(cid:number, p:packet):void {
+    public send_packet(cid:number, p:packet):void {
 
         const sockcid = this._cid_to_sock.get(cid);
         if(sockcid == undefined)
@@ -134,7 +134,7 @@ export class wslistener_nodeimpl implements wslistener {
         
         this._send_data(sockcid, data);
     }
-    broadcast_packet(cid:number[], p:packet):void {
+    public broadcast_packet(cid:number[], p:packet):void {
         natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_debug, `wslistener_nodeimpl broadcast cids:${cid} packet:${p}`);
 
         var data:Buffer = this._pcodec.encode_packet(p);
@@ -154,11 +154,11 @@ export class wslistener_nodeimpl implements wslistener {
             this._send_data(sockcid, data);
         }
     }
-    check_activeconns():void{
+    public check_activeconns():void{
         // TO DO : check & kick not active connections by lastpkttime
     }
 
-    _send_data(sockcid:socketCid, data:Buffer) {
+    protected _send_data(sockcid:socketCid, data:Buffer) {
 
         sockcid.socket.send(data, err=>{
             if(err != undefined) {
@@ -168,7 +168,7 @@ export class wslistener_nodeimpl implements wslistener {
         });
     }
 
-    _on_socket_connect(socket:WebSocket):void {
+    protected _on_socket_connect(socket:WebSocket):void {
 
         let sockcid = {
             cid:this._cid_seed, 
@@ -208,7 +208,7 @@ export class wslistener_nodeimpl implements wslistener {
         this._handler.on_connected(sockcid.cid);
     }
 
-    _handle_sys_cmd(sockcid:socketCid, p:packet):void {
+    protected _handle_sys_cmd(sockcid:socketCid, p:packet):void {
         switch(p.data.cmdid) {
             case sys_packet_cmds.spc_shakehand:
                 {
@@ -235,7 +235,7 @@ export class wslistener_nodeimpl implements wslistener {
         }
     }
 
-    _on_socket_message(sockcid:socketCid, data:Buffer):void {
+    protected _on_socket_message(sockcid:socketCid, data:Buffer):void {
         var p:packet = this._pcodec.decode_packet(data);
         sockcid.lastpkttime = Date.now();
         if(p.pktp == packettype.pkt_sys){
@@ -246,7 +246,7 @@ export class wslistener_nodeimpl implements wslistener {
         }
     }
 
-    _on_socket_close(sockcid:socketCid, code:number, reason:Buffer):void {
+    protected _on_socket_close(sockcid:socketCid, code:number, reason:Buffer):void {
         this._cid_to_sock.delete(sockcid.cid);
         sockcid.socket.off("message", sockcid.onmsg);
         sockcid.socket.off("close", sockcid.onclose);
@@ -256,7 +256,7 @@ export class wslistener_nodeimpl implements wslistener {
         this._handler.on_disconnected(sockcid.cid,reasonstr);
     }
 
-    _on_socket_error(sockcid:socketCid, err:Error):void {
+    protected _on_socket_error(sockcid:socketCid, err:Error):void {
         natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `wslistener_nodeimpl cid:${sockcid.cid} err:[${err.name}\r\n${err.message}]`);
 
         // TO DO : check error

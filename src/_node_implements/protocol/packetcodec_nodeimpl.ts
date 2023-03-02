@@ -13,7 +13,7 @@ import { packet_nodeimpl } from "./packet_nodeimpl";
 
 export class packetcodec_nodeimpl implements packetcodec {
 
-    create_shakehandpkt(time:number):packet {
+    public create_shakehandpkt(time:number):packet {
         let datas:Buffer = Buffer.alloc(9);
         datas.writeUint8(sys_packet_cmds.spc_shakehand);
         datas.writeUint32LE(shakehand_mark, 1);
@@ -22,7 +22,7 @@ export class packetcodec_nodeimpl implements packetcodec {
         return this.create_packet(packettype.pkt_sys, prototype.proto_binary, bodylenbits.bit8, false, datas);
     }
 
-    create_pingpongpkt(time:number):packet {
+    public create_pingpongpkt(time:number):packet {
 
         let datas:Buffer = Buffer.alloc(5);
         datas.writeUint8(sys_packet_cmds.spc_pingpong);
@@ -31,20 +31,20 @@ export class packetcodec_nodeimpl implements packetcodec {
         return this.create_packet(packettype.pkt_sys, prototype.proto_binary, bodylenbits.bit8, false, datas); 
     }
 
-    create_jsonpkt(data:any):packet {
+    public create_jsonpkt(data:any):packet {
         return this.create_packet(packettype.pkt_msg, prototype.proto_json, bodylenbits.bit8, false, data);  // bodylenbits & compressed is set in encode_packet
     }
 
-    create_stringpkt(data:string):packet {
+    public create_stringpkt(data:string):packet {
         return this.create_packet(packettype.pkt_msg, prototype.proto_text, bodylenbits.bit8, false, data); // bodylenbits & compressed is set in encode_packet
     }
 
-    create_packet(pktp:packettype, prototp:prototype, bodylenbit:bodylenbits, compressed:boolean, data:any):packet {
+    public create_packet(pktp:packettype, prototp:prototype, bodylenbit:bodylenbits, compressed:boolean, data:any):packet {
         let h = packet_nodeimpl.make_header(pktp, prototp, bodylenbit, compressed);
         return new packet_nodeimpl(h, data);
     }
 
-    _write_protocol_tobuf(p:packet):Buffer {
+    protected _write_protocol_tobuf(p:packet):Buffer {
         switch(p.prototp) {
             case prototype.proto_binary:
                 return p.data;
@@ -71,7 +71,7 @@ export class packetcodec_nodeimpl implements packetcodec {
         return p.data;
     }
     
-    _decode_sys_cmd(buffer:Buffer, offset:number):Object {
+    protected _decode_sys_cmd(buffer:Buffer, offset:number):Object {
         let data:any = {};
 
         data.cmdid = buffer.readUint8(offset);
@@ -90,7 +90,7 @@ export class packetcodec_nodeimpl implements packetcodec {
         return data;
     }
 
-    _read_protocol_frombuf(p:packet_nodeimpl, buffer:Buffer, offset:number):packet {
+    protected _read_protocol_frombuf(p:packet_nodeimpl, buffer:Buffer, offset:number):packet {
         switch(p.prototp) {
             case prototype.proto_binary:
                 {
@@ -128,7 +128,7 @@ export class packetcodec_nodeimpl implements packetcodec {
         return p;
     }
 
-    encode_packet(p:packet):Buffer {
+    public encode_packet(p:packet):Buffer {
         let protodata:Buffer = this._write_protocol_tobuf(p);
         
         // TO DO : do zip in thread
@@ -180,7 +180,7 @@ export class packetcodec_nodeimpl implements packetcodec {
         }
         return Buffer.concat([header, protodata]);
     }
-    decode_packet(buffer:Buffer):packet {
+    public decode_packet(buffer:Buffer):packet {
         let header = buffer.readUint8();
         let pkt = new packet_nodeimpl(header, null);
 

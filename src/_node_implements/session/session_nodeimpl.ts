@@ -6,27 +6,34 @@ import { session } from "../../interface/session/session";
 
 export class session_nodeimpl implements session {
     
-    _session_id:number = 0;
-    _session_key:string = "";
+    protected _session_id:number = 0;
+    protected _session_key:string = "";
 
-    _service_name:string = "";
-    _service_index:number = 0;
+    protected _service_name:string = "";
+    protected _service_index:number = 0;
 
-    get session_id() {
+    constructor(sid:number, skey:string, sn:string, si:number){
+        this._session_id = sid;
+        this._session_key = skey;
+        this._service_name = sn;
+        this._service_index = si;
+    }
+
+    public get session_id() {
         return this._session_id;
     }
-    get session_key() {
+    public get session_key() {
         return this._session_key;
     }
 
-    get service_name() {
+    public get service_name() {
         return this._service_name;
     }
-    get service_index() {
+    public get service_index() {
         return this._service_index;
     }
     
-    send_message(cmd:string, data:any):void{
+    public send_message(cmd:string, data:any):void{
 
     }
 }

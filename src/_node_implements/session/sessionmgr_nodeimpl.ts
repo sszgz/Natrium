@@ -10,28 +10,28 @@ import { session_nodeimpl } from "./session_nodeimpl";
 
 export class sessionmgr_nodeimpl implements sessionmgr {
 
-    _session_count:number = 0;
+    protected _session_count:number = 0;
 
-    get session_count() {
+    public get session_count() {
         return this._session_count;
     }
 
-    add_session(sid:number):session {
-        return new session_nodeimpl();
+    public add_session(sid:number):session {
+        return new session_nodeimpl(0,"","",0);
     }
-    remove_session(sid:number):void {
+    public remove_session(sid:number):void {
 
     }
 
-    get_session_by_sid(sid:number):session {
-        return new session_nodeimpl();
+    public get_session_by_sid(sid:number):session {
+        return new session_nodeimpl(0,"","",0);
     }
-    get_session_by_skey(skey:string):session {
-        return new session_nodeimpl();
+    public get_session_by_skey(skey:string):session {
+        return new session_nodeimpl(0,"","",0);
 
     }
 
-    get_sessiondata_bysid(sid:number):sessiondata {
+    public get_sessiondata_bysid(sid:number):sessiondata {
         return new sessiondata_nodeimpl();
     }
 

@@ -125,6 +125,10 @@ var testcmd = async ()=>{
                     connecter.send_packet(pkt);
                 }
                 break;
+            default:
+                console.log("unknown command!");
+
+                break;
         }
     }
 }

@@ -19,37 +19,37 @@ import { sys_nodeimpl } from "./sys/sys_nodeimpl";
 
 export class natrium_nodeimpl implements inatrium  {
 
-    static readonly impl:natrium_nodeimpl = new natrium_nodeimpl();
+    public static readonly impl:natrium_nodeimpl = new natrium_nodeimpl();
 
-    _dbg_logger:debug_logger_nodeimpl = new debug_logger_nodeimpl();
-    _sys:sys_nodeimpl = new sys_nodeimpl();
+    protected _dbg_logger:debug_logger_nodeimpl = new debug_logger_nodeimpl();
+    protected _sys:sys_nodeimpl = new sys_nodeimpl();
 
     constructor(){
 
     }
 
-    get dbglog() {
+    public get dbglog() {
         return this._dbg_logger;
     }
-    get sys() {
+    public get sys() {
         return this._sys;
     }
 
-    create_wslistener(h:wslistener_handler, p:packetcodec):wslistener {
+    public create_wslistener(h:wslistener_handler, p:packetcodec):wslistener {
         return new wslistener_nodeimpl(h,p);
     }
-    create_wsconnecter(h:wsconnecter_handler, p:packetcodec):wsconnecter {
+    public create_wsconnecter(h:wsconnecter_handler, p:packetcodec):wsconnecter {
         return new wsconnecter_nodeimpl(h, p);
     }
 
-    create_packetcodec():packetcodec {
+    public create_packetcodec():packetcodec {
         return new packetcodec_nodeimpl();
     }
     
-    create_servicemgr():servicemgr {
+    public create_servicemgr():servicemgr {
         return new servicemgr_nodeimpl();
     }
-    create_sessionmgr():sessionmgr {
+    public create_sessionmgr():sessionmgr {
         return new sessionmgr_nodeimpl();
     }
 }

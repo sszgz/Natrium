@@ -6,16 +6,16 @@ import { sys } from "../../interface/sys/sys";
 
 export class sys_nodeimpl implements sys {
 
-    _start_tick:number = Date.now();
+    protected _start_tick:number = Date.now();
 
     constructor(){
     }
     
-    getTimeStamp() : number {
+    public getTimeStamp() : number {
         return Date.now();
     }
 
-    getTickFromAppStart() : number {
+    public getTickFromAppStart() : number {
         return Date.now() - this._start_tick;
     }
     

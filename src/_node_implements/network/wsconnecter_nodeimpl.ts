@@ -14,38 +14,38 @@ import { natrium_nodeimpl } from "../natrium_nodeimpl";
 
 export class wsconnecter_nodeimpl implements wsconnecter {
     
-    _host:string = "";
-    _handler:wsconnecter_handler;
-    _pcodec:packetcodec;
-    _ws:WebSocket|null = null;
+    protected _host:string = "";
+    protected _handler:wsconnecter_handler;
+    protected _pcodec:packetcodec;
+    protected _ws:WebSocket|null = null;
 
-    _lastpingtm = 0;
-    _lastpongtm = 0;
-    _latency = 0;
-    _servertickfromstart = 0;
+    protected _lastpingtm = 0;
+    protected _lastpongtm = 0;
+    protected _latency = 0;
+    protected _servertickfromstart = 0;
 
     constructor(h:wsconnecter_handler, p:packetcodec) {
         this._handler = h;
         this._pcodec = p;
     }
 
-    get host() {
+    public get host() {
         return this._host;
     }
-    get handler() {
+    public get handler() {
         return this._handler;
     }
-    get pcodec() {
+    public get pcodec() {
         return this._pcodec;
     }
-    get latency(){
+    public get latency(){
         return this._latency;
     }
-    get server_tick() {
+    public get server_tick() {
         return this._servertickfromstart + (Date.now() - this._lastpongtm);
     }
     
-    connect(host:string):boolean {
+    public connect(host:string):boolean {
         
         if(this._pcodec == null)
         {
@@ -78,7 +78,7 @@ export class wsconnecter_nodeimpl implements wsconnecter {
 
         return true;
     }
-    disconnect(reason:string):void {
+    public disconnect(reason:string):void {
         if(this._ws == null){
             natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `wsconnecter_nodeimpl disconnect when ws not connect`);
             return;
@@ -87,7 +87,7 @@ export class wsconnecter_nodeimpl implements wsconnecter {
         natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_debug, `wsconnecter_nodeimpl disconnect`);
         this._ws.close(connection_close_code.client_close, reason);
     }
-    send_packet(p:packet):void {
+    public send_packet(p:packet):void {
         if(this._ws == null){
             natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `wsconnecter_nodeimpl send when ws not connect`);
             return;
@@ -108,13 +108,13 @@ export class wsconnecter_nodeimpl implements wsconnecter {
             }
         });
     }
-    shakehand():void{
+    public shakehand():void{
         let p = this._pcodec.create_shakehandpkt(0); // fisrt msg, no servertime saved
 
         this._lastpingtm = Date.now();
         this.send_packet(p);
     }
-    ping():void{
+    public ping():void{
 
         let p = this._pcodec.create_pingpongpkt(this.server_tick);
 
@@ -122,13 +122,13 @@ export class wsconnecter_nodeimpl implements wsconnecter {
         this.send_packet(p);
     }
     
-    _on_socket_connected():void {
+    protected _on_socket_connected():void {
         natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_debug, `wsconnecter_nodeimpl [${this._host}] connected`);
 
         this._handler.on_connected();
     }
 
-    _handle_sys_cmd(p:packet):void {
+    protected _handle_sys_cmd(p:packet):void {
         switch(p.data.cmdid) {
             case sys_packet_cmds.spc_shakehand:
                 {
@@ -162,7 +162,7 @@ export class wsconnecter_nodeimpl implements wsconnecter {
         }
     }
 
-    _on_socket_message(data:Buffer):void {
+    protected _on_socket_message(data:Buffer):void {
         var p:packet = this._pcodec.decode_packet(data);
         if(p.pktp == packettype.pkt_sys){
             this._handle_sys_cmd(p);
@@ -172,7 +172,7 @@ export class wsconnecter_nodeimpl implements wsconnecter {
         }
     }
 
-    _on_socket_error(err:Error):void {
+    protected _on_socket_error(err:Error):void {
         natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `wsconnecter_nodeimpl err:[${err.name}\r\n${err.message}]`);
 
         // TO DO : check error
