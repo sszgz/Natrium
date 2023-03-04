@@ -16,6 +16,4 @@ export interface sessionmgr {
     get_session_by_skey(skey:string):session|undefined;
 
     get_sessiondata_bysid(sid:number):sessiondata|undefined;
-
-    send_ws_msg(sid:number, command:string, data:any):void;
 }

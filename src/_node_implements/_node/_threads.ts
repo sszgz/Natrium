@@ -6,7 +6,7 @@ import { isMainThread, Worker, MessageChannel, MessagePort, workerData, parentPo
 import { EventEmitter } from "ws";
 import { debug_level_enum } from "../../interface/debug/debug_logger";
 import { natrium_nodeimpl } from "../natrium_nodeimpl";
-import { _Main2Worker_MSG, _Worker2Main_MSG } from "./_therads_msgs";
+import { _Main2Worker_MSG, _Service_W2M_MSG, _Worker2Main_MSG } from "./_therads_msgs";
 
 export interface _Node_Worker {
 
@@ -150,6 +150,16 @@ export class _Node_ThreadContext {
         parentPort?.postMessage({cmd:_Worker2Main_MSG._w2m_create_channel, workeruname:toworker, udata:udata});
 
         natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_system, `_Node_Thread request createChannelWith fromworker:${fromworker} toworker:${toworker}`);
+    }
+
+    public static postParentMessage(msg:any):void{
+        parentPort?.postMessage(msg);
+    }
+}
+
+export class _Node_SessionContext {
+    public static sendWSMsg(sid:number, command:string, data:any):void {
+        parentPort?.postMessage({cmd:_Service_W2M_MSG._w2m_session_msg, sid:sid, msg:{c:command, d:data}});
     }
 }
 

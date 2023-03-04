@@ -139,7 +139,7 @@ export class serviceworker_nodeimpl implements serviceworker {
     }
 
     protected _on_worker_msg(msg:any){
-        switch(msg.id)
+        switch(msg.cmd)
         {
         case _Service_W2M_MSG._w2m_session_msg:
             {
@@ -147,7 +147,7 @@ export class serviceworker_nodeimpl implements serviceworker {
 
                 // for Debug ...
                 let l = network.get_wslistener(0);
-                l.send_packet(msg.sid, l.pcodec.create_jsonpkt(msg)); // sid = cid
+                l.send_packet(msg.sid, l.pcodec.create_jsonpkt(msg.msg)); // sid = cid
             }
             break;
         }
