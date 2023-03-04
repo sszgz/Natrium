@@ -4,30 +4,40 @@
 
 import { isMainThread, Worker, MessageChannel, workerData, parentPort } from "node:worker_threads";
 import { debug_level_enum } from "../../interface/debug/debug_logger";
+import { network } from "../../interface/network/network";
 
 import { natrium_services, service, serviceconf } from "../../interface/service/service";
 import { servicechannel, serviceworker } from "../../interface/service/serviceworker";
 import { session } from "../../interface/session/session";
 import { natrium_nodeimpl } from "../natrium_nodeimpl";
 import { session_nodeimpl } from "../session/session_nodeimpl";
+import { _Service_M2W_MSG, _Service_W2M_MSG } from "../_node/_therads_msgs";
+import { _Node_MainTrhead, _Node_WorkerThread } from "../_node/_threads";
+import { _service_workers } from "./_service_workers";
 
 export class servicechannel_nodeimpl implements servicechannel {
+    
+    protected _worker_port:null|Worker|MessagePort = null;
 
-
-    public dispatch_service_task(cmd:string, data:any):void {
-
+    public set_worker_thread(t:Worker|MessagePort):void {
+        this._worker_port = t;
     }
 
-    public dispatch_session_msg(sid:number, cmd:string, data:any):void {
-
+    public dispatch_service_task(command:string, data:any):void {
+        this._worker_port?.postMessage({cmd:_Service_M2W_MSG._m2w_service_task, command:command, data:data});
     }
-    public brodcast_session_msg(cmd:string, data:any):void {
 
+    public dispatch_session_msg(sid:number, command:string, data:any):void {
+        this._worker_port?.postMessage({cmd:_Service_M2W_MSG._m2w_session_msg, sid:sid, command:command, data:data});
+    }
+    public brodcast_session_msg(command:string, data:any):void {
+        this._worker_port?.postMessage({cmd:_Service_M2W_MSG._m2w_bcast_msg, command:command, data:data});
     }
     
-    public session_rpc_sync(sid:number, cmd:string, data:any):any {
-
-    }
+    // public session_rpc_sync(sid:number, command:string, data:any):any {
+    //     // this._worker_port?.postMessage({cmd:_woker_cmds.wc_rpc_sync, sid:sid, command:command, data:data});
+    //     return null;
+    // }
 }
 
 export class serviceworker_nodeimpl implements serviceworker {
@@ -37,7 +47,7 @@ export class serviceworker_nodeimpl implements serviceworker {
     protected _service_index:number = 0;
     protected _channel:servicechannel_nodeimpl = new servicechannel_nodeimpl();
 
-    protected _worker_thread:null|Worker = null;
+    protected _worker_thread:null|_Node_WorkerThread = null;
 
     public get thread_id() {
         return this._thread_id;
@@ -57,199 +67,89 @@ export class serviceworker_nodeimpl implements serviceworker {
     }
 
     public start_service(c:serviceconf):boolean {
-        this._worker_thread = new Worker(__filename, {
-            workerData:{
+        this._worker_thread = _Node_MainTrhead.createWorker(
+            _service_workers.make_service_thread_uname(c.service_name, this._service_index),  
+            "./_node_implements/service/_service_nodeworker_impl.ts",
+            {
                 conf:c,
                 si:this._service_index
-            },
-            // resourceLimits:{
+            }
+            // ,
+            // // resource limits
+            // {
             //     maxYoungGenerationSizeMb:,
             //     maxOldGenerationSizeMb:,
             //     codeRangeSizeMb:,
             //     stackSizeMb:
             // }
-        });
+        );
 
         this._service_name = c.service_name;
         this._thread_id = this._worker_thread.threadId;
+
+        this._channel.set_worker_thread(this._worker_thread.worker);
 
         let thisptr = this;
 
         this._worker_thread.on('message', (msg)=>{
             thisptr._on_worker_msg(msg);
         });
-        this._worker_thread.on('messageerror', (err)=>{
-            thisptr._on_worker_error(err);
-        });
-        this._worker_thread.on('error', (err)=>{
-            thisptr._on_worker_error(err);
-        });
-        this._worker_thread.on('exit', (code) => {
-            if (code !== 0){
-                thisptr._on_worker_error(new Error(`Worker stopped with exit code ${code}`));
-            }
-            else {
-                thisptr._on_worker_exit(code);
-            }
-        });
 
         return true;
     }
     public finish_service():boolean {
+        if(this._worker_thread == null) {
+            natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `serviceworker_nodeimpl service:${this._service_name} index:${this._service_index} finish_service thread not start`);
+            return true;
+        }
+
+        this._worker_thread.finish();
 
         // wait worker exit
-
         // TO DO : off _worker_thread listener
 
         return true;
     }
 
     public add_session(s:session):void {
+        if(this._worker_thread == null) {
+            natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `serviceworker_nodeimpl service:${this._service_name} index:${this._service_index} add session:${s.session_id} thread not start`);
+            return;
+        }
 
+        this._worker_thread.worker.postMessage({cmd:_Service_M2W_MSG._m2w_add_session, sid:s.session_id, skey:s.session_key});
+        s.set_service(this._service_name, this._service_index);
     }
     public remove_session(s:session):void {
+        if(this._worker_thread == null) {
+            natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `serviceworker_nodeimpl service:${this._service_name} index:${this._service_index} rmv session:${s.session_id} thread not start`);
+            return;
+        }
 
+        this._worker_thread.worker.postMessage({cmd:_Service_M2W_MSG._m2w_rmv_session, sid:s.session_id});
+        s.set_service("", 0);
     }
     public on_session_close(s:session):void {
+        if(this._worker_thread == null) {
+            natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `serviceworker_nodeimpl service:${this._service_name} index:${this._service_index} close session:${s.session_id} thread not start`);
+            return;
+        }
 
+        this._worker_thread.worker.postMessage({cmd:_Service_M2W_MSG._m2w_close_session, sid:s.session_id});
     }
 
     protected _on_worker_msg(msg:any){
+        switch(msg.id)
+        {
+        case _Service_W2M_MSG._w2m_session_msg:
+            {
+                // TO DO : send session message
 
-    }
-    protected _on_worker_error(err:Error){
-
-    }
-    protected _on_worker_exit(exitCode: number){
-
-    }
-}
-
-enum _woker_cmds {
-    wc_add_session = 1,
-    wc_rmv_session = 2,
-    wc_close_session = 3,
-    wc_msg = 4,
-    wc_rpc_sync = 5,
-    wc_service_task = 6,
-    wc_bcast_msg = 7,
-    wc_exit = 8
-}
-
-class _worker_thread {
-
-    protected _service:service;
-
-    constructor(s:service){
-        this._service = s;
-    }
-
-    public start_up():void{
-        this._service.startup();
-    }
-    public shut_down():void{
-        this._service.shutdown();
-    }
-
-    public on_add_session(sid:number, skey:string):void{
-        this._service.on_add_session(new session_nodeimpl(sid, skey, this._service.service_name, this._service.service_index));
-    }
-    public on_remove_session(sid:number):void{
-        
-    }
-    public on_session_close(sid:number):void{
-
-    }
-
-    public on_service_task(command:string, data:object):void{
-
-    }
-
-    public on_broadcast_session_msg(command:string, data:object):void{
-
-    }
-    public on_session_message(sid:number, command:string, data:object):void{
-
-    }
-
-    public on_session_rpc_sync(sid:number, cmd:string, data:any):any{
-
-    }
-
-    public on_service_update():void{
-
-    }
-
-}
-
-function _worker_routine() {
-
-    let conf:serviceconf = workerData.conf;
-    let service_index:number = workerData.si;
-
-    if(parentPort == null) {
-        natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `_worker_routine service:${conf.service_name} parent port null`);
-        return;
-    }
-
-    let service = natrium_services.create_service(conf.service_name);
-    if(service == null) {
-        natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `_worker_routine service:${conf.service_name} class not exist`);
-        return;
-    }
-    service.set_service_index(service_index);
-
-    let worker_thread = new _worker_thread(service);
-
-    worker_thread.start_up();
-    
-    let on_msg = (data:any)=>{
-        switch(data.cmd){
-            case _woker_cmds.wc_msg:
-                worker_thread.on_session_message(data.sid, data.command, data.data);
-                break;
-            case _woker_cmds.wc_add_session:
-                worker_thread.on_add_session(data.sid, data.skey);
-                break;
-            case _woker_cmds.wc_rmv_session:
-                worker_thread.on_remove_session(data.sid);
-                break;
-            case _woker_cmds.wc_service_task:
-                worker_thread.on_service_task(data.command, data.data);
-                break;
-            case _woker_cmds.wc_bcast_msg:
-                worker_thread.on_broadcast_session_msg(data.command, data.data);
-                break;
-            case _woker_cmds.wc_rpc_sync:
-                worker_thread.on_session_rpc_sync(data.sid, data.command, data.data);
-                break;
-            case _woker_cmds.wc_close_session:
-                worker_thread.on_session_close(data.sid);
-                break;
-            case _woker_cmds.wc_exit:
-                {
-                    worker_thread.shut_down();
-                    
-                    // exit;
-                    process.exit(0);
-                }
-                break;
+                // for Debug ...
+                let l = network.get_wslistener(0);
+                l.send_packet(msg.sid, l.pcodec.create_jsonpkt(msg)); // sid = cid
+            }
+            break;
         }
     }
-
-    parentPort.on("close", ()=>{
-        worker_thread.shut_down();
-        
-        // exit;
-        process.exit(0);
-    });
-    parentPort.on("messageerror", (err)=>{
-
-    });
-    parentPort.on("message", on_msg);
-}
-
-if(!isMainThread) {
-    // worker initialize
-    _worker_routine();
 }

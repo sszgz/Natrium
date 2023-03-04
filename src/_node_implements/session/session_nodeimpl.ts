@@ -33,7 +33,8 @@ export class session_nodeimpl implements session {
         return this._service_index;
     }
     
-    public send_message(cmd:string, data:any):void{
-
+    public set_service(service_name:string, service_index:number):void {
+        this._service_name = service_name;
+        this._service_index = service_index;
     }
 }

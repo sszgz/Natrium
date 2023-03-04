@@ -10,5 +10,5 @@ export interface session {
     readonly service_name:string;
     readonly service_index:number;
 
-    send_message(cmd:string, data:any):void;
+    set_service(service_name:string, service_index:number):void;
 }

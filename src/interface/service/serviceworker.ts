@@ -12,7 +12,7 @@ export interface servicechannel {
     dispatch_session_msg(sid:number, cmd:string, data:any):void;
     brodcast_session_msg(cmd:string, data:any):void;
     
-    session_rpc_sync(sid:number, cmd:string, data:any):any;
+    //session_rpc_sync(sid:number, cmd:string, data:any):any;
 
 }
 
