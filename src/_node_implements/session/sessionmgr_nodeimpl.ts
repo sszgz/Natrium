@@ -61,8 +61,4 @@ export class sessionmgr_nodeimpl implements sessionmgr {
     public get_sessiondata_bysid(sid:number):sessiondata|undefined {
         return new sessiondata_nodeimpl();
     }
-
-    public send_ws_msg(sid:number, command:string, data:any):void{
-
-    }
 }
