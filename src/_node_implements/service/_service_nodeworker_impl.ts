@@ -2,12 +2,14 @@
 // license : MIT
 // author : Sean Chen
 
-import { isMainThread, Worker, MessageChannel, MessagePort, workerData, parentPort } from "node:worker_threads";
+import * as path from 'path';
+import { MessagePort } from "node:worker_threads";
 import { debug_level_enum } from "../../interface/debug/debug_logger";
 import { service, natrium_services, serviceconf } from "../../interface/service/service";
 import { natrium_nodeimpl } from "../natrium_nodeimpl";
-import { _Service_M2W_MSG } from "../_node/_therads_msgs";
-import { _Node_Worker } from "../_node/_threads";
+import { _Service_M2W_MSG } from "../_node/_threads_msgs";
+import { _Node_ThreadContext } from "../_node/_thread_contexts";
+import { _Node_Worker } from "../_node/_worker";
 
 class _Service_Node_Worker_Impl implements _Node_Worker {
 
@@ -18,14 +20,18 @@ class _Service_Node_Worker_Impl implements _Node_Worker {
         return this._uname;
     }
 
-    startup(uname:string, workerData:any):void {
+    async startup(uname:string, workerData:any):Promise<void> {
         
         let conf:serviceconf = workerData.conf;
         let service_index:number = workerData.si;
 
         this._uname = uname;
-        
-        this._service = natrium_services.create_service(conf.service_name);
+
+        // require service file
+        await import(path.resolve(__dirname, conf.service_file));
+        //require(conf.service_file);
+
+        this._service = natrium_services.create_service(conf.service_name, conf);
         if(this._service == null) {
             natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `_Service_Node_Worker_Impl service:${conf.service_name} class not exist`);
             return;
@@ -49,7 +55,7 @@ class _Service_Node_Worker_Impl implements _Node_Worker {
     onsetupchannel(fromworker:string, port:MessagePort, udata:any):void {
         // TO DO : setup channel
     }
-    
+
     onmsg(fromworker:string, data:any):void {
         if(this._service == null){
             natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `_Service_Node_Worker_Impl onmsg _uname:${this._uname} service is null`);
@@ -92,3 +98,5 @@ class _Service_Node_Worker_Impl implements _Node_Worker {
 }
 
 export const w = new _Service_Node_Worker_Impl();
+//_Node_ThreadContext.initCurrentWorker(new _Service_Node_Worker_Impl());
+//console.log(`_Node_ThreadContext.currentWorker:${_Node_ThreadContext.currentWorker}`);

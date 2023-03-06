@@ -2,6 +2,7 @@
 // license : MIT
 // author : Sean Chen
 
+import { threadId } from "node:worker_threads";
 import { debug_logger, debug_level_enum } from "../../interface/debug/debug_logger";
 
 export class debug_logger_nodeimpl implements debug_logger {
@@ -36,7 +37,7 @@ export class debug_logger_nodeimpl implements debug_logger {
                 break;
         }
 
-        const logstr = `${dlstr} ${info}`;
+        const logstr = `[${process.pid}][${threadId}]-${dlstr} ${info}`;
         console.log(logstr);
 
         // TO DO : write to log file

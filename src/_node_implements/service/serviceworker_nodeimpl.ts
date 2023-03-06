@@ -11,7 +11,7 @@ import { servicechannel, serviceworker } from "../../interface/service/servicewo
 import { session } from "../../interface/session/session";
 import { natrium_nodeimpl } from "../natrium_nodeimpl";
 import { session_nodeimpl } from "../session/session_nodeimpl";
-import { _Service_M2W_MSG, _Service_W2M_MSG } from "../_node/_therads_msgs";
+import { _Service_M2W_MSG, _Service_W2M_MSG } from "../_node/_threads_msgs";
 import { _Node_MainTrhead, _Node_WorkerThread } from "../_node/_threads";
 import { _service_workers } from "./_service_workers";
 
@@ -66,10 +66,10 @@ export class serviceworker_nodeimpl implements serviceworker {
         this._service_index = i;
     }
 
-    public start_service(c:serviceconf):boolean {
-        this._worker_thread = _Node_MainTrhead.createWorker(
+    public async start_service(c:serviceconf):Promise<boolean> {
+        this._worker_thread = await _Node_MainTrhead.createWorker(
             _service_workers.make_service_thread_uname(c.service_name, this._service_index),  
-            "./_node_implements/service/_service_nodeworker_impl.ts",
+            "../service/_service_nodeworker_impl",
             {
                 conf:c,
                 si:this._service_index
@@ -97,13 +97,13 @@ export class serviceworker_nodeimpl implements serviceworker {
 
         return true;
     }
-    public finish_service():boolean {
+    public async finish_service():Promise<boolean> {
         if(this._worker_thread == null) {
             natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `serviceworker_nodeimpl service:${this._service_name} index:${this._service_index} finish_service thread not start`);
             return true;
         }
 
-        this._worker_thread.finish();
+        await this._worker_thread.finish();
 
         // wait worker exit
         // TO DO : off _worker_thread listener

@@ -7,6 +7,7 @@ import { serviceworker } from "./serviceworker";
 
 export interface serviceconf {
     readonly service_name:string;
+    readonly service_file:string;
 }
 
 export interface service {
@@ -25,7 +26,7 @@ export interface service {
     startup():boolean;
     shutdown():boolean;
 
-    get_session(sid:number):session;
+    get_session(sid:number):session|undefined;
 
     on_add_session(sid:number, skey:string):void;
     on_remove_session(sid:number):void;
@@ -41,25 +42,21 @@ export interface service {
     on_service_update():void;
 }
 
-// export abstract class service_base implements service {
-
-// }
-
 export class natrium_services {
     
-    protected static _serviceTypeMap:Map<string, ()=>service> = new Map<string, any>();
+    protected static _serviceTypeMap:Map<string, (c:serviceconf)=>service> = new Map<string, any>();
     protected static _workerMap:Map<string, serviceworker> = new Map<string, serviceworker>();
 
-    public static register(name:string, serviceCtor:()=>service):void {
+    public static register(name:string, serviceCtor:(c:serviceconf)=>service):void {
         natrium_services._serviceTypeMap.set(name, serviceCtor);
     }
 
-    public static create_service(name:string):service|null {
+    public static create_service(name:string, c:serviceconf):service|null {
         let ctor = natrium_services._serviceTypeMap.get(name);
         if(ctor == undefined) {
             return null;
         }
-        return ctor();
+        return ctor(c);
     }
 
     public static make_service_uname(service_name:string, service_index:number):string {

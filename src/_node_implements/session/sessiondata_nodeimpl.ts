@@ -17,6 +17,6 @@ export class sessiondata_nodeimpl implements sessiondata {
     }
 
     public write_all():void {
-
+        
     }
 }

@@ -23,8 +23,10 @@ export interface serviceworker {
     readonly service_index:number;
     readonly channel:servicechannel;
 
-    start_service(c:serviceconf):boolean;
-    finish_service():boolean;
+    set_service_index(si:number):void;
+
+    start_service(c:serviceconf):Promise<boolean>;
+    finish_service():Promise<boolean>;
 
     add_session(s:session):void;
     remove_session(s:session):void;

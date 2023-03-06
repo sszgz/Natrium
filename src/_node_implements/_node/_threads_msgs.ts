@@ -10,7 +10,8 @@ export enum _Main2Worker_MSG {
 
 export enum _Worker2Main_MSG {
     _w2m_create_channel = 1,
-    _w2m_exit = 2
+    _w2m_exit = 2,
+    _w2m_started = 3,
 }
 
 

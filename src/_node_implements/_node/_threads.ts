@@ -2,31 +2,24 @@
 // license : MIT
 // author : Sean Chen
 
-import { isMainThread, Worker, MessageChannel, MessagePort, workerData, parentPort } from "node:worker_threads";
+import * as path from 'path';
+import { isMainThread, Worker, MessageChannel, MessagePort, workerData, parentPort, threadId } from "node:worker_threads";
 import { EventEmitter } from "ws";
 import { debug_level_enum } from "../../interface/debug/debug_logger";
 import { natrium_nodeimpl } from "../natrium_nodeimpl";
-import { _Main2Worker_MSG, _Service_W2M_MSG, _Worker2Main_MSG } from "./_therads_msgs";
-
-export interface _Node_Worker {
-
-    uname:string;
-
-    startup(uname:string, workerData:any):void;
-    shutdown():void;
-    startshutingdown():void;
-    
-    onsetupchannel(fromworker:string, port:MessagePort, udata:any):void;
-    onmsg(fromworker:string, msg:any):void;
-    onupdate():void;
-}
+import { _Main2Worker_MSG, _Service_W2M_MSG, _Worker2Main_MSG } from "./_threads_msgs";
+import { _Node_ThreadContext } from "./_thread_contexts";
+import { _Node_Worker } from "./_worker";
 
 export class _Node_MainTrhead {
 
     protected static _workermap:Map<string, _Node_WorkerThread> = new Map<string, _Node_WorkerThread>();
 
-    public static createWorker(uname:string, filename:string, workerData:any, resLimit:any=null):_Node_WorkerThread {
-        let worker = new Worker(__filename, {
+    public static async createWorker(uname:string, filename:string, workerData:any, resLimit:any=null):Promise<_Node_WorkerThread> {
+        
+        natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_system, `_Node_MainTrhead createWorker dir:${__dirname} worker:${uname} filename:${filename}`);
+
+        let worker = new Worker("./src/_threadstarter", {
             workerData:{
                 filename:filename,
                 uname:uname,
@@ -37,7 +30,7 @@ export class _Node_MainTrhead {
 
         let wt = new _Node_WorkerThread(uname, worker);
 
-        wt.init();
+        await wt.init();
 
         this._workermap.set(uname, wt);
 
@@ -58,6 +51,11 @@ export class _Node_WorkerThread extends EventEmitter {
     protected _on_err_fn:any = null;
     protected _on_exit_fn:any = null;
 
+    protected _init_resolve:any = null;
+    protected _init_reject:any = null;
+    protected _fin_resolve:any = null;
+    protected _fin_reject:any = null;
+    
     constructor(uname:string, w:Worker){
         super();
         
@@ -72,7 +70,7 @@ export class _Node_WorkerThread extends EventEmitter {
         return this._worker;
     }
 
-    public init():void{
+    public async init():Promise<void>{
         
         let thisptr = this;
         this._on_msg_fn = (msg:any)=>{
@@ -94,11 +92,22 @@ export class _Node_WorkerThread extends EventEmitter {
         this._worker.on('messageerror', this._on_err_fn);
         this._worker.on('error', this._on_err_fn);
         this._worker.on('exit', this._on_exit_fn);
+
+        return new Promise<void>((resolve, reject)=>{
+            thisptr._init_resolve= resolve;
+            thisptr._init_reject = reject;
+        });
     }
 
-    public finish():void{
+    public async finish():Promise<void>{
         // TO DO : finish
         this._worker.postMessage({cmd:_Main2Worker_MSG._m2w_exit});
+        
+        let thisptr = this;
+        return new Promise<void>((resolve, reject)=>{
+            thisptr._fin_resolve= resolve;
+            thisptr._fin_reject = reject;
+        });
     }
     
     protected _on_worker_msg(msg:any){
@@ -107,7 +116,7 @@ export class _Node_WorkerThread extends EventEmitter {
                 {
                     let other_worker = _Node_MainTrhead.getWorker(msg.workeruname);
                     if(other_worker == undefined){
-                        natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `_Node_WorkerThread tid${process.pid} uname:${this._uname} create channel to uname${msg.workeruname} woker thread not found`);
+                        natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `_Node_WorkerThread tid${this._worker.threadId} uname:${this._uname} create channel to uname${msg.workeruname} woker thread not found`);
 
                         break;
                     }
@@ -123,6 +132,14 @@ export class _Node_WorkerThread extends EventEmitter {
                     this._worker.terminate();
                 }
                 break;
+            case _Worker2Main_MSG._w2m_started:
+                {
+                    // worker started
+                    this._init_resolve();
+                    this._init_resolve = null;
+                    this._init_reject = null;
+                }
+                break;
             default:
                 {
                     this.emit('message', msg);
@@ -131,36 +148,27 @@ export class _Node_WorkerThread extends EventEmitter {
         }
     }
     protected _on_worker_error(err:Error){
-        natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `_Node_WorkerThread tid${process.pid} on error ${err.message}\r\n ${err.stack}`);
+        natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `_Node_WorkerThread tid:${this._worker.threadId} on error ${err.message}\r\n ${err.stack}`);
+        
+        if(this._init_reject){
+            this._init_reject(err.message);
+            
+            this._init_resolve = null;
+            this._init_reject = null;
+        }
     }
     protected _on_worker_exit(exitCode: number){
-        natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_system, `_Node_WorkerThread tid${process.pid} exit with code ${exitCode}`);
+        natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_system, `_Node_WorkerThread tid:${this._worker.threadId} exit with code ${exitCode}`);
         // TO DO : on exit
+
+        if(this._fin_resolve){
+            this._fin_resolve();
+            
+            this._fin_resolve = null;
+            this._fin_reject = null;
+        }
     }
 
-}
-
-export class _Node_ThreadContext {
-
-    public static get deltaTimeMS():number {
-        return _Node_Thread.deltaTimeMS;
-    }
-
-    public static createChannelWith(fromworker:string, toworker:string, udata:any):void{
-        parentPort?.postMessage({cmd:_Worker2Main_MSG._w2m_create_channel, workeruname:toworker, udata:udata});
-
-        natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_system, `_Node_Thread request createChannelWith fromworker:${fromworker} toworker:${toworker}`);
-    }
-
-    public static postParentMessage(msg:any):void{
-        parentPort?.postMessage(msg);
-    }
-}
-
-export class _Node_SessionContext {
-    public static sendWSMsg(sid:number, command:string, data:any):void {
-        parentPort?.postMessage({cmd:_Service_W2M_MSG._w2m_session_msg, sid:sid, msg:{c:command, d:data}});
-    }
 }
 
 class _Node_Thread {
@@ -176,7 +184,9 @@ class _Node_Thread {
     
     constructor(w:_Node_Worker, updateTickMS:number = 500){
         this._worker = w;
-        this._timer = setInterval(this._on_update, updateTickMS);
+
+        let thisptr = this;
+        this._timer = setInterval(()=>{thisptr._on_update}, updateTickMS);
 
         _Node_Thread._lastUpdateTime = natrium_nodeimpl.impl.sys.getTimeStamp();
     }
@@ -185,16 +195,16 @@ class _Node_Thread {
         return this._deltaTimeMS;
     }
 
-    public start_up(uname:string, workerData:any):void{
+    public async start_up(uname:string, workerData:any):Promise<void>{
         if(this._started){
             natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `_Node_Thread start_up worker:${uname} already started`);
             return;
         }
 
-        this._worker.startup(uname, workerData);
+        await this._worker.startup(uname, workerData);
         this._started = true;
         
-        natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_system, `_Node_Thread start_up tid${process.pid} worker:${this._worker.uname}`);
+        natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_system, `_Node_Thread start_up tid:${threadId} worker:${this._worker.uname}`);
     }
     public shut_down():void{
         if(!this._started){
@@ -206,7 +216,7 @@ class _Node_Thread {
         this._worker.shutdown();
         this._started = false;
         
-        natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_system, `_Node_Thread shutdown tid${process.pid} worker:${this._worker.uname}`);
+        natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_system, `_Node_Thread shutdown tid:${threadId} worker:${this._worker.uname}`);
     }
     public start_shutdown():void {
         this._isshutingdown = true;
@@ -243,6 +253,8 @@ class _Node_Thread {
             _Node_Thread._deltaTimeMS = 0;
         }
 
+        _Node_ThreadContext.setDeltaTimeMS(_Node_Thread._deltaTimeMS);
+
         this._worker.onupdate();
     }
 }
@@ -252,20 +264,23 @@ async function _Node_WorkerRoutine() {
     let wd:any = workerData.workerData;
 
     if(parentPort == null) {
-        natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `_Node_WorkerRoutine tid${process.pid} filename:${workerData.filename} parent port null`);
+        natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `_Node_WorkerRoutine tid:${threadId} filename:${workerData.filename} parent port null`);
         return;
     }
 
-    let {w} = await import(workerData.filename);
+    let {w} = await import(path.resolve(__dirname, workerData.filename));
     let wk = w as _Node_Worker;
+    //let wk = _Node_ThreadContext.currentWorker;
     if(wk == undefined){
-        natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `_Node_WorkerRoutine tid${process.pid} filename:${workerData.filename} import error`);
+        natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `_Node_WorkerRoutine tid:${threadId} filename:${workerData.filename} import error`);
         return;
     }
+    
+    natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_system, `_Node_WorkerRoutine tid:${threadId} filename:${workerData.filename} start`);
 
     let worker_thread = new _Node_Thread(wk, workerData.workerData.updateTickMS?workerData.workerData.updateTickMS:500);
 
-    worker_thread.start_up(workerData.uname, wd);
+    await worker_thread.start_up(workerData.uname, wd);
     
     let on_msg = (data:any)=>{
         if(data.cmd == _Main2Worker_MSG._m2w_setup_channel){
@@ -292,9 +307,12 @@ async function _Node_WorkerRoutine() {
         process.exit(0);
     });
     parentPort.on("messageerror", (err)=>{
-        natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `_Node_WorkerRoutine tid${process.pid} filename:${workerData.filename} on error ${err.message}\r\n ${err.stack}`);
+        natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `_Node_WorkerRoutine tid:${threadId} filename:${workerData.filename} on error ${err.message}\r\n ${err.stack}`);
     });
     parentPort.on("message", on_msg);
+    
+    // notify main thread woker is started
+    parentPort.postMessage({cmd:_Worker2Main_MSG._w2m_started});
 }
 
 if(!isMainThread) {
