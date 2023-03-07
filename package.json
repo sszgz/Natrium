@@ -7,6 +7,7 @@
     "utest": "npx ts-node ./test/test.ts",
     "testwsconn": "npx ts-node ./test/unittest/test_wsconnecter.ts",
     "testwslisten": "npx ts-node ./test/unittest/test_wslistener.ts",
+    "testserver": "npx ts-node ./test/unittest/test_server.ts",
     "start:dev": "npx nodemon",
     "build": "rimraf ./build && tsc",
     "start": "npm run build && node build/index.js"
@@ -29,6 +30,7 @@
     "ts-node": "^10.9.1"
   },
   "dependencies": {
+    "redis": "^4.6.5",
     "ws": "^8.12.1",
     "zlib": "^1.0.5"
   }

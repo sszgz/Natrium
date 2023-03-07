@@ -59,6 +59,7 @@ export class sessionmgr_nodeimpl implements sessionmgr {
     }
 
     public get_sessiondata_bysid(sid:number):sessiondata|undefined {
-        return new sessiondata_nodeimpl();
+        // TO DO : session data
+        return undefined;
     }
 }

@@ -95,6 +95,8 @@ export class serviceworker_nodeimpl implements serviceworker {
             thisptr._on_worker_msg(msg);
         });
 
+        natrium_services.add_worker(this);
+
         return true;
     }
     public async finish_service():Promise<boolean> {
@@ -118,7 +120,7 @@ export class serviceworker_nodeimpl implements serviceworker {
         }
 
         this._worker_thread.worker.postMessage({cmd:_Service_M2W_MSG._m2w_add_session, sid:s.session_id, skey:s.session_key});
-        s.set_service(this._service_name, this._service_index);
+        s.set_service(this);
     }
     public remove_session(s:session):void {
         if(this._worker_thread == null) {
@@ -127,7 +129,7 @@ export class serviceworker_nodeimpl implements serviceworker {
         }
 
         this._worker_thread.worker.postMessage({cmd:_Service_M2W_MSG._m2w_rmv_session, sid:s.session_id});
-        s.set_service("", 0);
+        s.set_service(null);
     }
     public on_session_close(s:session):void {
         if(this._worker_thread == null) {

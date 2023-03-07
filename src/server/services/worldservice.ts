@@ -4,13 +4,12 @@
 
 
 import { serviceconf, natrium_services } from "../../interface/service/service";
-import { levelinstanceservice } from "./levelinstanceservice";
 import { servicebase } from "./servicebase";
 
 export class worldservice extends servicebase {
 
     public static create(c:serviceconf) {
-        return new levelinstanceservice(c);
+        return new worldservice(c);
     }
     
     constructor(c:serviceconf) {

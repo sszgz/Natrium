@@ -108,18 +108,21 @@ export class wsconnecter_nodeimpl implements wsconnecter {
             }
         });
     }
-    public shakehand():void{
+    public shakehand():void {
         let p = this._pcodec.create_shakehandpkt(0); // fisrt msg, no servertime saved
 
         this._lastpingtm = Date.now();
         this.send_packet(p);
     }
-    public ping():void{
+    public ping():void {
 
         let p = this._pcodec.create_pingpongpkt(this.server_tick);
 
         this._lastpingtm = Date.now();
         this.send_packet(p);
+    }
+    public login(uid:string, token:string):void {
+        
     }
     
     protected _on_socket_connected():void {

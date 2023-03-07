@@ -2,6 +2,6 @@
 // license : MIT
 // author : Sean Chen
 
-export interface globaldata {
+export class _service_data_mgr {
     
 }
