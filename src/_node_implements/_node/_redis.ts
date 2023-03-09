@@ -15,9 +15,7 @@ export class _redis_client {
 
     constructor(conf:redisconf) {
         this._conf = conf;
-    }
-
-    public async connect():Promise<void> {
+        
         this._client = createClient({
             //url: 'redis://alice:foobared@awesome.redis.server:6380'
             url: this._conf.url,
@@ -26,6 +24,9 @@ export class _redis_client {
             name:this._conf.name,
             database:this._conf.database
           });
+    }
+
+    public async connect():Promise<void> {
 
         this._client.on("error", (err:Error)=>{
             natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `_redis ${this._conf.name}-${this._conf.database} error:${err.message}\r\n${err.stack}`);

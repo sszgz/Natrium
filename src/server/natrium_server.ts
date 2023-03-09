@@ -76,14 +76,8 @@ export class natrium_server implements wslistener_handler {
                     break;
             }
             
-            promiseAry.push(service.start_service({
-                service_name:scs[i].service_name,
-                service_file:scs[i].service_file,
-            }));
-            // await service.start_service({
-            //         service_name:scs[i].service_name,
-            //         service_file:scs[i].service_file,
-            //     });
+            promiseAry.push(service.start_service(scs[i]));
+            // await service.start_service(scs[i]);
         }
 
         await Promise.all(promiseAry);

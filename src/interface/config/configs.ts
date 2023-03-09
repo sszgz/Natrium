@@ -3,7 +3,10 @@
 // author : Sean Chen
 
 export interface dbconf {
-
+    readonly host:string;
+    readonly user:string;
+    readonly password:string;
+    readonly database:string;
 }
 
 export interface redisconf {
