@@ -3,7 +3,8 @@
 // author : Sean Chen
 
 
-import { serviceconf, natrium_services } from "../../interface/service/service";
+import { serviceconf } from "../../interface/config/configs";
+import { natrium_services } from "../../interface/service/service";
 import { servicebase } from "./servicebase";
 
 export class worldservice extends servicebase {

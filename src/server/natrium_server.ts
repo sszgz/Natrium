@@ -3,6 +3,7 @@
 // author : Sean Chen
 
 import { nat } from "..";
+import { serverconf } from "../interface/config/configs";
 import { debug_level_enum } from "../interface/debug/debug_logger";
 import { network } from "../interface/network/network";
 import { wslistener, wslistener_handler } from "../interface/network/wslistener";
@@ -25,61 +26,69 @@ export class natrium_server implements wslistener_handler {
     }
 
     public async startup() {
-        // start up service
-        let outservice1 = nat.create_serviceworker();
-        outservice1.set_service_index(0);
-        this._outgameServices.push(outservice1);
-        
-        let worldservice1 = nat.create_serviceworker();
-        worldservice1.set_service_index(0);
-        this._worldServices.push(worldservice1);
-        let worldservice2 = nat.create_serviceworker();
-        worldservice2.set_service_index(1);
-        this._worldServices.push(worldservice2);
-        let worldservice3 = nat.create_serviceworker();
-        worldservice3.set_service_index(2);
-        this._worldServices.push(worldservice3);
-        let worldservice4 = nat.create_serviceworker();
-        worldservice4.set_service_index(3);
-        this._worldServices.push(worldservice4);
-        
-        let levelservice1 = nat.create_serviceworker();
-        levelservice1.set_service_index(0);
-        this._levelInstanceServices.push(levelservice1);
-        let levelservice2 = nat.create_serviceworker();
-        levelservice2.set_service_index(1);
-        this._levelInstanceServices.push(levelservice2);
+        // init config
+        nat.conf.init();
 
-        await outservice1.start_service({
-            service_name:"outgameservice",
-            service_file:"../../server/services/outgameservice.ts"
-        });
-        
-        await worldservice1.start_service({
-            service_name:"worldservice",
-            service_file:"../../server/services/worldservice.ts"
-        });
-        await worldservice2.start_service({
-            service_name:"worldservice",
-            service_file:"../../server/services/worldservice.ts"
-        });
-        await worldservice3.start_service({
-            service_name:"worldservice",
-            service_file:"../../server/services/worldservice.ts"
-        });
-        await worldservice4.start_service({
-            service_name:"worldservice",
-            service_file:"../../server/services/worldservice.ts"
-        });
-        
-        await levelservice1.start_service({
-            service_name:"levelinstanceservice",
-            service_file:"../../server/services/levelinstanceservice.ts"
-        });
-        await levelservice2.start_service({
-            service_name:"levelinstanceservice",
-            service_file:"../../server/services/levelinstanceservice.ts"
-        });
+        // start up service
+        const svrconf = nat.conf.get_serverconf();
+        if(svrconf == null) {
+            nat.dbglog.log(debug_level_enum.dle_error, `natrium_server startup server config not exist`);
+            return;
+        }
+        const scs = svrconf.get_services_conf();
+        if(scs == null || scs.length <= 0){
+            nat.dbglog.log(debug_level_enum.dle_error, `natrium_server startup service config not exist`);
+            return;
+        }
+
+        let outgameindex = 0;
+        let worldindex = 0;
+        let levelindex = 0;
+        let promiseAry = new Array<any>();
+        for(let i=0; i<scs.length; ++i) {
+            
+            let service = nat.create_serviceworker();
+
+            switch(scs[i].service_name){
+                case "outgameservice":
+                    {
+                        service.set_service_index(outgameindex);
+                        this._outgameServices.push(service);
+
+                        ++outgameindex;
+                    }
+                    break;
+                case "worldservice":
+                    {
+                        service.set_service_index(worldindex);
+                        this._worldServices.push(service);
+                        
+                        ++worldindex;
+                    }
+                    break;
+                case "levelinstanceservice":
+                    {
+                        service.set_service_index(levelindex);
+                        this._levelInstanceServices.push(service);
+                        
+                        ++levelindex;
+                    }
+                    break;
+            }
+            
+            promiseAry.push(service.start_service({
+                service_name:scs[i].service_name,
+                service_file:scs[i].service_file,
+            }));
+            // await service.start_service({
+            //         service_name:scs[i].service_name,
+            //         service_file:scs[i].service_file,
+            //     });
+        }
+
+        await Promise.all(promiseAry);
+
+        nat.dbglog.log(debug_level_enum.dle_system, `natrium_server start service [${scs.length}] outgame[${outgameindex}] world[${worldindex}] level[${levelindex}]`);
 
         // init session mgr
 

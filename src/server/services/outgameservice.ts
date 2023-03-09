@@ -3,8 +3,9 @@
 // author : Sean Chen
 
 import { nat } from "../..";
+import { serviceconf } from "../../interface/config/configs";
 import { debug_level_enum } from "../../interface/debug/debug_logger";
-import { serviceconf, natrium_services } from "../../interface/service/service";
+import { natrium_services } from "../../interface/service/service";
 import { servicebase } from "./servicebase";
 
 export class outgameservice extends servicebase {

@@ -1,6 +1,17 @@
-
+export interface object_diff_path {
+    diffpaths:Array<string>;
+    newpaths:Array<string>;
+    delpaths:Array<string>;
+}
 
 export class object_util {
+    
+    public static isObject(object:any):boolean {
+        return object != null && typeof object === 'object';
+    }
+    public static isArray(object:any):boolean {
+        return object != null && Array.isArray(object);
+    }
 
     public static shallowEqual(object1:any, object2:any):boolean {
         const keys1 = Object.keys(object1);
@@ -47,11 +58,104 @@ export class object_util {
         }
         return true;
     }
+    
+    public static deepDiffObject(
+        newobj:any, 
+        oldobj:any, 
+        diffs:object_diff_path, 
+        currentPath:string=""):void 
+    {
+        const keysnew = Object.keys(newobj);
+        for(const key of keysnew){
 
-    public static isObject(object:any):boolean {
-        return object != null && typeof object === 'object';
+            if(!(key in oldobj))
+            {
+                diffs.newpaths.push(`${currentPath}.${key}`);
+
+                continue;
+            }
+
+            const valnew = newobj[key];
+            const valold = oldobj[key];
+
+            if(this.isArray(valnew)){
+                if(!this.isArray(valold)){
+                    diffs.diffpaths.push(`${currentPath}.${key}`);
+                }
+                else{
+                    this.deepDiffArray(valnew, valold, diffs, `${currentPath}.${key}`);
+                }
+            }
+            else if(this.isObject(valnew)){
+                if(!this.isObject(valold)){
+                    diffs.diffpaths.push(`${currentPath}.${key}`);
+                }
+                else{
+                    this.deepDiffObject(valnew, valold, diffs, `${currentPath}.${key}`);
+                }
+            }
+
+            if (valnew !== valold) {
+                diffs.diffpaths.push(`${currentPath}.${key}`);
+            }
+        }
+
+        const keysold = Object.keys(oldobj);
+        for(const key of keysold){
+            if(!(key in newobj))
+            {
+                diffs.delpaths.push(`${currentPath}.${key}`);
+            }
+        }
     }
-    public static isArray(object:any):boolean {
-        return object != null && Array.isArray(object);
+    
+    public static deepDiffArray(
+        newobj:any, 
+        oldobj:any, 
+        diffs:object_diff_path, 
+        currentPath:string=""):void 
+    {
+        const keysnew = Object.keys(newobj);
+        for(const key of keysnew){
+
+            if(!(key in oldobj))
+            {
+                diffs.newpaths.push(`${currentPath}[${key}]`);
+
+                continue;
+            }
+
+            const valnew = newobj[key];
+            const valold = oldobj[key];
+
+            if(this.isArray(valnew)){
+                if(!this.isArray(valold)){
+                    diffs.diffpaths.push(`${currentPath}[${key}]`);
+                }
+                else{
+                    this.deepDiffArray(valnew, valold, diffs, `${currentPath}[${key}]`);
+                }
+            }
+            else if(this.isObject(valnew)){
+                if(!this.isObject(valold)){
+                    diffs.diffpaths.push(`${currentPath}[${key}]`);
+                }
+                else{
+                    this.deepDiffObject(valnew, valold, diffs, `${currentPath}[${key}]`);
+                }
+            }
+
+            if (valnew !== valold) {
+                diffs.diffpaths.push(`${currentPath}[${key}]`);
+            }
+        }
+
+        const keysold = Object.keys(oldobj);
+        for(const key of keysold){
+            if(!(key in newobj))
+            {
+                diffs.delpaths.push(`${currentPath}[${key}]`);
+            }
+        }
     }
 }

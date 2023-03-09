@@ -6,7 +6,7 @@ import { isMainThread, Worker, MessageChannel, workerData, parentPort } from "no
 import { debug_level_enum } from "../../interface/debug/debug_logger";
 import { network } from "../../interface/network/network";
 
-import { natrium_services, service, serviceconf } from "../../interface/service/service";
+import { natrium_services } from "../../interface/service/service";
 import { servicechannel, serviceworker } from "../../interface/service/serviceworker";
 import { session } from "../../interface/session/session";
 import { natrium_nodeimpl } from "../natrium_nodeimpl";
@@ -14,6 +14,7 @@ import { session_nodeimpl } from "../session/session_nodeimpl";
 import { _Service_M2W_MSG, _Service_W2M_MSG } from "../_node/_threads_msgs";
 import { _Node_MainTrhead, _Node_WorkerThread } from "../_node/_threads";
 import { _service_workers } from "./_service_workers";
+import { serviceconf } from "../../interface/config/configs";
 
 export class servicechannel_nodeimpl implements servicechannel {
     

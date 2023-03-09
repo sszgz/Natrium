@@ -1,0 +1,8 @@
+{
+    "map":{
+        "file":"game/map.json"
+    },
+    "game":{
+        "file":"game/game.json"
+    }
+}

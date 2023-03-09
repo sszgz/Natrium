@@ -2,8 +2,8 @@
 // license : MIT
 // author : Sean Chen
 
+import { serviceconf } from "../config/configs";
 import { session } from "../session/session";
-import { serviceconf } from "./service";
 
 export interface servicechannel {
 

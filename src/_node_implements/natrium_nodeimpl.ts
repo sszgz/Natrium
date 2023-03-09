@@ -10,6 +10,7 @@ import { serviceworker } from "../interface/service/serviceworker";
 import { session } from "../interface/session/session";
 import { sessionmgr } from "../interface/session/sessionmgr";
 import { sys } from "../interface/sys/sys";
+import { configs_nodeimpl } from "./config/configs_nodeimpl";
 import { debug_logger_nodeimpl } from "./debug/debug_logger_nodeimpl";
 import { wsconnecter_nodeimpl } from "./network/wsconnecter_nodeimpl";
 import { wslistener_nodeimpl } from "./network/wslistener_nodeimpl";
@@ -25,6 +26,7 @@ export class natrium_nodeimpl implements inatrium  {
 
     protected _dbg_logger:debug_logger_nodeimpl = new debug_logger_nodeimpl();
     protected _sys:sys_nodeimpl = new sys_nodeimpl();
+    protected _conf:configs_nodeimpl = new configs_nodeimpl();
 
     constructor(){
 
@@ -35,6 +37,9 @@ export class natrium_nodeimpl implements inatrium  {
     }
     public get sys() {
         return this._sys;
+    }
+    public get conf() {
+        return this._conf;
     }
 
     public create_wslistener(h:wslistener_handler, p:packetcodec):wslistener {

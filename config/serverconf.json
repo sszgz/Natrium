@@ -1,0 +1,51 @@
+{
+    "db":{
+        "main":{
+
+        }
+    },
+    "redis":{
+        "main":{
+            "url":"",
+            "username":"",
+            "password":"",
+            "name":"",
+            "database":1
+        },
+        "session":{
+            "url":"",
+            "username":"",
+            "password":"",
+            "name":"",
+            "database":2
+        }
+    },
+    "services":[
+        {
+            "service_name":"outgameservice",
+            "service_file":"src/server/services/outgameservice.ts"
+        },
+        {
+            "service_name":"worldservice",
+            "service_file":"src/server/services/worldservice.ts"
+        },
+        {
+            "service_name":"worldservice",
+            "service_file":"src/server/services/worldservice.ts"
+        },
+        {
+            "service_name":"levelinstanceservice",
+            "service_file":"src/server/services/levelinstanceservice.ts"
+        },
+        {
+            "service_name":"levelinstanceservice",
+            "service_file":"src/server/services/levelinstanceservice.ts"
+        }
+    ],
+    "wslistener":{
+
+    },
+    "httplistener":{
+
+    }
+}

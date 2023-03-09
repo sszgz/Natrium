@@ -3,23 +3,17 @@
 // author : Sean Chen
 
 import { createClient } from 'redis';
+import { redisconf } from '../../interface/config/configs';
 import { debug_level_enum } from '../../interface/debug/debug_logger';
 import { natrium_nodeimpl } from '../natrium_nodeimpl';
 
-export interface _redis_conf {
-    readonly url:string;
-    readonly username:string;
-    readonly password:string;
-    readonly name:string;
-    readonly database:number;
-}
 
 export class _redis_client {
 
     protected _client:any = null;
-    protected _conf:_redis_conf;
+    protected _conf:redisconf;
 
-    constructor(conf:_redis_conf) {
+    constructor(conf:redisconf) {
         this._conf = conf;
     }
 
@@ -101,5 +95,5 @@ export class _redis_client {
         });
     }
 
-    
+
 }

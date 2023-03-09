@@ -5,11 +5,12 @@
 import * as path from 'path';
 import { MessagePort } from "node:worker_threads";
 import { debug_level_enum } from "../../interface/debug/debug_logger";
-import { service, natrium_services, serviceconf } from "../../interface/service/service";
+import { service, natrium_services } from "../../interface/service/service";
 import { natrium_nodeimpl } from "../natrium_nodeimpl";
 import { _Service_M2W_MSG } from "../_node/_threads_msgs";
 import { _Node_ThreadContext } from "../_node/_thread_contexts";
 import { _Node_Worker } from "../_node/_worker";
+import { serviceconf } from '../../interface/config/configs';
 
 class _Service_Node_Worker_Impl implements _Node_Worker {
 
@@ -26,9 +27,12 @@ class _Service_Node_Worker_Impl implements _Node_Worker {
         let service_index:number = workerData.si;
 
         this._uname = uname;
+        
+        natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_system, `_Service_Node_Worker_Impl service:${conf.service_name} index:${service_index} init conf`);
+        natrium_nodeimpl.impl.conf.init();
 
         // require service file
-        await import(path.resolve(__dirname, conf.service_file));
+        await import(path.resolve(__dirname, `../../../${conf.service_file}`));
         //require(conf.service_file);
 
         this._service = natrium_services.create_service(conf.service_name, conf);

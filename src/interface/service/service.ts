@@ -2,13 +2,9 @@
 // license : MIT
 // author : Sean Chen
 
+import { serviceconf } from "../config/configs";
 import { session } from "../session/session";
 import { serviceworker } from "./serviceworker";
-
-export interface serviceconf {
-    readonly service_name:string;
-    readonly service_file:string;
-}
 
 export interface service {
 

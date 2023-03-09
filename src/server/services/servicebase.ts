@@ -3,7 +3,8 @@
 // license : MIT
 // author : Sean Chen
 
-import { service, serviceconf } from "../../interface/service/service";
+import { serviceconf } from "../../interface/config/configs";
+import { service } from "../../interface/service/service";
 import { session } from "../../interface/session/session";
 import { nat } from "../../natrium";
 

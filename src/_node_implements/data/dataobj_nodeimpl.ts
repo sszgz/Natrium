@@ -2,11 +2,16 @@
 // license : MIT
 // author : Sean Chen
 
+import * as crypto from "node:crypto";
 import { dataobj } from "../../interface/data/dataobj";
+import { object_util } from "../../util/object_util";
 import { _redis_client } from "../_node/_redis";
 
 export class dataobj_nodeimpl implements dataobj {
 
+    protected static _md5sum = crypto.createHash("md5");
+
+    protected _rc_key:string = "";
     protected _rc:_redis_client;
 
     protected _table_name:string = "";
@@ -16,6 +21,7 @@ export class dataobj_nodeimpl implements dataobj {
 
     constructor(r:_redis_client, tn:string, k:string, d:any) {
         this._rc = r;
+        this._rc_key = dataobj_nodeimpl._md5sum.update(`${this._table_name}_${this._key}`).digest('hex'); // calc hash key
         this._table_name = tn;
         this._key = k;
         this._data = d;
@@ -41,11 +47,16 @@ export class dataobj_nodeimpl implements dataobj {
 
     public async write_back(do_persist:boolean):Promise<boolean> {
         // TO DO :compare _data & _last_write_data
+        // if(object_util.deepEqual(this._data, this._last_write_data)){
+        //     // no change
+        //     return true;
+        // }
 
         // write to cache
+        this._rc.update_json(this._rc_key, ".", this._data);
 
         if(do_persist){
-            // write to disk
+            // TO DO : write to disk
         }
 
         return true;

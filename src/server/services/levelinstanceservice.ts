@@ -2,7 +2,8 @@
 // license : MIT
 // author : Sean Chen
 
-import { natrium_services, serviceconf } from "../../interface/service/service";
+import { serviceconf } from "../../interface/config/configs";
+import { natrium_services } from "../../interface/service/service";
 import { servicebase } from "./servicebase";
 
 export class levelinstanceservice extends servicebase {
