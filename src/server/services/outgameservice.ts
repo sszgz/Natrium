@@ -102,6 +102,8 @@ export class outgameservice extends servicebase {
                         _Node_SessionContext.sendWSMsg(sid, "login_res", {res:ServerErrorCode.ResCreatePlayerError});
                         return;
                     }
+
+                    _Node_SessionContext.sendWSMsg(sid, "login_res", {res:ServerErrorCode.ResOK, data:{name:data.name}});
                 }
                 break;
         }
