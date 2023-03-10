@@ -13,6 +13,13 @@ export class serverconf_nodeimpl implements serverconf {
     constructor(d:any) {
         this._data = d;
     }
+
+    public get db_confs(){
+        return this._data.db;
+    }
+    public get redis_confs(){
+        return this._data.redis;
+    }
     
     public get_db_conf(dbname:string):dbconf|null {
         if(!(dbname in this._data.db)) {

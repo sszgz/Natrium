@@ -9,7 +9,7 @@ export interface sessiondata {
 
     set_default_value(key:string, data:any):void;
     
-    get_dataobj(key:string):dataobj;
+    get_dataobj(key:string):dataobj|null;
 
-    write_all():void;
+    write_all(do_persisit:boolean):void;
 }

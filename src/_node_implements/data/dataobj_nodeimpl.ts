@@ -14,22 +14,22 @@ export class dataobj_nodeimpl implements dataobj {
     protected _rc_key:string = "";
     protected _rc:_redis_client;
 
-    protected _table_name:string = "";
+    protected _db_name:string = "";
     protected _key:string = "";
     protected _data:any = null;
     protected _last_write_data:any = null;
 
     constructor(r:_redis_client, tn:string, k:string, d:any) {
         this._rc = r;
-        this._rc_key = dataobj_nodeimpl._md5sum.update(`${this._table_name}_${this._key}`).digest('hex'); // calc hash key
-        this._table_name = tn;
+        this._rc_key = dataobj_nodeimpl._md5sum.update(`${this._db_name}_${this._key}`).digest('hex'); // calc hash key
+        this._db_name = tn;
         this._key = k;
         this._data = d;
         this._last_write_data = d;
     }
 
-    public get table_name():string {
-        return this._table_name;
+    public get db_name():string {
+        return this._db_name;
     }
     public get key():string {
         return this._key;

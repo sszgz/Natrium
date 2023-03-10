@@ -3,7 +3,7 @@
 // author : Sean Chen
 
 export interface dataobj {
-    readonly table_name:string;
+    readonly db_name:string;
     readonly key:string;
     
     readonly data:any;

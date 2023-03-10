@@ -15,7 +15,7 @@ export class _redis_client {
 
     constructor(conf:redisconf) {
         this._conf = conf;
-        
+
         this._client = createClient({
             //url: 'redis://alice:foobared@awesome.redis.server:6380'
             url: this._conf.url,
@@ -24,6 +24,10 @@ export class _redis_client {
             name:this._conf.name,
             database:this._conf.database
           });
+    }
+
+    public get connected():Boolean{
+        return this._client.isReady;
     }
 
     public async connect():Promise<void> {
@@ -41,7 +45,7 @@ export class _redis_client {
             natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `_redis ${this._conf.name}-${this._conf.database} disconnect client is null`);
             return;
         }
-        if(!this._client.isOpen) {
+        if(!this._client.isReady) {
             natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `_redis ${this._conf.name}-${this._conf.database} disconnect client not open`);
             return;
         }
@@ -54,7 +58,7 @@ export class _redis_client {
             natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `_redis ${this._conf.name}-${this._conf.database} insert_json key:${key} client is null`);
             return false;
         }
-        if(!this._client.isOpen) {
+        if(!this._client.isReady) {
             natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `_redis ${this._conf.name}-${this._conf.database} insert_json key:${key} client not open`);
             return false;
         }
@@ -70,7 +74,7 @@ export class _redis_client {
             natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `_redis ${this._conf.name}-${this._conf.database} update_json key:${key} client is null`);
             return false;
         }
-        if(!this._client.isOpen) {
+        if(!this._client.isReady) {
             natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `_redis ${this._conf.name}-${this._conf.database} update_json key:${key} client not open`);
             return false;
         }
@@ -86,7 +90,7 @@ export class _redis_client {
             natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `_redis ${this._conf.name}-${this._conf.database} get_json key:${key} client is null`);
             return null;
         }
-        if(!this._client.isOpen) {
+        if(!this._client.isReady) {
             natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `_redis ${this._conf.name}-${this._conf.database} get_json key:${key} client not open`);
             return null;
         }

@@ -4,6 +4,7 @@
 
 import { serviceconf } from "../config/configs";
 import { session } from "../session/session";
+import { servicesession } from "./servicesession";
 import { serviceworker } from "./serviceworker";
 
 export interface service {
@@ -22,7 +23,7 @@ export interface service {
     startup():boolean;
     shutdown():boolean;
 
-    get_session(sid:number):session|undefined;
+    get_session(sid:number):servicesession|undefined;
 
     on_add_session(sid:number, skey:string):void;
     on_remove_session(sid:number):void;

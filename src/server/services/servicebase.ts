@@ -5,6 +5,7 @@
 
 import { serviceconf } from "../../interface/config/configs";
 import { service } from "../../interface/service/service";
+import { servicesession } from "../../interface/service/servicesession";
 import { session } from "../../interface/session/session";
 import { nat } from "../../natrium";
 
@@ -12,7 +13,7 @@ export abstract class servicebase implements service {
     
     protected _service_index:number = 0;
     protected _conf:serviceconf;
-    protected _sessions:Map<number, session> = new Map<number, session>();
+    protected _sessions:Map<number, servicesession> = new Map<number, servicesession>();
 
     constructor(c:serviceconf) {
         this._conf = c;
@@ -45,12 +46,12 @@ export abstract class servicebase implements service {
         return true;
     }
 
-    public get_session(sid:number):session|undefined {
+    public get_session(sid:number):servicesession|undefined {
         return this._sessions.get(sid);
     }
 
     public on_add_session(sid:number, skey:string):void {
-        this._sessions.set(sid, nat.create_session(sid, skey, this.service_name, this.service_index));
+        this._sessions.set(sid, nat.create_servicesession(sid, skey, this));
     }
     public on_remove_session(sid:number):void {
         this._sessions.delete(sid);
