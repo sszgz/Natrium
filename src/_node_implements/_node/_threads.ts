@@ -206,14 +206,14 @@ class _Node_Thread {
         
         natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_system, `_Node_Thread start_up tid:${threadId} worker:${this._worker.uname}`);
     }
-    public shut_down():void{
+    public async shut_down():Promise<void>{
         if(!this._started){
             natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `_Node_Thread shut_down worker:${this._worker.uname} not started`);
             return;
         }
 
         clearInterval(this._timer);
-        this._worker.shutdown();
+        await this._worker.shutdown();
         this._started = false;
         
         natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_system, `_Node_Thread shutdown tid:${threadId} worker:${this._worker.uname}`);
@@ -241,12 +241,12 @@ class _Node_Thread {
         natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_system, `_Node_Thread setup_channel worker:${this._worker.uname} with fromworker:${fromworker}`);
     }
 
-    public on_msg(fromport:string, data:any):void {
+    public async on_msg(fromport:string, data:any):Promise<void> {
         // TO DO : queue msgs?
-        this._worker.onmsg(fromport, data);
+        await this._worker.onmsg(fromport, data);
     }
 
-    protected _on_update():void{
+    protected async _on_update():Promise<void>{
         let now = natrium_nodeimpl.impl.sys.getTimeStamp();
         _Node_Thread._deltaTimeMS = now - _Node_Thread._lastUpdateTime;
         if(_Node_Thread._deltaTimeMS < 0) {
@@ -255,7 +255,7 @@ class _Node_Thread {
 
         _Node_ThreadContext.setDeltaTimeMS(_Node_Thread._deltaTimeMS);
 
-        this._worker.onupdate();
+        await this._worker.onupdate();
     }
 }
 
@@ -282,26 +282,32 @@ async function _Node_WorkerRoutine() {
 
     await worker_thread.start_up(workerData.uname, wd);
     
-    let on_msg = (data:any)=>{
-        if(data.cmd == _Main2Worker_MSG._m2w_setup_channel){
-            // setup channel
-            worker_thread.setup_channel(data.from, data.port, data.udata);
+    let on_msg = async (data:any)=>{
+        try{
+            if(data.cmd == _Main2Worker_MSG._m2w_setup_channel){
+                // setup channel
+                worker_thread.setup_channel(data.from, data.port, data.udata);
+            }
+            if(data.cmd == _Main2Worker_MSG._m2w_exit){
+    
+                // start shut down
+                worker_thread.start_shutdown();
+    
+                // finish all task, notify main thread worker exit
+                parentPort?.postMessage({cmd:_Worker2Main_MSG._w2m_exit});
+            }
+            else {
+                await worker_thread.on_msg("__parent", data);
+            }
         }
-        if(data.cmd == _Main2Worker_MSG._m2w_exit){
-
-            // start shut down
-            worker_thread.start_shutdown();
-
-            // finish all task, notify main thread worker exit
-            parentPort?.postMessage({cmd:_Worker2Main_MSG._w2m_exit});
-        }
-        else {
-            worker_thread.on_msg("__parent", data);
+        catch(_e){
+            let err:Error= _e as Error;
+            natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `_Node_WorkerRoutine tid:${threadId} filename:${workerData.filename} on_msg exception ${err.message}\r\n ${err.stack}`);
         }
     }
 
-    parentPort.on("close", ()=>{
-        worker_thread.shut_down();
+    parentPort.on("close", async ()=>{
+        await worker_thread.shut_down();
         
         // exit;
         process.exit(0);

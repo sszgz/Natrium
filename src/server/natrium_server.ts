@@ -130,8 +130,8 @@ export class natrium_server implements wslistener_handler {
     on_packet(cid:number, p:packet):void {
         nat.dbglog.log(debug_level_enum.dle_debug, `handler on packet  ${cid}, packet:${p.data}`);
         
-        // send back
-        this._wslistener?.send_packet(cid, p);
+        // // send back
+        // this._wslistener?.send_packet(cid, p);
         
         let ses = this._sessions.get_session_by_sid(cid);
         if(ses == undefined){

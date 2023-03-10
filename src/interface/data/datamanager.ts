@@ -8,7 +8,9 @@ import { globaldatas } from "./globaldata";
 export interface datamanager {
     init():Promise<void>;
     
-    create_session_dataobj(sid:number, key:string, default_data:any):dataobj|null;
+    insert_session_data(sid:number, key:string, data:any):Promise<boolean>;
+    read_session_data(sid:number, key:string):Promise<any>;
+    create_session_dataobj(sid:number, key:string, default_data:any):Promise<dataobj|null>;
 
     create_globaldatas(table_name:string):globaldatas|null;
 }

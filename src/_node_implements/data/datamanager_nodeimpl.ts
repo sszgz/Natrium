@@ -52,15 +52,51 @@ export class datamanager_nodeimpl implements datamanager {
         
         return;
     }
+
+    public async read_session_data(sid:number, key:string):Promise<any> {
+        if(this._session_rc == null) {
+            natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `datamanager_nodeimpl read_session_data redis db [session] not exist`);
+            return null;
+        }
+
+        let dkey = `${sid}_${key}`;
+
+        return await this._session_rc.get_json(dataobj_nodeimpl.make_rc_key("session", dkey), ".");
+    }
     
-    public create_session_dataobj(sid:number, key:string, default_data:any):dataobj|null {
+    public async insert_session_data(sid:number, key:string, data:any):Promise<boolean> {
+        if(this._session_rc == null) {
+            natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `datamanager_nodeimpl write_session_data redis db [session] not exist`);
+            return false;
+        }
+
+        let dkey = `${sid}_${key}`;
+        
+        return await this._session_rc.insert_json(dataobj_nodeimpl.make_rc_key("session", dkey), data);
+    }
+
+    public async create_session_dataobj(sid:number, key:string, default_data:any):Promise<dataobj|null> {
         if(this._session_rc == null) {
             natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `datamanager_nodeimpl create_dataobj redis db [session] not exist`);
             return null;
         }
 
         let dkey = `${sid}_${key}`;
-        return new dataobj_nodeimpl(this._session_rc, "session", dkey, default_data);
+
+        let dataobj = new dataobj_nodeimpl(this._session_rc, "session", dkey, default_data);
+        if(default_data == undefined) {
+            // no default data
+            let data = await dataobj.read_data();
+            if(data == null){
+                // read from db failed
+                return null;
+            }
+        }
+        else {
+            await dataobj.get_data_initdef();
+        }
+
+        return dataobj;
     }
 
     public create_globaldatas(table_name:string):globaldatas|null {

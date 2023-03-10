@@ -9,8 +9,6 @@ import { _redis_client } from "../_node/_redis";
 
 export class dataobj_nodeimpl implements dataobj {
 
-    protected static _md5sum = crypto.createHash("md5");
-
     protected _rc_key:string = "";
     protected _rc:_redis_client;
 
@@ -19,13 +17,20 @@ export class dataobj_nodeimpl implements dataobj {
     protected _data:any = null;
     protected _last_write_data:any = null;
 
+    public static make_rc_key(db_name:string, key:string):string {
+        // const md5sum = crypto.createHash("md5");
+        // return md5sum.update(`${db_name}_${key}`).digest('hex');
+        return `${db_name}_${key}`;
+    }
+
     constructor(r:_redis_client, tn:string, k:string, d:any) {
         this._rc = r;
-        this._rc_key = dataobj_nodeimpl._md5sum.update(`${this._db_name}_${this._key}`).digest('hex'); // calc hash key
         this._db_name = tn;
         this._key = k;
         this._data = d;
         this._last_write_data = d;
+        
+        this._rc_key = dataobj_nodeimpl.make_rc_key(this._db_name, this._key); // calc hash key
     }
 
     public get db_name():string {
@@ -39,6 +44,38 @@ export class dataobj_nodeimpl implements dataobj {
     }
     public get last_write_data():any {
         return this._last_write_data;
+    }
+
+    // read data from db
+    // if data not exist, than insert with default value
+    public async get_data_initdef():Promise<any>{
+        // read from cache
+        let data = await this._rc.get_json(this._rc_key, ".");
+        if(data == null){
+            // TO DO : read from persist
+
+            // new data with default value
+            await this._rc.insert_json(this._rc_key, this._data);
+        }
+        else {
+            this._data = data;
+            this._last_write_data = data;
+        }
+            
+        return this._data;
+    }
+
+    // only read data from db
+    public async read_data():Promise<any> {
+        let data = await this._rc.get_json(this._rc_key, ".");
+        if(data==null){
+            return null;
+        }
+
+        this._data = data;
+        this._last_write_data = data;
+
+        return this._data;
     }
 
     public mod_data(new_data:any):void {

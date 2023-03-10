@@ -1,3 +1,10 @@
+
+// natrium
+// license : MIT
+// author : Sean Chen
+
+import * as lodash from "lodash";
+
 export interface object_diff_path {
     diffpaths:Array<string>;
     newpaths:Array<string>;
@@ -157,5 +164,9 @@ export class object_util {
                 diffs.delpaths.push(`${currentPath}[${key}]`);
             }
         }
+    }
+
+    public static deepClone(obj:any):any {
+        return lodash.cloneDeep(obj);
     }
 }

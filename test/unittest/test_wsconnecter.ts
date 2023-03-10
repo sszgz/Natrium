@@ -66,6 +66,21 @@ var testcmd = async ()=>{
                     connecter.send_packet(pkt);
                 }
                 break;
+            case "login":
+                {
+                    let obj = {
+                        c:"login",
+                        d:{
+                            "name":"BIG",
+                            "uid":"1111",
+                            "token":"132-12-BIG"
+                        }
+                    };
+    
+                    let pkt = connecter.pcodec.create_jsonpkt(obj);
+                    connecter.send_packet(pkt);
+                }
+                break;
             case "sendj1":
                 {
                     let obj = {

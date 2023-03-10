@@ -47,7 +47,7 @@ class _Service_Node_Worker_Impl implements _Node_Worker {
 
         this._service.startup();
     }
-    shutdown():void {
+    async shutdown():Promise<void> {
         if(this._service == null){
             natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `_Service_Node_Worker_Impl shutdown _uname:${this._uname} service is null`);
             return;
@@ -63,7 +63,7 @@ class _Service_Node_Worker_Impl implements _Node_Worker {
         // TO DO : setup channel
     }
 
-    onmsg(fromworker:string, data:any):void {
+    async onmsg(fromworker:string, data:any):Promise<void> {
         if(this._service == null){
             natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `_Service_Node_Worker_Impl onmsg _uname:${this._uname} service is null`);
             return;
@@ -72,35 +72,35 @@ class _Service_Node_Worker_Impl implements _Node_Worker {
         // TO DO : queue msgs?
         switch(data.cmd){
             case _Service_M2W_MSG._m2w_session_msg:
-                this._service.on_session_message(data.sid, data.command, data.data);
+                await this._service.on_session_message(data.sid, data.command, data.data);
                 break;
             case _Service_M2W_MSG._m2w_add_session:
-                this._service.on_add_session(data.sid, data.skey);
+                await this._service.on_add_session(data.sid, data.skey);
                 break;
             case _Service_M2W_MSG._m2w_rmv_session:
-                this._service.on_remove_session(data.sid);
+                await this._service.on_remove_session(data.sid);
                 break;
             case _Service_M2W_MSG._m2w_service_task:
-                this._service.on_service_task(data.command, data.data);
+                await this._service.on_service_task(data.command, data.data);
                 break;
             case _Service_M2W_MSG._m2w_bcast_msg:
-                this._service.on_broadcast_session_msg(data.command, data.data);
+                await this._service.on_broadcast_session_msg(data.command, data.data);
                 break;
             // case _Service_M2W_MSG._m2w_rpc_sync:
             //     this._service.on_session_rpc_sync(data.sid, data.command, data.data);
             //     break;
             case _Service_M2W_MSG._m2w_close_session:
-                this._service.on_session_close(data.sid);
+                await this._service.on_session_close(data.sid);
                 break;
         }
     }
-    onupdate():void {
+    async onupdate():Promise<void> {
         if(this._service == null){
             natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `_Service_Node_Worker_Impl onupdate _uname:${this._uname} service is null`);
             return;
         }
 
-        this._service.on_service_update();
+        await this._service.on_service_update();
     }
 }
 
