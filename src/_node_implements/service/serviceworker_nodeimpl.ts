@@ -150,7 +150,15 @@ export class serviceworker_nodeimpl implements serviceworker {
 
                 // for Debug ...
                 let l = network.get_wslistener(0);
-                l.send_packet(msg.sid, l.pcodec.create_jsonpkt(msg.msg)); // sid = cid
+
+                if(msg.is_rpc){
+                    // send rpc
+                    l.send_packet(msg.sid, l.pcodec.create_protopkt(msg.msg.c, msg.msg.d)); // sid = cid
+                }
+                else {
+                    // send json
+                    l.send_packet(msg.sid, l.pcodec.create_jsonpkt(msg.msg)); // sid = cid
+                }
             }
             break;
         }

@@ -40,8 +40,8 @@ export class _Node_ThreadContext {
 }
 
 export class _Node_SessionContext {
-    public static sendWSMsg(sid:number, command:string, data:any):void {
+    public static sendWSMsg(sid:number, command:string, data:any, is_rpc:boolean=true):void {
         // TO DO : setup wslistener port
-        parentPort?.postMessage({cmd:_Service_W2M_MSG._w2m_session_msg, sid:sid, msg:{c:command, d:data}});
+        parentPort?.postMessage({cmd:_Service_W2M_MSG._w2m_session_msg, sid:sid, is_rpc:is_rpc, msg:{c:command, d:data}});
     }
 }

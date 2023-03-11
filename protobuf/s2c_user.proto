@@ -1,0 +1,9 @@
+package s2c_user;
+syntax = "proto3";
+
+import "./share_structure.proto";
+
+message login_res {
+    int32 res = 1;
+    user_data data = 2;
+}

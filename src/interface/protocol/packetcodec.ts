@@ -6,6 +6,10 @@ import { bodylenbits, packet, packettype, prototype } from "./packet";
 
 export interface packetcodec{
 
+    load_protobufs(filenames:string[]):void;
+    register_protobuf_msg(msgid:number, msgcmd:string, path:string):void;
+    create_protopkt(c:string, d:any):packet;
+
     create_shakehandpkt(time:number):packet;
     create_pingpongpkt(time:number):packet;
     create_jsonpkt(data:any):packet;

@@ -186,7 +186,13 @@ export class wslistener_nodeimpl implements wslistener {
 
         let thisptr = this;
         sockcid.onmsg = (data:any)=>{
-            thisptr._on_socket_message(sockcid, data as Buffer);
+            try{
+                thisptr._on_socket_message(sockcid, data as Buffer);
+            }
+            catch(e){
+                let err:Error = e as Error;
+                natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `wslistener_nodeimpl _on_socket_message cid:${sockcid.cid} error:${err.message}\r\n${err.stack}`);
+            }
         };
         sockcid.onclose = (code:number, reason:Buffer)=>{
             thisptr._on_socket_close(sockcid, code, reason);

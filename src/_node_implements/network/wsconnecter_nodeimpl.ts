@@ -73,7 +73,13 @@ export class wsconnecter_nodeimpl implements wsconnecter {
             thisptr._on_socket_connected();
         });
         this._ws.on('message', data=>{
-            thisptr._on_socket_message(data as Buffer);
+            try{
+                thisptr._on_socket_message(data as Buffer);
+            }
+            catch(e){
+                let err:Error = e as Error;
+                natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `wsconnecter_nodeimpl _on_socket_message error:${err.message}\r\n${err.stack}`);
+            }
         });
 
         return true;

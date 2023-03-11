@@ -14,4 +14,3 @@ mv rejson.so /etc/redis/modules/
 
 /etc/redis/redis.conf
 loadmodule /etc/redis/modules/rejson.so
-

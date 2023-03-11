@@ -10,8 +10,19 @@ import { packetcodec } from "../../interface/protocol/packetcodec";
 import { sys_packet_cmds, shakehand_mark } from "../../interface/protocol/protocolconsts";
 import { natrium_nodeimpl } from "../natrium_nodeimpl";
 import { packet_nodeimpl } from "./packet_nodeimpl";
+import { _protobuf_mgr } from "./_protobuf_mgr";
 
 export class packetcodec_nodeimpl implements packetcodec {
+    
+    public load_protobufs(filenames:string[]):void {
+        _protobuf_mgr.loadProtobufFiles(filenames);
+    }
+    public register_protobuf_msg(msgid:number, msgcmd:string, path:string):void {
+        _protobuf_mgr.registerMsg(msgid, msgcmd, path);
+    }
+    public create_protopkt(c:string, d:any):packet {
+        return this.create_packet(packettype.pkt_msg, prototype.proto_grpc, bodylenbits.bit8, false, {c:c, d:d}); // bodylenbits & compressed is set in encode_packet
+    }
 
     public create_shakehandpkt(time:number):packet {
         let datas:Buffer = Buffer.alloc(9);
@@ -50,7 +61,15 @@ export class packetcodec_nodeimpl implements packetcodec {
                 return p.data;
             case prototype.proto_grpc:
                 {
-                    // TO DO : grpc
+                    const msgT = _protobuf_mgr.msgs[p.data.c];
+                    const msg = msgT.create(p.data.d);
+
+                    const msgbuf = msgT.encode(msg).finish();
+                    const msgid = _protobuf_mgr.get_msgid_bycmd(p.data.c);
+                    
+                    let buf = Buffer.alloc(2);
+                    buf.writeUint16LE(msgid);
+                    return Buffer.concat([buf, msgbuf]);
                 }
                 break;
             case prototype.proto_json:
@@ -104,7 +123,16 @@ export class packetcodec_nodeimpl implements packetcodec {
                 break;
             case prototype.proto_grpc:
                 {
-                    // TO DO : grpc
+                    // read command id
+                    const msgid = buffer.readUint16LE(offset);
+                    offset+=2;
+
+                    const msgcmd = _protobuf_mgr.get_msgcmd_byid(msgid);
+                    const data = _protobuf_mgr.msgs[msgcmd].decode(buffer.subarray(offset));
+                    p.data = {
+                        c:msgcmd,
+                        d:data
+                    };
                 }
                 break;
             case prototype.proto_json:
@@ -205,7 +233,7 @@ export class packetcodec_nodeimpl implements packetcodec {
         let bufferLenLeft = buffer.length - offset;
         if(len != bufferLenLeft) {
             natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `decode_packet len[${len}] != buffer len[${bufferLenLeft}]`);
-            return pkt;
+            throw new Error(`Natrium: decode_packet len[${len}] != buffer len[${bufferLenLeft}]`);
         }
 
         // TO DO : do unzip in thread

@@ -21,9 +21,19 @@ export class natrium_client extends EventEmitter implements wsconnecter_handler 
         super();
     }
 
-    public connect(uri:string):Promise<void> {
+    public get connecter() {
+        return this._connecter;
+    }
+
+    public init():void {
         var c = nat.create_packetcodec();
         this._connecter = nat.create_wsconnecter(this, c);
+    }
+
+    public async connect(uri:string):Promise<void> {
+        if(this._connecter == null) {
+            return;
+        }
         
         this._connecter.connect(uri);
 
@@ -68,14 +78,12 @@ export class natrium_client extends EventEmitter implements wsconnecter_handler 
             this._connect_reject = null;
         }
         
-        this.emit("disconnected");
+        this.emit("disconnected", reason);
     }
     on_packet(p:packet):void {
         nat.dbglog.log(debug_level_enum.dle_debug, `connecter handler on packet packet:${p.data}`);
 
-        if(p.prototp == prototype.proto_json){
-            console.log(JSON.stringify(p.data));
-        }
+        this.emit("onmsg", p);
     }
 
 }

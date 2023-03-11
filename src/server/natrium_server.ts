@@ -25,6 +25,10 @@ export class natrium_server implements wslistener_handler {
     constructor() {
     }
 
+    public get wslistener() {
+        return this._wslistener;
+    }
+
     public async startup() {
         // init config
         nat.conf.init();
@@ -89,9 +93,16 @@ export class natrium_server implements wslistener_handler {
         // start up listener
         var c = nat.create_packetcodec();
         this._wslistener = nat.create_wslistener(this, c);
-
         network.add_wslistener(this._wslistener); // register listener
+    }
 
+    public open_wslistener() {
+        if(this._wslistener == null){
+            nat.dbglog.log(debug_level_enum.dle_error, `natrium_server open wslistener when _wslistener is null`);
+            return;
+        }
+
+        // TO DO : use config
         this._wslistener.start("127.0.0.1", 4091);
     }
 

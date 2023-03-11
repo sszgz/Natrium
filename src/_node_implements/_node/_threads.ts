@@ -74,7 +74,13 @@ export class _Node_WorkerThread extends EventEmitter {
         
         let thisptr = this;
         this._on_msg_fn = (msg:any)=>{
-            thisptr._on_worker_msg(msg);
+            try{
+                thisptr._on_worker_msg(msg);
+            }
+            catch(e){
+                let err:Error = e as Error;
+                natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `_Node_WorkerThread tid${this._worker.threadId} uname:${this._uname} _on_worker_msg error:${err.message}\r\n${err.stack}`);
+            }
         };
         this._on_err_fn = (err:Error)=>{
             thisptr._on_worker_error(err);

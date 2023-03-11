@@ -1,0 +1,6 @@
+package user_c2s;
+syntax = "proto3";
+
+message user_data {
+    string name = 1;
+}

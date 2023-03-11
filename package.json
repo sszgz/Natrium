@@ -8,6 +8,7 @@
     "testwsconn": "npx ts-node ./test/unittest/test_wsconnecter.ts",
     "testwslisten": "npx ts-node ./test/unittest/test_wslistener.ts",
     "testserver": "npx ts-node ./test/unittest/test_server.ts",
+    "testclient": "npx ts-node ./test/unittest/test_client.ts",
     "start:dev": "npx nodemon",
     "build": "rimraf ./build && tsc",
     "start": "npm run build && node build/index.js"
@@ -34,6 +35,7 @@
   "dependencies": {
     "lodash": "^4.17.21",
     "mysql": "^2.18.1",
+    "protobufjs": "^7.2.2",
     "redis": "^4.6.5",
     "ws": "^8.12.1",
     "zlib": "^1.0.5"
