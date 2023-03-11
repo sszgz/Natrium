@@ -28,8 +28,8 @@ export async function user_login(s:service, ses:servicesession, pl:any, data:any
         return;
     }
     
-    let user_ses_data = await nat.datas.read_user_data(data.uid, "ses");
-    if(user_ses_data != undefined) {
+    let user_sid = await nat.datas.get_user_sessionid(data.uid);
+    if(user_sid != undefined) {
         // TO DO : kick other user ?
         _Node_SessionContext.sendWSMsg(ses.session_id, "login_res", {res:ServerErrorCode.ResUserLoginedByOther});
         return;
@@ -56,7 +56,7 @@ export async function user_login(s:service, ses:servicesession, pl:any, data:any
     await nat.datas.insert_session_data(ses.session_id, "base", {name:data.name, uid:data.uid, token:data.token});
 
     // insert user=>session data
-    await nat.datas.insert_user_data(data.uid, "ses", {sid:ses.session_id});
+    await nat.datas.set_user_sessionid(data.uid, ses.session_id);
 
     // TO DO : check player exist
     let res_data = {

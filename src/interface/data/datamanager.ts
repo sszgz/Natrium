@@ -8,6 +8,11 @@ import { globaldatas } from "./globaldata";
 export interface datamanager {
     init():Promise<void>;
     
+    set_user_sessionid(uid:string, sid:number):Promise<boolean>;
+    get_user_sessionid(uid:string):Promise<any>;
+    del_user_sessionid(uid:string):Promise<boolean>;
+
+    clear_session_datas():Promise<boolean>;
     insert_session_data(sid:number, key:string, data:any):Promise<boolean>;
     update_session_data(sid:number, key:string, data:any, path:string):Promise<boolean>;
     read_session_data(sid:number, key:string):Promise<any>;

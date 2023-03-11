@@ -33,6 +33,12 @@ export class natrium_server implements wslistener_handler {
         // init config
         nat.conf.init();
 
+        // init datas
+        await nat.datas.init();
+
+        // clear all session data
+        nat.datas.clear_session_datas();
+
         // start up service
         const svrconf = nat.conf.get_serverconf();
         if(svrconf == null) {

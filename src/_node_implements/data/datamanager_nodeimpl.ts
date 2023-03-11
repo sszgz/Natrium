@@ -62,6 +62,46 @@ export class datamanager_nodeimpl implements datamanager {
         return;
     }
 
+    public async set_user_sessionid(uid:string, sid:number):Promise<boolean> {
+        if(this._session_rc == null) {
+            natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `datamanager_nodeimpl set_user_sessionid redis db [session] not exist`);
+            return false;
+        }
+
+        let dkey = `__bindsid_${uid}`;
+
+        return await this._session_rc.set(dkey, sid);
+    }
+    public async get_user_sessionid(uid:string):Promise<any> {
+        if(this._session_rc == null) {
+            natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `datamanager_nodeimpl get_user_sessionid redis db [session] not exist`);
+            return null;
+        }
+
+        let dkey = `__bindsid_${uid}`;
+
+        return await this._session_rc.get(dkey);
+    }
+    public async del_user_sessionid(uid:string):Promise<boolean> {
+        if(this._session_rc == null) {
+            natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `datamanager_nodeimpl del_user_sessionid redis db [session] not exist`);
+            return false;
+        }
+
+        let dkey = `__bindsid_${uid}`;
+
+        return await this._session_rc.del(dkey);
+    }
+
+    public async clear_session_datas():Promise<boolean> {
+        if(this._session_rc == null) {
+            natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `datamanager_nodeimpl read_session_data redis db [session] not exist`);
+            return false;
+        }
+
+        return this._session_rc.clearall();
+    }
+
     public async read_session_data(sid:number, key:string):Promise<any> {
         if(this._session_rc == null) {
             natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `datamanager_nodeimpl read_session_data redis db [session] not exist`);

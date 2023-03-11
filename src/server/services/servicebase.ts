@@ -134,7 +134,7 @@ export abstract class servicebase implements service {
         let ses_base_data = await nat.datas.read_session_data(sid, "base");
         if(ses_base_data != null) {
             // delete user ses data
-            await nat.datas.delete_user_data(ses_base_data.uid, "ses");
+            await nat.datas.del_user_sessionid(ses_base_data.uid);
         }
 
         // delete base session data

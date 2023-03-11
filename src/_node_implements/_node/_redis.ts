@@ -7,7 +7,6 @@ import { redisconf } from '../../interface/config/configs';
 import { debug_level_enum } from '../../interface/debug/debug_logger';
 import { natrium_nodeimpl } from '../natrium_nodeimpl';
 
-
 export class _redis_client {
 
     protected _client:any = null;
@@ -51,6 +50,65 @@ export class _redis_client {
         }
 
         await this._client.quit();
+    }
+
+    public async clearall():Promise<boolean> {
+        if(this._client == null) {
+            natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `_redis ${this._conf.name}-${this._conf.database} clearall client is null`);
+            return false;
+        }
+        if(!this._client.isReady) {
+            natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `_redis ${this._conf.name}-${this._conf.database} clearall client not open`);
+            return false;
+        }
+
+        //await this._client.flushdb();
+        await this._client.sendCommand(['FLUSHDB']);
+
+        return true;
+    }
+
+    public async set(key:string, value:any):Promise<boolean> {
+        if(this._client == null) {
+            natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `_redis ${this._conf.name}-${this._conf.database} set key:${key} client is null`);
+            return false;
+        }
+        if(!this._client.isReady) {
+            natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `_redis ${this._conf.name}-${this._conf.database} set key:${key} client not open`);
+            return false;
+        }
+
+        await this._client.set(key, value);
+
+        return true;
+    }
+    
+    public async get(key:string):Promise<any> {
+        if(this._client == null) {
+            natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `_redis ${this._conf.name}-${this._conf.database} get key:${key} client is null`);
+            return false;
+        }
+        if(!this._client.isReady) {
+            natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `_redis ${this._conf.name}-${this._conf.database} get key:${key} client not open`);
+            return false;
+        }
+
+        return await this._client.get(key);
+    }
+
+    public async del(key:string):Promise<boolean> {
+        if(this._client == null) {
+            natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `_redis ${this._conf.name}-${this._conf.database} del key:${key} client is null`);
+            return false;
+        }
+        if(!this._client.isReady) {
+            natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `_redis ${this._conf.name}-${this._conf.database} del key:${key} client not open`);
+            return false;
+        }
+
+        await this._client.del(key);
+
+        return true;
     }
 
     public async insert_json(key:string, value:any):Promise<boolean> {
