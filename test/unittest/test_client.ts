@@ -6,7 +6,7 @@ import * as path from "node:path";
 import * as readline from 'node:readline/promises';
 import { stdin as input, stdout as output } from 'node:process';
 
-import { protobuf_c2s, protobuf_s2c } from "../../src/server/msgs/protobufmsgs";
+import { protobuf_c2s, protobuf_s2c } from "../../src/server/gameframework/msgs/protobufmsgs";
 import { natrium_client } from "../../src/client/natrium_client";
 import { packet, prototype } from "../../src/interface/protocol/packet";
 
@@ -100,6 +100,17 @@ var testcmd = async ()=>{
                     };
     
                     //let pkt = client.connecter.pcodec.create_jsonpkt(obj);
+                    let pkt = client.connecter.pcodec.create_protopkt(obj.c, obj.d);
+                    client.connecter.send_packet(pkt);
+                }
+                break;
+            case "create_player":
+                {
+                    let obj = {
+                        c:"create_player",
+                        d:{}
+                    };
+
                     let pkt = client.connecter.pcodec.create_protopkt(obj.c, obj.d);
                     client.connecter.send_packet(pkt);
                 }

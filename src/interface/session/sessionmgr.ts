@@ -3,7 +3,6 @@
 // author : Sean Chen
 
 import { session } from "./session";
-import { sessiondata } from "./sessiondatas";
 
 export interface sessionmgr {
 
@@ -14,6 +13,4 @@ export interface sessionmgr {
 
     get_session_by_sid(sid:number):session|undefined;
     get_session_by_skey(skey:string):session|undefined;
-
-    get_sessiondata_bysid(sid:number):sessiondata|undefined;
 }

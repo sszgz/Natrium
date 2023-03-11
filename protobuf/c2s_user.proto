@@ -10,7 +10,7 @@ message login {
 }
 
 message create_player {
-
+    
 }
 
 message enter_game {

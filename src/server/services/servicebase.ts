@@ -11,7 +11,7 @@ import { servicesession } from "../../interface/service/servicesession";
 import { msg_proc_func_map_type } from "../../interface/service/service_msgproc";
 import { nat } from "../../natrium";
 import { game } from "../gameframework/game";
-import { player } from "../gameframework/player";
+import { player, player_datas } from "../gameframework/player";
 
 export abstract class servicebase implements service {
     
@@ -70,13 +70,16 @@ export abstract class servicebase implements service {
         return this._sessions.get(sid);
     }
 
-    public async create_player(ses:servicesession):Promise<player|null> {
-        const new_pl = game.impl.create_player(ses);
-        const succ = await new_pl.init();
+    public async create_player(ses:servicesession, d:player_datas):Promise<player|null> {
+        const new_pl = game.impl.create_player(ses, d);
+        let succ = await new_pl.init();
         if(!succ){
             return null;
         }
-        await new_pl.sync_data_from_dbobj();
+        succ = await new_pl.sync_data_from_dbobj();
+        if(!succ){
+            return null;
+        }
         this._players.set(ses.session_id, new_pl);
 
         return new_pl;
@@ -101,6 +104,9 @@ export abstract class servicebase implements service {
             nat.dbglog.log(debug_level_enum.dle_error, `service:${this.service_name}:${this.service_index} on_remove_session sid:${sid} player not found`);
         }
 
+        // don't clear nat.datas session data cache!
+
+        // delete session
         this._sessions.delete(sid);
     }
     public async on_session_close(sid:number):Promise<void> {
@@ -116,7 +122,23 @@ export abstract class servicebase implements service {
             nat.dbglog.log(debug_level_enum.dle_error, `service:${this.service_name}:${this.service_index} on_session_close sid:${sid} player not found`);
         }
 
+        // clear nat.datas session cache
+        this._do_clear_session(sid);
+
+        // delete session
         this._sessions.delete(sid);
+    }
+
+    protected async _do_clear_session(sid:number):Promise<void> {
+
+        let ses_base_data = await nat.datas.read_session_data(sid, "base");
+        if(ses_base_data != null) {
+            // delete user ses data
+            await nat.datas.delete_user_data(ses_base_data.uid, "ses");
+        }
+
+        // delete base session data
+        await nat.datas.delete_session_data(sid, "base");
     }
 
     protected async _do_remove_player(pl:player):Promise<void> {
@@ -131,7 +153,22 @@ export abstract class servicebase implements service {
 
     }
     public async on_session_message(sid:number, command:string, data:any):Promise<void> {
+        const ses = this._sessions.get(sid);
+        if(ses == undefined) {
+            nat.dbglog.log(debug_level_enum.dle_error, `on_session_message session ${sid} c:${command} d:${data}, session not exist`);
+            return;
+        }
 
+        if(!(command in this._msg_procs)){
+            nat.dbglog.log(debug_level_enum.dle_error, `on_session_message session ${sid} c:${command} d:${data}, unknown command`);
+            return;
+        }
+
+        const pl = this._players.get(sid);
+
+        await this._msg_procs[command](this, ses, pl, data);
+
+        nat.dbglog.log(debug_level_enum.dle_debug, `on_session_message session ${sid} c:${command} d:${data}`);
     }
 
     //on_session_rpc_sync(sid:number, cmd:string, data:any):any;

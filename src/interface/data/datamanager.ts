@@ -2,15 +2,28 @@
 // license : MIT
 // author : Sean Chen
 
-import { dataobj } from "./dataobj";
+import { dataobject } from "./dataobj";
 import { globaldatas } from "./globaldata";
 
 export interface datamanager {
     init():Promise<void>;
     
     insert_session_data(sid:number, key:string, data:any):Promise<boolean>;
+    update_session_data(sid:number, key:string, data:any, path:string):Promise<boolean>;
     read_session_data(sid:number, key:string):Promise<any>;
-    create_session_dataobj(sid:number, key:string, default_data:any):Promise<dataobj|null>;
+    delete_session_data(sid:number, key:string):Promise<boolean>;
+    
+    insert_user_data(uid:string, key:string, data:any):Promise<boolean>;
+    update_user_data(uid:string, key:string, data:any, path:string):Promise<boolean>;
+    read_user_data(uid:string, key:string):Promise<any>;
+    delete_user_data(uid:string, key:string):Promise<boolean>;
+    
+    insert_player_data(uid:string, key:string, data:any):Promise<boolean>;
+    update_player_data(uid:string, key:string, data:any, path:string):Promise<boolean>;
+    read_player_data(uid:string, key:string):Promise<any>;
+    delete_player_data(uid:string, key:string):Promise<boolean>;
+
+    create_user_dataobj(uid:string, dbname:string, key:string, default_data:any):Promise<dataobject|null>;
 
     create_globaldatas(table_name:string):globaldatas|null;
 }

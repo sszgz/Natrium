@@ -4,7 +4,7 @@
 
 import * as path from "node:path";
 import { natrium_server } from "../../src/server/natrium_server";
-import { protobuf_c2s, protobuf_s2c } from "../../src/server/msgs/protobufmsgs";
+import { protobuf_c2s, protobuf_s2c } from "../../src/server/gameframework/msgs/protobufmsgs";
 
 const server:natrium_server = new natrium_server();
 

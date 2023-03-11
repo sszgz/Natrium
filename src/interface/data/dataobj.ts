@@ -2,7 +2,7 @@
 // license : MIT
 // author : Sean Chen
 
-export interface dataobj {
+export interface dataobject {
     readonly db_name:string;
     readonly key:string;
     
@@ -11,7 +11,7 @@ export interface dataobj {
 
     get_data_initdef():Promise<any>;
     read_data():Promise<any>;
-    
+
     mod_data(new_data:any):void;
 
     write_back(do_persist:boolean):Promise<boolean>;

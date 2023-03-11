@@ -5,7 +5,8 @@ import "./share_structure.proto";
 
 message login_res {
     required int32 res = 1;
-    required share.user_data data = 2;
+    optional share.user_data data = 2;
+    optional bool is_new = 3;
 }
 
 message create_player_res {
@@ -14,7 +15,7 @@ message create_player_res {
 
 message enter_game_res {
     required int32 res = 1;
-    required share.player_data data = 2;
+    optional share.player_data data = 2;
 }
 
 message player_goto {

@@ -4,10 +4,8 @@
 
 import { debug_level_enum } from "../../interface/debug/debug_logger";
 import { session } from "../../interface/session/session";
-import { sessiondata } from "../../interface/session/sessiondatas";
 import { sessionmgr } from "../../interface/session/sessionmgr";
 import { natrium_nodeimpl } from "../natrium_nodeimpl";
-import { sessiondata_nodeimpl } from "./sessiondata_nodeimpl";
 import { session_nodeimpl } from "./session_nodeimpl";
 
 export class sessionmgr_nodeimpl implements sessionmgr {
@@ -56,10 +54,5 @@ export class sessionmgr_nodeimpl implements sessionmgr {
     }
     public get_session_by_skey(skey:string):session|undefined {
         return this._sessionkeymap.get(skey);
-    }
-
-    public get_sessiondata_bysid(sid:number):sessiondata|undefined {
-        // TO DO : session data
-        return undefined;
     }
 }

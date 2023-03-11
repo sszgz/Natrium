@@ -3,11 +3,11 @@
 // author : Sean Chen
 
 import * as crypto from "node:crypto";
-import { dataobj } from "../../interface/data/dataobj";
+import { dataobject } from "../../interface/data/dataobj";
 import { object_util } from "../../util/object_util";
 import { _redis_client } from "../_node/_redis";
 
-export class dataobj_nodeimpl implements dataobj {
+export class dataobj_nodeimpl implements dataobject {
 
     protected _rc_key:string = "";
     protected _rc:_redis_client;
@@ -29,7 +29,7 @@ export class dataobj_nodeimpl implements dataobj {
         this._key = k;
         this._data = d;
         this._last_write_data = d;
-        
+
         this._rc_key = dataobj_nodeimpl.make_rc_key(this._db_name, this._key); // calc hash key
     }
 
@@ -69,6 +69,7 @@ export class dataobj_nodeimpl implements dataobj {
     public async read_data():Promise<any> {
         let data = await this._rc.get_json(this._rc_key, ".");
         if(data==null){
+            // TO DO : read from persist
             return null;
         }
 

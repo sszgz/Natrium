@@ -13,4 +13,8 @@ export enum ServerErrorCode {
     ResLoinedOtherUid = -1003,
     ResLoginTokenError = -1004,
     ResServiceWrong = -1005,
+    ResCreatePlayerAlreadyExist = -1006,
+    ResUserLoginedByOther = -1007,
+    ResUserNotExist = -1008,
+    ResSessionNotLogin = -1009,
 }
