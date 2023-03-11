@@ -20,6 +20,8 @@ export interface redisconf {
 export interface serviceconf {
     readonly service_name:string;
     readonly service_file:string;
+    readonly service_count:number;
+    readonly service_msgprocs:string[];
 }
 
 export interface wslistenerconf {

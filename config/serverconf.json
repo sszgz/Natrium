@@ -23,23 +23,27 @@
     "services":[
         {
             "service_name":"outgameservice",
-            "service_file":"src/server/services/outgameservice.ts"
+            "service_file":"src/server/services/outgameservice.ts",
+            "service_count":1,
+            "service_msgprocs":[
+                "src/server/msgs/outgame_msgprocs.ts"
+            ]
         },
         {
             "service_name":"worldservice",
-            "service_file":"src/server/services/worldservice.ts"
-        },
-        {
-            "service_name":"worldservice",
-            "service_file":"src/server/services/worldservice.ts"
-        },
-        {
-            "service_name":"levelinstanceservice",
-            "service_file":"src/server/services/levelinstanceservice.ts"
+            "service_file":"src/server/services/worldservice.ts",
+            "service_count":2,
+            "service_msgprocs":[
+                "src/server/msgs/world_msgprocs.ts"
+            ]
         },
         {
             "service_name":"levelinstanceservice",
-            "service_file":"src/server/services/levelinstanceservice.ts"
+            "service_file":"src/server/services/levelinstanceservice.ts",
+            "service_count":2,
+            "service_msgprocs":[
+                "src/server/msgs/level_msgprocs.ts"
+            ]
         }
     ],
     "wslistener":{

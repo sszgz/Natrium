@@ -45,7 +45,7 @@ class _Service_Node_Worker_Impl implements _Node_Worker {
         }
         this._service.set_service_index(service_index);
 
-        this._service.startup();
+        await this._service.startup();
     }
     async shutdown():Promise<void> {
         if(this._service == null){
@@ -53,7 +53,7 @@ class _Service_Node_Worker_Impl implements _Node_Worker {
             return;
         }
 
-        this._service.shutdown();
+        await this._service.shutdown();
     }
     startshutingdown():void {
         // TO DO : finish all tasks

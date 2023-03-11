@@ -81,7 +81,8 @@ var testcmd = async ()=>{
                         }
                     };
     
-                    let pkt = client.connecter.pcodec.create_jsonpkt(obj);
+                    //let pkt = client.connecter.pcodec.create_jsonpkt(obj);
+                    let pkt = client.connecter.pcodec.create_protopkt(obj.c, obj.d);
                     client.connecter.send_packet(pkt);
                 }
                 break;

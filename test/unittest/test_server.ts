@@ -23,7 +23,7 @@ let start_server = async () =>{
     // register client msg
     server.wslistener?.pcodec.register_protobuf_msg(protobuf_s2c.login, "login", "c2s_user.login");
     
-    server.open_wslistener();
+    server.open_wslistener("127.0.0.1", 4091);
 }
 
 start_server();

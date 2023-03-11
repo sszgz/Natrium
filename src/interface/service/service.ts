@@ -20,8 +20,8 @@ export interface service {
 
     set_service_index(si:number):void;
 
-    startup():boolean;
-    shutdown():boolean;
+    startup():Promise<boolean>;
+    shutdown():Promise<boolean>;
 
     get_session(sid:number):servicesession|undefined;
 

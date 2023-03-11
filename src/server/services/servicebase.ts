@@ -3,11 +3,12 @@
 // license : MIT
 // author : Sean Chen
 
+import * as path from 'path';
 import { serviceconf } from "../../interface/config/configs";
 import { debug_level_enum } from "../../interface/debug/debug_logger";
 import { service } from "../../interface/service/service";
 import { servicesession } from "../../interface/service/servicesession";
-import { session } from "../../interface/session/session";
+import { msg_proc_func_map_type } from "../../interface/service/service_msgproc";
 import { nat } from "../../natrium";
 import { game } from "../gameframework/game";
 import { player } from "../gameframework/player";
@@ -18,6 +19,8 @@ export abstract class servicebase implements service {
     protected _conf:serviceconf;
     protected _sessions:Map<number, servicesession> = new Map<number, servicesession>();
     protected _players:Map<number, player> = new Map<number, player>();
+
+    protected _msg_procs:msg_proc_func_map_type = {};
 
     constructor(c:serviceconf) {
         this._conf = c;
@@ -43,10 +46,23 @@ export abstract class servicebase implements service {
         this._service_index = si;
     }
 
-    public startup():boolean {
+    public async startup():Promise<boolean> {
+        for(var i=0;i<this._conf.service_msgprocs.length; ++i){
+            let procfile = this._conf.service_msgprocs[i];
+
+            // require funcprocess file
+            let procfunc = await import(path.resolve(__dirname, `../../../${procfile}`));
+            for(var funcname in procfunc.procs){
+                if(funcname in this._msg_procs) {
+                    nat.dbglog.log(debug_level_enum.dle_error, `service:${this.service_name}:${this.service_index} startup msgproc:${funcname} from file:${procfile} already exist`);
+                    continue;
+                }
+                this._msg_procs[funcname] = procfunc.procs[funcname];
+            }
+        }
         return true;
     }
-    public shutdown():boolean {
+    public async shutdown():Promise<boolean> {
         return true;
     }
 
@@ -54,8 +70,7 @@ export abstract class servicebase implements service {
         return this._sessions.get(sid);
     }
 
-    protected async _create_player(ses:servicesession):Promise<player|null> {
-
+    public async create_player(ses:servicesession):Promise<player|null> {
         const new_pl = game.impl.create_player(ses);
         const succ = await new_pl.init();
         if(!succ){
@@ -79,6 +94,7 @@ export abstract class servicebase implements service {
             await this._do_remove_player(pl);
             await pl.flush_data_to_dbobj(false);
             pl.fin();
+            this._players.delete(sid);
         }
         else {
             // err
@@ -93,6 +109,7 @@ export abstract class servicebase implements service {
             await this._do_remove_player(pl);
             await pl.flush_data_to_dbobj(true);
             pl.fin();
+            this._players.delete(sid);
         }
         else {
             // err

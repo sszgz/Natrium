@@ -45,48 +45,51 @@ export class natrium_server implements wslistener_handler {
             return;
         }
 
-        let outgameindex = 0;
-        let worldindex = 0;
-        let levelindex = 0;
         let promiseAry = new Array<any>();
         for(let i=0; i<scs.length; ++i) {
-            
-            let service = nat.create_serviceworker();
-
             switch(scs[i].service_name){
                 case "outgameservice":
                     {
-                        service.set_service_index(outgameindex);
-                        this._outgameServices.push(service);
-
-                        ++outgameindex;
+                        for(let index=0;index<scs[i].service_count; ++index){
+                            let service = nat.create_serviceworker();
+                            service.set_service_index(index);
+                            this._outgameServices.push(service);
+                            promiseAry.push(service.start_service(scs[i]));
+                        }
                     }
                     break;
                 case "worldservice":
                     {
-                        service.set_service_index(worldindex);
-                        this._worldServices.push(service);
-                        
-                        ++worldindex;
+                        for(let index=0;index<scs[i].service_count; ++index){
+                            let service = nat.create_serviceworker();
+                            service.set_service_index(index);
+                            this._worldServices.push(service);
+                            promiseAry.push(service.start_service(scs[i]));
+                        }
                     }
                     break;
                 case "levelinstanceservice":
                     {
-                        service.set_service_index(levelindex);
-                        this._levelInstanceServices.push(service);
-                        
-                        ++levelindex;
+                        for(let index=0;index<scs[i].service_count; ++index){
+                            let service = nat.create_serviceworker();
+                            service.set_service_index(index);
+                            this._levelInstanceServices.push(service);
+                            promiseAry.push(service.start_service(scs[i]));
+                        }
+                    }
+                    break;
+                default :
+                    {
+                        nat.dbglog.log(debug_level_enum.dle_error, `natrium_server startup service name:${scs[i].service_name} wrong`);
                     }
                     break;
             }
-            
-            promiseAry.push(service.start_service(scs[i]));
             // await service.start_service(scs[i]);
         }
 
         await Promise.all(promiseAry);
 
-        nat.dbglog.log(debug_level_enum.dle_system, `natrium_server start service [${scs.length}] outgame[${outgameindex}] world[${worldindex}] level[${levelindex}]`);
+        nat.dbglog.log(debug_level_enum.dle_system, `natrium_server start service [${scs.length}] outgame[${this._outgameServices.length}] world[${this._worldServices.length}] level[${this._levelInstanceServices.length}]`);
 
         // init session mgr
 
@@ -96,14 +99,14 @@ export class natrium_server implements wslistener_handler {
         network.add_wslistener(this._wslistener); // register listener
     }
 
-    public open_wslistener() {
+    public open_wslistener(uri:string, port:number) {
         if(this._wslistener == null){
             nat.dbglog.log(debug_level_enum.dle_error, `natrium_server open wslistener when _wslistener is null`);
             return;
         }
 
         // TO DO : use config
-        this._wslistener.start("127.0.0.1", 4091);
+        this._wslistener.start(uri, port);
     }
 
     on_connected(cid:number):void {
@@ -155,11 +158,8 @@ export class natrium_server implements wslistener_handler {
             return;
         }
 
-        if(p.prototp == prototype.proto_json) {
+        if(p.prototp == prototype.proto_json || p.prototp == prototype.proto_grpc) {
             ses.current_service.channel.dispatch_session_msg(ses.session_id, p.data.c, p.data.d);
-        }
-        else if(p.prototp == prototype.proto_grpc) {
-            // TO DO : rpc
         }
     }
 

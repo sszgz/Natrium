@@ -24,13 +24,13 @@ export class outgameservice extends servicebase {
         super(c);
     }
 
-    public override startup():boolean {
+    public override async startup():Promise<boolean> {
 
         game.impl.register_player_behaviours(user_behaviour.beh_name, user_behaviour.creater);
 
         return super.startup();
     }
-    public override shutdown():boolean {
+    public override async shutdown():Promise<boolean> {
         return super.startup();
     }
 
@@ -73,40 +73,14 @@ export class outgameservice extends servicebase {
             return;
         }
 
-        switch(command){
-            case "login":
-                {
-                    const pl = this._players.get(sid);
-                    if(pl != undefined){
-                        // already logined
-                        // for Debug ...
-                        _Node_SessionContext.sendWSMsg(sid, "login_res", {res:ServerErrorCode.ResAlreadyLogin});
-                        return;
-                    }
-
-                    // for Debug ...
-                    await nat.datas.insert_session_data(sid, "user", {name:data.name, uid:data.uid, token:data.token});
-
-                    const user_data = await nat.datas.read_session_data(sid, "user");
-                    if(user_data.uid != data.uid) {
-                        _Node_SessionContext.sendWSMsg(sid, "login_res", {res:ServerErrorCode.ResLoinedOtherUid});
-                        return;
-                    }
-                    if(user_data.token != data.token) {
-                        _Node_SessionContext.sendWSMsg(sid, "login_res", {res:ServerErrorCode.ResLoginTokenError});
-                        return;
-                    }
-
-                    const succ = await this._create_player(ses);
-                    if(!succ) {
-                        _Node_SessionContext.sendWSMsg(sid, "login_res", {res:ServerErrorCode.ResCreatePlayerError});
-                        return;
-                    }
-
-                    _Node_SessionContext.sendWSMsg(sid, "login_res", {res:ServerErrorCode.ResOK, data:{name:data.name}});
-                }
-                break;
+        if(!(command in this._msg_procs)){
+            nat.dbglog.log(debug_level_enum.dle_error, `on_session_message session ${sid} c:${command} d:${data}, unknown command`);
+            return;
         }
+
+        const pl = this._players.get(sid);
+
+        await this._msg_procs[command](this, ses, pl, data);
 
         nat.dbglog.log(debug_level_enum.dle_debug, `on_session_message session ${sid} c:${command} d:${data}`);
     }
