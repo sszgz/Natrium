@@ -17,6 +17,11 @@ export async function user_login(s:service, ses:servicesession, pl:any, data:any
         return;
     }
 
+    if(s.constructor.name != "outgameservice") {
+        _Node_SessionContext.sendWSMsg(ses.session_id, "login_res", {res:ServerErrorCode.ResServiceWrong});
+        return;
+    }
+
     // for Debug ...
     await nat.datas.insert_session_data(ses.session_id, "user", {name:data.name, uid:data.uid, token:data.token});
 
@@ -37,4 +42,11 @@ export async function user_login(s:service, ses:servicesession, pl:any, data:any
     }
 
     _Node_SessionContext.sendWSMsg(ses.session_id, "login_res", {res:ServerErrorCode.ResOK, data:{name:data.name}});
+}
+
+export async function user_createplayer(s:service, ses:servicesession, pl:any, data:any):Promise<void> {
+
+}
+export async function user_entergame(s:service, ses:servicesession, pl:any, data:any):Promise<void> {
+
 }

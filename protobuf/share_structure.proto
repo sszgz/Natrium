@@ -1,6 +1,61 @@
-package user_c2s;
+package share;
 syntax = "proto3";
 
+message pos2d {
+    int32 x = 1;
+    int32 y = 2;
+}
+
+// ----------------------------------------------------------------------------
 message user_data {
     string name = 1;
+}
+
+// ----------------------------------------------------------------------------
+message player_data {
+    uint32 mapid = 1;
+    uint32 def_heroava = 2;
+
+    repeated hero_data heros = 3;
+    repeated pet_data pets = 4;
+    repeated ship_data ships = 5;
+
+}
+
+message hero_data {
+    
+}
+
+message pet_data {
+    
+}
+
+message ship_data {
+
+}
+
+// ----------------------------------------------------------------------------
+message port_data {
+    uint32 portid = 1;
+
+    repeated minning_data minnings = 2;
+    repeated factory_data factories = 3;
+    repeated shop_data shops = 4;
+    repeated shipyard_data shipyards = 5;
+}
+
+message minning_data {
+
+}
+
+message factory_data {
+
+}
+
+message shop_data {
+
+}
+
+message shipyard_data {
+
 }

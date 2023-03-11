@@ -4,7 +4,32 @@ syntax = "proto3";
 import "./share_structure.proto";
 
 message login {
-    string name = 1; 
-    string uid = 2;
-    string token = 3;
+    required string name = 1; 
+    required string uid = 2;
+    required string token = 3;
 }
+
+message create_player {
+
+}
+
+message enter_game {
+
+}
+
+message goto {
+    required share.pos2d frompos = 1;
+    required share.pos2d topos = 2;
+}
+
+message changemap_begin {
+}
+
+message changemap_end {
+    required uint32 tomapid = 1;
+}
+
+message manul_mine {
+    required uint32 mineid = 1;
+}
+
