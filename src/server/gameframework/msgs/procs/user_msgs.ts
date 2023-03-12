@@ -62,7 +62,7 @@ export async function user_login(s:service, ses:servicesession, pl:any, data:any
     let res_data = {
         res:ServerErrorCode.ResOK, 
         data:{name:data.name},
-        is_new:true
+        isNew:true
     }
 
     let player_base_data = await nat.datas.read_player_data(data.uid, "generic");
@@ -74,7 +74,7 @@ export async function user_login(s:service, ses:servicesession, pl:any, data:any
             return;
         }
 
-        res_data.is_new = false;
+        res_data.isNew = false;
     }
 
     _Node_SessionContext.sendWSMsg(ses.session_id, "login_res", res_data);
