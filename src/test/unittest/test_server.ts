@@ -3,8 +3,8 @@
 // author : Sean Chen
 
 import * as path from "node:path";
-import { natrium_server } from "../../src/server/natrium_server";
-import { protobuf_c2s, protobuf_s2c } from "../../src/server/gameframework/msgs/protobufmsgs";
+import { natrium_server } from "../../server/natrium_server";
+import { protobuf_c2s, protobuf_s2c } from "../../share/msgs/protobufmsgs";
 
 const server:natrium_server = new natrium_server();
 
@@ -13,9 +13,9 @@ let start_server = async () =>{
     await server.startup();
 
     server.wslistener?.pcodec.load_protobufs([
-        path.resolve(__dirname, "../../protobuf/share_structure.proto"),
-        path.resolve(__dirname, "../../protobuf/s2c_user.proto"),
-        path.resolve(__dirname, "../../protobuf/c2s_user.proto"),
+        path.resolve(__dirname, "../../../protobuf/share_structure.proto"),
+        path.resolve(__dirname, "../../../protobuf/s2c_user.proto"),
+        path.resolve(__dirname, "../../../protobuf/c2s_user.proto"),
     ]);
     
     let pcodec = server.wslistener?.pcodec;

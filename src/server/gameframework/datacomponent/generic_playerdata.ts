@@ -6,6 +6,7 @@ import { player } from "../player";
 import { player_datacomp_base } from "../player_datas";
 
 export interface generic_playerdata {
+    readonly mapid:number
     readonly def_heroava:number;
 }
 
@@ -28,10 +29,16 @@ export class generic_playerdata_comp extends player_datacomp_base {
 
         // set default data value
         this._data = {
-            def_heroava:1
+            mapid:1,
+            def_heroava:1,
+            heros:[]
         };
     }
 
+    protected async _on_create_data():Promise<void> {
+        // generate unique id
+        //this._data["playerid"] = ;
+    }
     protected _format_data_fromdbdata(dbdata:any):any {
         // TO DO : format data
         return dbdata;

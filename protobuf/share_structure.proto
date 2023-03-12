@@ -12,9 +12,20 @@ message user_data {
 }
 
 // ----------------------------------------------------------------------------
+
+message player_sinfo {
+    uint32 playerid = 1;
+    uint32 heroava = 2;
+}
+
+message player_info {
+    required player_sinfo sinfo = 1;
+    
+}
+
 message player_data {
     uint32 mapid = 1;
-    uint32 def_heroava = 2;
+    required player_info info = 2;
 
     repeated hero_data heros = 3;
     repeated pet_data pets = 4;

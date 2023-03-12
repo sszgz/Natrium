@@ -2,10 +2,10 @@
 // license : MIT
 // author : Sean Chen
 
-import { debug_level_enum } from "../../src/interface/debug/debug_logger";
-import { wslistener_handler } from "../../src/interface/network/wslistener";
-import { packet } from "../../src/interface/protocol/packet";
-import { nat } from "../../src/natrium";
+import { debug_level_enum } from "../../interface/debug/debug_logger";
+import { wslistener_handler } from "../../interface/network/wslistener";
+import { packet } from "../../interface/protocol/packet";
+import { nat } from "../../natrium";
 
 class handler implements wslistener_handler {
     on_connected(cid:number):void {

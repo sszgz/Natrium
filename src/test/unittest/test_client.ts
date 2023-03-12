@@ -6,9 +6,9 @@ import * as path from "node:path";
 import * as readline from 'node:readline/promises';
 import { stdin as input, stdout as output } from 'node:process';
 
-import { protobuf_c2s, protobuf_s2c } from "../../src/server/gameframework/msgs/protobufmsgs";
-import { natrium_client } from "../../src/client/natrium_client";
-import { packet, prototype } from "../../src/interface/protocol/packet";
+import { protobuf_c2s, protobuf_s2c } from "../../share/msgs/protobufmsgs";
+import { natrium_client } from "../../client/natrium_client";
+import { packet, prototype } from "../../interface/protocol/packet";
 
 const client:natrium_client = new natrium_client();
 
@@ -17,9 +17,9 @@ let start_client = async () =>{
     await client.init();
 
     client.connecter?.pcodec.load_protobufs([
-        path.resolve(__dirname, "../../protobuf/share_structure.proto"),
-        path.resolve(__dirname, "../../protobuf/s2c_user.proto"),
-        path.resolve(__dirname, "../../protobuf/c2s_user.proto"),
+        path.resolve(__dirname, "../../../protobuf/share_structure.proto"),
+        path.resolve(__dirname, "../../../protobuf/s2c_user.proto"),
+        path.resolve(__dirname, "../../../protobuf/c2s_user.proto"),
     ]);
 
     let pcodec = client.connecter?.pcodec;

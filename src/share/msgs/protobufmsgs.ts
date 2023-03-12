@@ -10,6 +10,8 @@ export enum protobuf_c2s {
     goto = 101,
     changemap_begin = 102,
     changemap_end = 103,
+    get_player_sinfo = 104,
+    get_player_info = 105,
 
     manul_mine = 201,
 }
@@ -21,6 +23,10 @@ export enum protobuf_s2c {
 
     player_goto = 10101,
     changemap_res = 10103,
+    get_player_sinfo_res = 10104,
+    get_player_info_res = 10105,
+    player_enter_zone = 10106,
+    player_leave_zone = 10107,
 
     manul_mine_res = 10201,
 }

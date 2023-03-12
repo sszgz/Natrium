@@ -2,13 +2,17 @@
   "name": "natrium",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/"
+  ],
   "scripts": {
-    "utest": "npx ts-node ./test/test.ts",
-    "testwsconn": "npx ts-node ./test/unittest/test_wsconnecter.ts",
-    "testwslisten": "npx ts-node ./test/unittest/test_wslistener.ts",
-    "testserver": "npx ts-node ./test/unittest/test_server.ts",
-    "testclient": "npx ts-node ./test/unittest/test_client.ts",
+    "utest": "npx ts-node ./src/test/test.ts",
+    "testwsconn": "npx ts-node ./src/test/unittest/test_wsconnecter.ts",
+    "testwslisten": "npx ts-node ./src/test/unittest/test_wslistener.ts",
+    "testserver": "npx ts-node ./src/test/unittest/test_server.ts",
+    "testclient": "npx ts-node ./src/test/unittest/test_client.ts",
     "start:dev": "npx nodemon",
     "build": "rimraf ./build && tsc",
     "start": "npm run build && node build/index.js"

@@ -1,0 +1,12 @@
+.github/
+.vscode/
+src/
+src/test/
+dist/test/
+.deepsource.toml
+.release-it.json
+CONTRIBUTING.md
+SECURITY.md
+index.ts
+tsconfig.json
+nodemon.json

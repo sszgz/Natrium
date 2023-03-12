@@ -8,7 +8,7 @@ import { servicesession } from "../../../../interface/service/servicesession";
 import { _Node_SessionContext } from "../../../../_node_implements/_node/_thread_contexts";
 import { outgameservice } from "../../../services/outgameservice";
 import { player_datas } from "../../player";
-import { ServerErrorCode } from "../msgcode";
+import { ServerErrorCode } from "../../../../share/msgs/msgcode";
 
 export async function user_login(s:service, ses:servicesession, pl:any, data:any):Promise<void> {
     if(pl != undefined){

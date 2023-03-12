@@ -161,8 +161,11 @@ export class packetcodec_nodeimpl implements packetcodec {
         
         // TO DO : do zip in thread
         let isZiped = false;
+
+        // TO DO : wait client fix zlib bug
         if(protodata.length > 1024){
-            let zipedbuf = zlib.brotliCompressSync(protodata);
+            //let zipedbuf = zlib.brotliCompressSync(protodata);
+            let zipedbuf = zlib.deflateRawSync(protodata);
             if(zipedbuf.length < protodata.length){
                 protodata = zipedbuf;
                 isZiped = true;
@@ -237,9 +240,12 @@ export class packetcodec_nodeimpl implements packetcodec {
         }
 
         // TO DO : do unzip in thread
+        
+        // TO DO : wait client fix zlib bug
         if(pkt.compressed){
             buffer = buffer.subarray(offset);
-            buffer = zlib.brotliDecompressSync(buffer);
+            //buffer = zlib.brotliDecompressSync(buffer);
+            buffer = zlib.inflateRawSync(buffer);
             offset = 0;
         }
 

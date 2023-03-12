@@ -4,10 +4,10 @@
 import * as readline from 'node:readline/promises';
 import { stdin as input, stdout as output } from 'node:process';
 
-import { debug_level_enum } from "../../src/interface/debug/debug_logger";
-import { wsconnecter_handler } from "../../src/interface/network/wsconnecter";
-import { packet, prototype } from "../../src/interface/protocol/packet";
-import { nat } from "../../src/natrium";
+import { debug_level_enum } from "../../interface/debug/debug_logger";
+import { wsconnecter_handler } from "../../interface/network/wsconnecter";
+import { packet, prototype } from "../../interface/protocol/packet";
+import { nat } from "../../natrium";
 
 
 class handler implements wsconnecter_handler {
@@ -43,7 +43,7 @@ var c = nat.create_packetcodec();
 
 var connecter = nat.create_wsconnecter(h, c);
 
-connecter.connect("ws://127.0.0.1:4091");
+connecter.connect("ws://127.0.0.1:4090");
 
 var testcmd = async ()=>{
     const rl = readline.createInterface({ input, output });
