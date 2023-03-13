@@ -115,7 +115,7 @@ export async function user_createplayer(s:service, ses:servicesession, pl:any, d
         pname:data.pname,
         heros:[]
     };
-    await nat.datas.insert_player_data(data.uid, "generic", player_generic_data);
+    await nat.datas.insert_player_data(ses_base_data.uid, "generic", player_generic_data);
 
     const pla = await (s as outgameservice).create_player(ses, new player_datas(ses_base_data.uid));
     if(pla == null) {

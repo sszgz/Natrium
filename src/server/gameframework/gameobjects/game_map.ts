@@ -64,7 +64,7 @@ export class game_map {
         // notify change map
         _Node_SessionContext.sendWSMsg(pl.session.session_id, "changemap_res", {
             tomapid:this._mapconf.id,
-            self_instid:pl.runtimedata.instid, 
+            selfInstid:pl.runtimedata.instid, 
             pos:pl.datacomp.generic.data.pos
         });
 
@@ -105,8 +105,10 @@ export class game_map {
 
         // remove player
         this._pid_players.delete(pl.datacomp.generic.data.playerid);
-        let idx = this._player_sessionids.findIndex((v)=>v==pl.session.session_id);
-        this._player_sessionids = this._player_sessionids.splice(idx);
+        let idx = this._player_sessionids.indexOf(pl.session.session_id);
+        if(idx >= 0){
+            this._player_sessionids.splice(idx);
+        }
         
         // notify other player this player leave
         _Node_SessionContext.broadCastMsg(pl.session.session_id, this._player_sessionids, "player_leavezone", {
@@ -158,28 +160,21 @@ export class game_map {
 
         // notify other player this player move
         _Node_SessionContext.broadCastMsg(pl.session.session_id, this._player_sessionids, "player_goto", {
-            infos:[
-                {
-                    instid:pl.runtimedata.instid, 
-                    goto:{
-                        from,
-                        to
-                    }
-                }
-            ]
+            instid:pl.runtimedata.instid, 
+            goto:{
+                from,
+                to
+            }
         });
     }
     public player_stop(pl:player, pos:pos2d):void {
         pl.runtimedata.moving = null;
+        pl.datacomp.generic.data.pos = pos;
 
         // notify other player this player stop
         _Node_SessionContext.broadCastMsg(pl.session.session_id, this._player_sessionids, "player_stop", {
-            infos:[
-                {
-                    instid:pl.runtimedata.instid, 
-                    pos
-                }
-            ]
+            instid:pl.runtimedata.instid, 
+            pos
         });
     }
 }

@@ -138,6 +138,44 @@ var testcmd = async ()=>{
                     client.connecter.send_packet(pkt);
                 }
                 break;
+            case "goto":
+                {
+                    let obj = {
+                        c:"goto",
+                        d:{
+                            goto:{
+                                from:{
+                                    x:11,
+                                    y:11,
+                                },
+                                to:{
+                                    x:22,
+                                    y:23
+                                }
+                            }
+                        }
+                    };
+
+                    let pkt = client.connecter.pcodec.create_protopkt(obj.c, obj.d);
+                    client.connecter.send_packet(pkt);
+                }
+                break;
+            case "stop":
+                {
+                    let obj = {
+                        c:"stop",
+                        d:{
+                            pos:{
+                                x:200,
+                                y:200
+                            }
+                        }
+                    };
+
+                    let pkt = client.connecter.pcodec.create_protopkt(obj.c, obj.d);
+                    client.connecter.send_packet(pkt);
+                }
+                break;
             default:
                 console.log("unknown command!");
 

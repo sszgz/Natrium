@@ -48,7 +48,7 @@ message player_stop {
 
 message changemap_res {
     required uint32 tomapid = 1;
-    required uint32 self_instid = 2;
+    required uint32 selfInstid = 2;
     required share.pos2d pos = 3;
 }
 

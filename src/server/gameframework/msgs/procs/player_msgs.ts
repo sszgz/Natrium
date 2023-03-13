@@ -20,7 +20,7 @@ export async function player_goto(s:service, ses:servicesession, pl:any, data:an
         return;
     }
 
-    (pl as player).runtimedata.map?.player_goto(pl, data.from, data.to);
+    (pl as player).runtimedata.map?.player_goto(pl, data.goto.from, data.goto.to);
 }
 export async function player_stop(s:service, ses:servicesession, pl:any, data:any):Promise<void> {
     if(pl == null){
