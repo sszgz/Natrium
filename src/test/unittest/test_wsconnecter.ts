@@ -71,9 +71,9 @@ var testcmd = async ()=>{
                     let obj = {
                         c:"login",
                         d:{
-                            "name":"BIG",
-                            "uid":"1111",
-                            "token":"132-12-BIG"
+                            "name": "",
+                            "uid": "2",
+                            "token": "714540b0-1678703398240-2",
                         }
                     };
     

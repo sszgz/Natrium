@@ -93,9 +93,9 @@ var testcmd = async ()=>{
                     let obj = {
                         c:"login",
                         d:{
-                            "name":"BIG",
-                            "uid":"1111",
-                            "token":"132-12-BIG"
+                            "name": "",
+                            "uid": "2",
+                            "token": "936a17ca-1678700838930-2",
                         }
                     };
     
@@ -108,7 +108,23 @@ var testcmd = async ()=>{
                 {
                     let obj = {
                         c:"create_player",
-                        d:{}
+                        d:{
+                            "pname":"eedd",
+                            "gender":1
+                        }
+                    };
+
+                    let pkt = client.connecter.pcodec.create_protopkt(obj.c, obj.d);
+                    client.connecter.send_packet(pkt);
+                }
+                break;
+            case "enter_game":
+                {
+                    let obj = {
+                        c:"enter_game",
+                        d:{
+                            
+                        }
                     };
 
                     let pkt = client.connecter.pcodec.create_protopkt(obj.c, obj.d);

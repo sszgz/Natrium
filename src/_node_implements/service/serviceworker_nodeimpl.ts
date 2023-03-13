@@ -193,7 +193,7 @@ export class serviceworker_nodeimpl implements serviceworker {
                 this.remove_session(ses);
                 
                 this._changing_svr_sessoins.set(ses.session_id, ses);
-                // TO DO : wait remove finish
+                // wait remove finish
             }
             break;
         case _Service_W2M_MSG._w2m_changeservice_sesrmved:
@@ -213,7 +213,6 @@ export class serviceworker_nodeimpl implements serviceworker {
                 if(serviceworker == undefined){
                     natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `serviceworker_nodeimpl service:${this._service_name} index:${this._service_index} change service to service:${msg.msg.tosn} index:${msg.msg.tosi} not exist`);
                     // TO DO : kick
-                    // for Debug ...
                     network.def_wslistener.disconnect(msg.sid,"service bind error");
                     return;
                 }
