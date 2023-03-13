@@ -53,7 +53,7 @@ export class wslistener_nodeimpl implements wslistener {
         return this._pcodec;
     }
 
-    public start(host:string, port:number):boolean{
+    public start(host:string|undefined, port:number):boolean{
 
         if(this._pcodec == null)
         {

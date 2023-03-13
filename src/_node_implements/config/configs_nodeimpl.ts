@@ -24,7 +24,8 @@ export class configs_nodeimpl implements configs {
             svrconfigfile = "../../../config/serverconf.json";
         }
         let serverconf_name = path.resolve(__dirname, svrconfigfile);
-        
+        this._svrconfigfile = svrconfigfile;
+
         natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_system, `configs_nodeimpl init server conf from ${serverconf_name}`);
 
         let scf = fs.readFileSync(serverconf_name, "utf-8");

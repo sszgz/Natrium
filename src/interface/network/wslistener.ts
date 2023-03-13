@@ -17,7 +17,7 @@ export interface wslistener {
     readonly handler:wslistener_handler;
     readonly pcodec:packetcodec;
 
-    start(host:string, port:number):boolean;
+    start(host:string|undefined, port:number):boolean;
     shutdown():void;
     
     disconnect(cid:number, reason:string):void;

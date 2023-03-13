@@ -136,7 +136,7 @@ export class natrium_server implements wslistener_handler, httplistener_handler 
         this._httplistener.start(host, port);
     }
 
-    public open_wslistener(uri:string, port:number) {
+    public open_wslistener(uri:string|undefined, port:number) {
         if(this._wslistener == null){
             nat.dbglog.log(debug_level_enum.dle_error, `natrium_server open wslistener when _wslistener is null`);
             return;
