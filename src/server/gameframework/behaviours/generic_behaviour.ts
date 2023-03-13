@@ -8,10 +8,6 @@ import { debug_level_enum } from "../../../interface/debug/debug_logger";
 import { object_util } from "../../../util/object_util";
 import { player, player_behaviour, player_behaviour_base } from "../player";
 
-export interface player_generic_data {
-    readonly def_heroava:number;
-}
-
 export class generic_behaviour extends player_behaviour_base {
 
     public static readonly beh_name = "generic";

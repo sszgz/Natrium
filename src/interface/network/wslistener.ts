@@ -22,5 +22,5 @@ export interface wslistener {
     
     disconnect(cid:number, reason:string):void;
     send_packet(cid:number, p:packet):void;
-    broadcast_packet(cid:number[], p:packet):void;
+    broadcast_packet(cid:number[], p:packet, exceptcid:number):void;
 }

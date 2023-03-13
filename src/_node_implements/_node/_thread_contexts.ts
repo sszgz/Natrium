@@ -46,6 +46,10 @@ export class _Node_SessionContext {
         // TO DO : setup wslistener port
         parentPort?.postMessage({cmd:_Service_W2M_MSG._w2m_session_msg, sid:sid, is_rpc:is_rpc, msg:{c:command, d:data}});
     }
+    public static broadCastMsg(fromsid:number, tosids:Array<number>, command:string, data:any, is_rpc:boolean=true):void {
+        // TO DO : setup wslistener port
+        parentPort?.postMessage({cmd:_Service_W2M_MSG._w2m_boradcast_session_msg, fromsid, tosids, is_rpc, msg:{c:command, d:data}});
+    }
     public static changeService(sid:number, toservicename:string, toserviceindex:number):void {
         const svr_worker = _Node_ThreadContext.currentWorker as _Service_Node_Worker_Impl;
         svr_worker.mark_changeservice(sid, toservicename, toserviceindex);
@@ -55,5 +59,8 @@ export class _Node_SessionContext {
     public static changeServiceSesRmved(sid:number, tosn:string, tosi:number):void {
         // notify change service session removed
         parentPort?.postMessage({cmd:_Service_W2M_MSG._w2m_changeservice_sesrmved, sid:sid, msg:{tosn, tosi}});
+    }
+    public static kickPlayer(sid:number, reason:string):void {
+        parentPort?.postMessage({cmd:_Service_W2M_MSG._w2m_kickplayer, sid, reason});
     }
 }

@@ -22,6 +22,7 @@ export interface service {
 
     startup():Promise<boolean>;
     shutdown():Promise<boolean>;
+    startshutingdown():Promise<boolean>;
 
     get_session(sid:number):servicesession|undefined;
 
@@ -43,6 +44,10 @@ export class natrium_services {
     
     protected static _serviceTypeMap:Map<string, (c:serviceconf)=>service> = new Map<string, any>();
     protected static _workerMap:Map<string, serviceworker> = new Map<string, serviceworker>();
+
+    public static get workers(){
+        return this._workerMap;
+    }
 
     public static register(name:string, serviceCtor:(c:serviceconf)=>service):void {
         natrium_services._serviceTypeMap.set(name, serviceCtor);

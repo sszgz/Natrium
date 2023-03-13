@@ -35,6 +35,7 @@ export interface httplistenerconf {
 export interface serverconf {
     readonly db_confs:any;
     readonly redis_confs:any;
+    readonly service_confs:any;
     
     get_db_conf(dbname:string):dbconf|null;
     get_redis_conf(dbname:string):redisconf|null;

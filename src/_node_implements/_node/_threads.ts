@@ -55,6 +55,8 @@ export class _Node_WorkerThread extends EventEmitter {
     protected _init_reject:any = null;
     protected _fin_resolve:any = null;
     protected _fin_reject:any = null;
+
+    protected _exited:boolean = false;
     
     constructor(uname:string, w:Worker){
         super();
@@ -68,6 +70,9 @@ export class _Node_WorkerThread extends EventEmitter {
     }
     public get worker():Worker {
         return this._worker;
+    }
+    public get exited():boolean {
+        return this._exited;
     }
 
     public async init():Promise<void>{
@@ -86,6 +91,7 @@ export class _Node_WorkerThread extends EventEmitter {
             thisptr._on_worker_error(err);
         };
         this._on_exit_fn = (code:number) => {
+            thisptr._exited = true;
             if (code !== 0){
                 thisptr._on_worker_error(new Error(`Worker stopped with exit code ${code}`));
             }
@@ -224,9 +230,9 @@ class _Node_Thread {
         
         natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_system, `_Node_Thread shutdown tid:${threadId} worker:${this._worker.uname}`);
     }
-    public start_shutdown():void {
+    public async start_shutdown():Promise<void> {
         this._isshutingdown = true;
-        this._worker.startshutingdown();
+        await this._worker.startshutingdown();
 
         // TO DO : finish all tasks
         // TO DO : close all messge channel

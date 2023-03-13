@@ -22,6 +22,7 @@ export interface serviceworker {
     readonly service_name:string;
     readonly service_index:number;
     readonly channel:servicechannel;
+    readonly exited:boolean;
 
     set_service_index(si:number):void;
 

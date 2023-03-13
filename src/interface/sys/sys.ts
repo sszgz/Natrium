@@ -7,4 +7,6 @@ export interface sys {
     getTimeStamp() : number;
 
     getTickFromAppStart() : number;
+
+    random(): number;
 }

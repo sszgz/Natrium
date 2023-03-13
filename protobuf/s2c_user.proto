@@ -23,13 +23,33 @@ message enter_game_res {
     optional share.player_data data = 2;
 }
 
+message playerinzoneinfo {
+    required uint32 instid = 1;
+    required uint32 playerid = 2;
+    required share.pos2d pos = 3;
+    optional share.player_mov_info goto = 4;
+}
+
+message player_enterzone {
+    repeated playerinzoneinfo infos = 1;
+}
+message player_leavezone {
+    repeated uint32 instids = 1;
+}
+
 message player_goto {
-    required share.pos2d frompos = 1;
-    required share.pos2d topos = 2;
+    required uint32 instid = 1;
+    required share.player_mov_info goto = 2;
+}
+message player_stop {
+    required uint32 instid = 1;
+    required share.pos2d pos = 2;
 }
 
 message changemap_res {
     required uint32 tomapid = 1;
+    required uint32 self_instid = 2;
+    required share.pos2d pos = 3;
 }
 
 message get_player_sinfo_res {

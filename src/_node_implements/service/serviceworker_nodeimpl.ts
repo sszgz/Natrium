@@ -65,6 +65,12 @@ export class serviceworker_nodeimpl implements serviceworker {
     public get channel() {
         return this._channel;
     }
+    public get exited() {
+        if(this._worker_thread == null){
+            return false;
+        }
+        return this._worker_thread.exited;
+    }
 
     public set_service_index(i:number):void {
         this._service_index = i;
@@ -111,9 +117,6 @@ export class serviceworker_nodeimpl implements serviceworker {
         }
 
         await this._worker_thread.finish();
-
-        // wait worker exit
-        // TO DO : off _worker_thread listener
 
         return true;
     }
@@ -181,6 +184,18 @@ export class serviceworker_nodeimpl implements serviceworker {
                 }
             }
             break;
+        case _Service_W2M_MSG._w2m_boradcast_session_msg:
+            {
+                if(msg.is_rpc){
+                    // send rpc
+                    network.def_wslistener.broadcast_packet(msg.tosids, network.def_wslistener.pcodec.create_protopkt(msg.msg.c, msg.msg.d), msg.fromsid); // sid = cid
+                }
+                else {
+                    // send json
+                    network.def_wslistener.broadcast_packet(msg.tosids, network.def_wslistener.pcodec.create_jsonpkt(msg.msg), msg.fromsid); // sid = cid
+                }
+            }
+            break;
         case _Service_W2M_MSG._w2m_changeservice:
             {
                 let ses = this._sessions.get(msg.sid);
@@ -217,6 +232,11 @@ export class serviceworker_nodeimpl implements serviceworker {
                     return;
                 }
                 serviceworker.add_session(ses);
+            }
+            break;
+        case _Service_W2M_MSG._w2m_kickplayer:
+            {
+                network.def_wslistener.disconnect(msg.sid, msg.reason);
             }
             break;
         }

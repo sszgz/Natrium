@@ -10,6 +10,8 @@ export class serverconf_nodeimpl implements serverconf {
 
     protected _data:any;
 
+    protected _service_confs:any = {};
+
     constructor(d:any) {
         this._data = d;
     }
@@ -19,6 +21,15 @@ export class serverconf_nodeimpl implements serverconf {
     }
     public get redis_confs(){
         return this._data.redis;
+    }
+    public get service_confs(){
+        return this._service_confs;
+    }
+
+    public format_server_conf(){
+        for(let i=0; i<this._data.services.length; ++i){
+            this._service_confs[this._data.services[i].service_name] = this._data.services[i];
+        }
     }
     
     public get_db_conf(dbname:string):dbconf|null {

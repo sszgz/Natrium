@@ -29,9 +29,13 @@ let start_client = async () =>{
     }
 
     // register server msg
+    pcodec.register_protobuf_msg(protobuf_s2c.server_error, "server_error", "s2c_user.server_error");
     pcodec.register_protobuf_msg(protobuf_s2c.login_res, "login_res", "s2c_user.login_res");
     pcodec.register_protobuf_msg(protobuf_s2c.create_player_res, "create_player_res", "s2c_user.create_player_res");
     pcodec.register_protobuf_msg(protobuf_s2c.enter_game_res, "enter_game_res", "s2c_user.enter_game_res");
+    pcodec.register_protobuf_msg(protobuf_s2c.player_stop, "player_stop", "s2c_user.player_stop");
+    pcodec.register_protobuf_msg(protobuf_s2c.player_enterzone, "player_enterzone", "s2c_user.player_enterzone");
+    pcodec.register_protobuf_msg(protobuf_s2c.player_leavezone, "player_leavezone", "s2c_user.player_leavezone");
     pcodec.register_protobuf_msg(protobuf_s2c.player_goto, "player_goto", "s2c_user.player_goto");
     pcodec.register_protobuf_msg(protobuf_s2c.changemap_res, "changemap_res", "s2c_user.changemap_res");
     pcodec.register_protobuf_msg(protobuf_s2c.manul_mine_res, "manul_mine_res", "s2c_user.manul_mine_res");
@@ -41,6 +45,7 @@ let start_client = async () =>{
     pcodec.register_protobuf_msg(protobuf_c2s.create_player, "create_player", "c2s_user.create_player");
     pcodec.register_protobuf_msg(protobuf_c2s.enter_game, "enter_game", "c2s_user.enter_game");
     pcodec.register_protobuf_msg(protobuf_c2s.goto, "goto", "c2s_user.goto");
+    pcodec.register_protobuf_msg(protobuf_c2s.stop, "stop", "c2s_user.stop");
     pcodec.register_protobuf_msg(protobuf_c2s.changemap_begin, "changemap_begin", "c2s_user.changemap_begin");
     pcodec.register_protobuf_msg(protobuf_c2s.changemap_end, "changemap_end", "c2s_user.changemap_end");
     pcodec.register_protobuf_msg(protobuf_c2s.manul_mine, "manul_mine", "c2s_user.manul_mine");
@@ -94,8 +99,10 @@ var testcmd = async ()=>{
                         c:"login",
                         d:{
                             "name": "",
-                            "uid": "2",
-                            "token": "936a17ca-1678700838930-2",
+                            //"uid": "2",
+                            //"token": "936a17ca-1678700838930-2",
+                            "uid": "3",
+                            "token": "936a17ca-1678700838930-3",
                         }
                     };
     
@@ -123,7 +130,7 @@ var testcmd = async ()=>{
                     let obj = {
                         c:"enter_game",
                         d:{
-                            
+
                         }
                     };
 

@@ -21,6 +21,7 @@ message player_sinfo {
     required uint32 heroava = 2;
     required uint32 gender = 3;
     required string pname = 4;
+    optional uint32 speed = 5;
 }
 
 message player_info {
@@ -36,6 +37,12 @@ message player_data {
     repeated pet_data pets = 4;
     repeated ship_data ships = 5;
 
+}
+
+message player_mov_info {
+    
+    required share.pos2d from = 1;
+    required share.pos2d to = 2;
 }
 
 message hero_data {

@@ -19,8 +19,10 @@ message enter_game {
 }
 
 message goto {
-    required share.pos2d frompos = 1;
-    required share.pos2d topos = 2;
+    required share.player_mov_info goto = 1;
+}
+message stop {
+    required share.pos2d pos = 1;
 }
 
 message changemap_begin {

@@ -136,7 +136,7 @@ export class wslistener_nodeimpl implements wslistener {
         
         this._send_data(sockcid, data);
     }
-    public broadcast_packet(cid:number[], p:packet):void {
+    public broadcast_packet(cid:number[], p:packet, exceptcid:number):void {
         natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_debug, `wslistener_nodeimpl broadcast cids:${cid} packet:${p}`);
 
         var data:Buffer = this._pcodec.encode_packet(p);
@@ -145,7 +145,9 @@ export class wslistener_nodeimpl implements wslistener {
         }
 
         for(var i=0; i<cid.length; ++i){
-            
+            if(cid[i] == exceptcid) {
+                continue;
+            }
             const sockcid = this._cid_to_sock.get(cid[i]);
             if(sockcid == undefined)
             {

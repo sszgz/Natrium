@@ -89,7 +89,7 @@ export abstract class player_datacomp_base implements player_datacomponent{
         data = this._format_data_fromruntime(data);
 
         this._dataobj.mod_data(data);
-        this._dataobj.write_back(do_persisit);
+        await this._dataobj.write_back(do_persisit);
     }
 
     protected _format_data_fromdbdata(dbdata:any):any {

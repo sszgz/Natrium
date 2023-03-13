@@ -61,8 +61,14 @@ export class _Service_Node_Worker_Impl implements _Node_Worker {
 
         await this._service.shutdown();
     }
-    startshutingdown():void {
+    async startshutingdown():Promise<void> {
         // TO DO : finish all tasks
+        if(this._service == null){
+            natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `_Service_Node_Worker_Impl shutdown _uname:${this._uname} service is null`);
+            return;
+        }
+
+        await this._service.startshutingdown();
     }
     
     onsetupchannel(fromworker:string, port:MessagePort, udata:any):void {

@@ -55,6 +55,7 @@ export class httplistener_nodeimpl implements httplistener {
     }
     public shutdown():void {
         this._httpserver.close();
+        natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_system, `httplistener_nodeimpl listen at:${this._host}:${this._port} shutdown`);
     }
 
     protected _on_err(err:Error):void {

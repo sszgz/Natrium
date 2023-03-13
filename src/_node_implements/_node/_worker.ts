@@ -11,7 +11,7 @@ export interface _Node_Worker {
 
     startup(uname:string, workerData:any):Promise<void>;
     shutdown():Promise<void>;
-    startshutingdown():void;
+    startshutingdown():Promise<void>;
     
     onsetupchannel(fromworker:string, port:MessagePort, udata:any):void;
     onmsg(fromworker:string, msg:any):Promise<void>;

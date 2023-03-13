@@ -6,9 +6,18 @@ import { nat } from "../../../natrium";
 import { player } from "../player";
 import { player_datacomp_base } from "../player_datas";
 
+export interface pos2d {
+    readonly x:number;
+    readonly y:number;
+}
+
 export interface generic_playerdata {
-    readonly mapid:number
-    readonly def_heroava:number;
+    readonly playerid:number;
+    readonly mapid:number;
+    readonly heroava:number;
+    readonly gender:number;
+    readonly pname:number;
+    readonly pos?:pos2d;
 }
 
 export class generic_playerdata_comp extends player_datacomp_base {

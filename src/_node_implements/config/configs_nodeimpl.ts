@@ -31,6 +31,7 @@ export class configs_nodeimpl implements configs {
         let scf = fs.readFileSync(serverconf_name, "utf-8");
         let scd = JSON.parse(scf);
         this._serverconf = new serverconf_nodeimpl(scd);
+        this._serverconf.format_server_conf();
 
         let mainconf_name = path.resolve(__dirname, "../../../config/main.json");
         

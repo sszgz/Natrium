@@ -6,6 +6,8 @@ import { nat } from "../..";
 import { dataobject } from "../../interface/data/dataobj";
 import { debug_level_enum } from "../../interface/debug/debug_logger";
 import { servicesession } from "../../interface/service/servicesession";
+import { pos2d } from "./datacomponent/generic_playerdata";
+import { game_map } from "./gameobjects/game_map";
 import { player_datacomponent, player_datas } from "./player_datas";
 
 export interface player_behaviour {
@@ -17,17 +19,37 @@ export interface player_behaviour {
     fin():Promise<void>;
 }
 
+export interface movedata {
+    from:pos2d;
+    to:pos2d;
+}
+
+export interface runtimedata {
+    instid:number;
+    inzoneplayer:Array<player>;
+    moving:movedata|null;
+    map:game_map|null;
+}
+
 export class player {
     protected _session:servicesession;
     protected _behaviours:player_behaviours_map;
     protected _datas:player_datas;
     protected _datacomponents:player_player_datacomponent_map;
+    protected _runtimedata:runtimedata;
 
     constructor(s:servicesession, d:player_datas) {
         this._session = s;
         this._behaviours = {};
         this._datas = d;
         this._datacomponents = {};
+
+        this._runtimedata = {
+            instid:0,
+            moving:null,
+            map:null,
+            inzoneplayer:new Array<player>
+        }
     }
 
     public get session() {
@@ -41,6 +63,9 @@ export class player {
     }
     public get datacomp() {
         return this._datacomponents;
+    }
+    public get runtimedata() {
+        return this._runtimedata;
     }
 
     public add_behaviours(beh:player_behaviour):void{

@@ -22,6 +22,8 @@ export enum _Service_W2M_MSG {
 
     _w2m_changeservice = 108,
     _w2m_changeservice_sesrmved = 109,
+    _w2m_kickplayer = 110,
+    _w2m_boradcast_session_msg = 111,
 }
 
 export enum _Service_M2W_MSG {

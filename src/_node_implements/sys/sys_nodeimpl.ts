@@ -2,6 +2,7 @@
 // license : MIT
 // author : Sean Chen
 
+import { random } from "lodash";
 import { sys } from "../../interface/sys/sys";
 
 export class sys_nodeimpl implements sys {
@@ -19,4 +20,7 @@ export class sys_nodeimpl implements sys {
         return Date.now() - this._start_tick;
     }
     
+    public random(): number {
+        return random();
+    }
 }

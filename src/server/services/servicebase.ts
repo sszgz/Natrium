@@ -63,6 +63,26 @@ export abstract class servicebase implements service {
         return true;
     }
     public async shutdown():Promise<boolean> {
+
+        // TO DO : exit clear
+
+        return true;
+    }
+    public async startshutingdown():Promise<boolean> {
+
+        // clear sessions & save data
+        let sessionids = new Array<number>();
+        this._sessions.forEach((s)=>{
+            sessionids.push(s.session_id);
+        });
+
+        // manully call on_session_close
+        for(let i=0; i<sessionids.length; ++i){
+            await this.on_session_close(sessionids[i]);
+        }
+
+        nat.dbglog.log(debug_level_enum.dle_system, `${this._conf.service_name}:${this._service_index} service shutingdown close:${sessionids.length} sessoins`);
+
         return true;
     }
 

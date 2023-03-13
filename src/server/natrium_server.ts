@@ -117,6 +117,37 @@ export class natrium_server implements wslistener_handler, httplistener_handler 
         var c = nat.create_packetcodec();
         this._wslistener = nat.create_wslistener(this, c);
         network.add_wslistener(this._wslistener); // register listener
+
+        // listen on exit sig
+        let thisptr = this;
+        process.on('SIGINT', function() {
+            console.log("Caught interrupt signal");
+        
+            // close all listener
+            thisptr._httplistener?.shutdown();
+            thisptr._wslistener?.shutdown();
+
+            // wait all service shutdown
+
+            // TO DO : not working?
+            natrium_services.workers.forEach(async (sw)=>{
+                await sw.finish_service();
+            });
+
+            // let allexit = false;
+            // while(!allexit){
+            //     allexit = true;
+            //     natrium_services.workers.forEach( (sw)=>{
+            //         if(!sw.exited){
+            //             allexit = false;
+            //         }
+            //     });
+            // }
+
+            console.log("shut down");
+
+            process.exit();
+        });
     }
 
     public reg_httpmsg_proc(cmd:string, proc:httpmsgproc_type):void {

@@ -7,7 +7,7 @@ import { service } from "../../../../interface/service/service";
 import { servicesession } from "../../../../interface/service/servicesession";
 import { _Node_SessionContext } from "../../../../_node_implements/_node/_thread_contexts";
 import { outgameservice } from "../../../services/outgameservice";
-import { player_datas } from "../../player";
+import { player, player_datas } from "../../player";
 import { ServerErrorCode } from "../../../../share/msgs/msgcode";
 import { generic_playerdata_comp } from "../../datacomponent/generic_playerdata";
 
@@ -134,5 +134,6 @@ export async function user_entergame(s:service, ses:servicesession, pl:any, data
     }
 
     // TO DO : calc service index by mapid
-    ses.changeservice("worldservice", 0);
+    let index = ((pl as player).datacomp.generic as generic_playerdata_comp).generic_data.mapid % nat.conf.get_serverconf()?.service_confs.worldservice.service_count;
+    ses.changeservice("worldservice", index);
 }
