@@ -12,6 +12,9 @@ export interface datamanager {
     get_user_sessionid(uid:string):Promise<any>;
     del_user_sessionid(uid:string):Promise<boolean>;
 
+    set_wallet_userid(walletaddr:string, uid:string):Promise<boolean>;
+    get_wallet_userid(walletaddr:string):Promise<string>;
+
     clear_session_datas():Promise<boolean>;
     insert_session_data(sid:number, key:string, data:any):Promise<boolean>;
     update_session_data(sid:number, key:string, data:any, path:string):Promise<boolean>;
@@ -28,6 +31,8 @@ export interface datamanager {
     read_player_data(uid:string, key:string):Promise<any>;
     delete_player_data(uid:string, key:string):Promise<boolean>;
 
+    generate_autoinc_id(key:string):Promise<number>;
+    
     create_user_dataobj(uid:string, dbname:string, key:string, default_data:any):Promise<dataobject|null>;
 
     create_globaldatas(table_name:string):globaldatas|null;

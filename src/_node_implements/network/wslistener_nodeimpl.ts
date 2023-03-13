@@ -102,6 +102,8 @@ export class wslistener_nodeimpl implements wslistener {
     
     public shutdown():void {
         // TO DO : disconnect all connections and shut down
+        natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_system, `wslistener_nodeimpl ${this._host}:${this._port} shutdown`);
+        this._wss?.close();
     }
     
     public disconnect(cid:number, reason:string):void {

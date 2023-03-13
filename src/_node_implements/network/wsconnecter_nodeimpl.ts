@@ -127,9 +127,6 @@ export class wsconnecter_nodeimpl implements wsconnecter {
         this._lastpingtm = Date.now();
         this.send_packet(p);
     }
-    public login(uid:string, token:string):void {
-        
-    }
     
     protected _on_socket_connected():void {
         natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_debug, `wsconnecter_nodeimpl [${this._host}] connected`);

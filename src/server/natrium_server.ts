@@ -5,16 +5,19 @@
 import { nat } from "..";
 import { serverconf } from "../interface/config/configs";
 import { debug_level_enum } from "../interface/debug/debug_logger";
+import { httplistener, httplistener_handler, http_request_like, http_response_like } from "../interface/network/httplistener";
 import { network } from "../interface/network/network";
 import { wslistener, wslistener_handler } from "../interface/network/wslistener";
 import { packet, prototype } from "../interface/protocol/packet";
 import { natrium_services } from "../interface/service/service";
 import { serviceworker } from "../interface/service/serviceworker";
 import { sessionmgr } from "../interface/session/sessionmgr";
+import { http_unknown_cmd_json, on_verify_sign } from "./gameframework/msgs/httpmsgs";
 
-export class natrium_server implements wslistener_handler {
+export class natrium_server implements wslistener_handler, httplistener_handler {
 
     protected _wslistener:wslistener|null = null;
+    protected _httplistener:httplistener|null = null;
 
     protected _sessions:sessionmgr = nat.create_sessionmgr();;
 
@@ -22,11 +25,16 @@ export class natrium_server implements wslistener_handler {
     protected _worldServices:Array<serviceworker> = new Array<serviceworker>();
     protected _levelInstanceServices:Array<serviceworker> = new Array<serviceworker>();
 
+    protected _httpmsgprocs:httpmsgproc_map_type = {};
+
     constructor() {
     }
 
     public get wslistener() {
         return this._wslistener;
+    }
+    public get httplistener() {
+        return this._httplistener;
     }
 
     public async startup() {
@@ -99,10 +107,33 @@ export class natrium_server implements wslistener_handler {
 
         // init session mgr
 
-        // start up listener
+        // reg http msg
+        this.reg_httpmsg_proc("/verify", on_verify_sign);
+
+        // start up http listener
+        this._httplistener = nat.create_httplistener(this);
+
+        // start up ws listener
         var c = nat.create_packetcodec();
         this._wslistener = nat.create_wslistener(this, c);
         network.add_wslistener(this._wslistener); // register listener
+    }
+
+    public reg_httpmsg_proc(cmd:string, proc:httpmsgproc_type):void {
+        if(cmd in this._httpmsgprocs){
+            nat.dbglog.log(debug_level_enum.dle_error, `natrium_server register http msg proc [${cmd} already exist]`);
+            return;
+        }
+        this._httpmsgprocs[cmd] = proc;
+    }
+    public open_httplistener(host:string, port:number) {
+        if(this._httplistener == null){
+            nat.dbglog.log(debug_level_enum.dle_error, `natrium_server open httplistener when _httplistener is null`);
+            return;
+        }
+        
+        // TO DO : use config
+        this._httplistener.start(host, port);
     }
 
     public open_wslistener(uri:string, port:number) {
@@ -169,5 +200,28 @@ export class natrium_server implements wslistener_handler {
         }
     }
 
-
+    async on_request(req:http_request_like, res:http_response_like):Promise<void> {
+        if(req.url == undefined) {
+            res.write(http_unknown_cmd_json);
+            res.end();
+            return;
+        }
+        if(!(req.url in this._httpmsgprocs)){
+            res.write(http_unknown_cmd_json);
+            res.end();
+            return;
+        }
+        try{
+            await this._httpmsgprocs[req.url](req, res);
+        }
+        catch(e){
+            let err:Error = e as Error;
+            nat.dbglog.log(debug_level_enum.dle_error, `natrium_server on http request ${req.url} exception:${err.message}\r\n ${err.stack}`);
+        }
+    }
 }
+
+export type httpmsgproc_type = (req:http_request_like, res:http_response_like) => Promise<void>;
+type httpmsgproc_map_type = {
+    [key:string]:httpmsgproc_type
+};

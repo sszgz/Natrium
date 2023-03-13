@@ -4,6 +4,8 @@
 
 import { datamanager } from "../interface/data/datamanager";
 import { inatrium } from "../interface/inatrium";
+import { httpconnecter } from "../interface/network/httpconnecter";
+import { httplistener, httplistener_handler } from "../interface/network/httplistener";
 import { wsconnecter, wsconnecter_handler } from "../interface/network/wsconnecter";
 import { wslistener, wslistener_handler } from "../interface/network/wslistener";
 import { packetcodec } from "../interface/protocol/packetcodec";
@@ -14,6 +16,8 @@ import { sessionmgr } from "../interface/session/sessionmgr";
 import { configs_nodeimpl } from "./config/configs_nodeimpl";
 import { datamanager_nodeimpl } from "./data/datamanager_nodeimpl";
 import { debug_logger_nodeimpl } from "./debug/debug_logger_nodeimpl";
+import { httpconnecter_nodeimpl } from "./network/httpconnecter_nodeimpl";
+import { httplistener_nodeimpl } from "./network/httplistener_nodeimpl";
 import { wsconnecter_nodeimpl } from "./network/wsconnecter_nodeimpl";
 import { wslistener_nodeimpl } from "./network/wslistener_nodeimpl";
 import { packetcodec_nodeimpl } from "./protocol/packetcodec_nodeimpl";
@@ -46,6 +50,13 @@ export class natrium_nodeimpl implements inatrium  {
     }
     public get datas() {
         return this._datas;
+    }
+    
+    public create_httplistener(h:httplistener_handler):httplistener {
+        return new httplistener_nodeimpl(h);
+    }
+    public create_httpconnecter(usehttps:boolean):httpconnecter {
+        return new httpconnecter_nodeimpl(usehttps);
     }
 
     public create_wslistener(h:wslistener_handler, p:packetcodec):wslistener {

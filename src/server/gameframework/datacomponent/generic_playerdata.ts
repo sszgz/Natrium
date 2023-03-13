@@ -2,6 +2,7 @@
 // license : MIT
 // author : Sean Chen
 
+import { nat } from "../../../natrium";
 import { player } from "../player";
 import { player_datacomp_base } from "../player_datas";
 
@@ -37,7 +38,7 @@ export class generic_playerdata_comp extends player_datacomp_base {
 
     protected async _on_create_data():Promise<void> {
         // generate unique id
-        //this._data["playerid"] = ;
+        this._data["playerid"] = await nat.datas.generate_autoinc_id("playerid");
     }
     protected _format_data_fromdbdata(dbdata:any):any {
         // TO DO : format data

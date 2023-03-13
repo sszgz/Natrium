@@ -110,6 +110,32 @@ export class _redis_client {
 
         return true;
     }
+    
+    public async incr(key:string):Promise<number> {
+        if(this._client == null) {
+            natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `_redis ${this._conf.name}-${this._conf.database} incr key:${key} client is null`);
+            return 0;
+        }
+        if(!this._client.isReady) {
+            natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `_redis ${this._conf.name}-${this._conf.database} incr key:${key} client not open`);
+            return 0;
+        }
+
+        return await this._client.incr(key);
+    }
+
+    public async decr(key:string):Promise<number> {
+        if(this._client == null) {
+            natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `_redis ${this._conf.name}-${this._conf.database} decr key:${key} client is null`);
+            return 0;
+        }
+        if(!this._client.isReady) {
+            natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `_redis ${this._conf.name}-${this._conf.database} decr key:${key} client not open`);
+            return 0;
+        }
+
+        return await this._client.decr(key);
+    }
 
     public async insert_json(key:string, value:any):Promise<boolean> {
         if(this._client == null) {

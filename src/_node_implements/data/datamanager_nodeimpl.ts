@@ -61,6 +61,27 @@ export class datamanager_nodeimpl implements datamanager {
         
         return;
     }
+    
+    public async set_wallet_userid(walletaddr:string, uid:string):Promise<boolean> {
+        if(this._user_rc == null) {
+            natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `datamanager_nodeimpl set_wallet_userid redis db [user] not exist`);
+            return false;
+        }
+
+        let dkey = `__wu_${walletaddr}`;
+
+        return await this._user_rc.set(dkey, uid);
+    }
+    public async get_wallet_userid(walletaddr:string):Promise<string> {
+        if(this._user_rc == null) {
+            natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `datamanager_nodeimpl get_wallet_userid redis db [user] not exist`);
+            return "";
+        }
+
+        let dkey = `__wu_${walletaddr}`;
+
+        return await this._user_rc.get(dkey);
+    }
 
     public async set_user_sessionid(uid:string, sid:number):Promise<boolean> {
         if(this._session_rc == null) {
@@ -232,6 +253,17 @@ export class datamanager_nodeimpl implements datamanager {
         let dkey = `${uid}_${key}`;
         
         return await this._user_rc.delete_json(dataobj_nodeimpl.make_rc_key("player", dkey));
+    }
+    
+    public async generate_autoinc_id(key:string):Promise<number> {
+        if(this._user_rc == null) {
+            natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `datamanager_nodeimpl generate_autoinc_id redis db [user] not exist`);
+            return 0;
+        }
+        
+        let dkey = `autoinc_${key}`;
+        
+        return await this._user_rc.incr(dkey);
     }
 
     public async create_user_dataobj(uid:string, dbname:string, key:string, default_data:any):Promise<dataobject|null> {

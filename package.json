@@ -9,6 +9,8 @@
   ],
   "scripts": {
     "utest": "npx ts-node ./src/test/test.ts",
+    "testhttpconn": "npx ts-node ./src/test/unittest/test_httpconnecter.ts",
+    "testhttplisten": "npx ts-node ./src/test/unittest/test_httplistener.ts",
     "testwsconn": "npx ts-node ./src/test/unittest/test_wsconnecter.ts",
     "testwslisten": "npx ts-node ./src/test/unittest/test_wslistener.ts",
     "testserver": "npx ts-node ./src/test/unittest/test_server.ts",

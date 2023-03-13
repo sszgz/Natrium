@@ -41,6 +41,7 @@ let start_server = async () =>{
     pcodec.register_protobuf_msg(protobuf_c2s.changemap_end, "changemap_end", "c2s_user.changemap_end");
     pcodec.register_protobuf_msg(protobuf_c2s.manul_mine, "manul_mine", "c2s_user.manul_mine");
     
+    server.open_httplistener("127.0.0.1", 8080);
     server.open_wslistener("127.0.0.1", 4091);
 }
 

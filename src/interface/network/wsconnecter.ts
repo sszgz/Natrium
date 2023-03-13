@@ -24,5 +24,4 @@ export interface wsconnecter {
     send_packet(p:packet):void;
     shakehand():void;
     ping():void;
-    login(uid:string, token:string):void;
 }
