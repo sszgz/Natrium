@@ -44,7 +44,7 @@ export interface serverconf {
 }
 
 export interface configs {
-    init():void;
+    init(svrconfigfile:string):void;
     get_config_data(config_name:string):any;
     get_serverconf():serverconf|null;
 }

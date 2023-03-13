@@ -37,9 +37,9 @@ export class natrium_server implements wslistener_handler, httplistener_handler 
         return this._httplistener;
     }
 
-    public async startup() {
+    public async startup(svrconfigfile:string) {
         // init config
-        nat.conf.init();
+        nat.conf.init(svrconfigfile);
 
         // init datas
         await nat.datas.init();

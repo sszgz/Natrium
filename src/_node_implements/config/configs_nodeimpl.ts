@@ -13,9 +13,17 @@ export class configs_nodeimpl implements configs {
 
     protected _conf_map:Map<string, any> = new Map<string, any>();
     protected _serverconf:serverconf_nodeimpl|null = null;
+    protected _svrconfigfile:string = "";
 
-    public init():void {
-        let serverconf_name = path.resolve(__dirname, "../../../config/serverconf.json");
+    public get svrconfigfile() {
+        return this._svrconfigfile;
+    }
+
+    public init(svrconfigfile:string):void {
+        if(svrconfigfile == undefined || svrconfigfile.length == 0){
+            svrconfigfile = "../../../config/serverconf.json";
+        }
+        let serverconf_name = path.resolve(__dirname, svrconfigfile);
         
         natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_system, `configs_nodeimpl init server conf from ${serverconf_name}`);
 

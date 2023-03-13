@@ -35,7 +35,7 @@ export class _Service_Node_Worker_Impl implements _Node_Worker {
         this._uname = uname;
         
         natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_system, `_Service_Node_Worker_Impl service:${conf.service_name} index:${service_index} init conf`);
-        natrium_nodeimpl.impl.conf.init();
+        natrium_nodeimpl.impl.conf.init(workerData.svrconfigfile);
 
         natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_system, `_Service_Node_Worker_Impl service:${conf.service_name} index:${service_index} init db`);
         await natrium_nodeimpl.impl.datas.init();

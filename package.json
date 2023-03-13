@@ -14,6 +14,7 @@
     "testwsconn": "npx ts-node ./src/test/unittest/test_wsconnecter.ts",
     "testwslisten": "npx ts-node ./src/test/unittest/test_wslistener.ts",
     "testserver": "npx ts-node ./src/test/unittest/test_server.ts",
+    "clienttestserver": "npx ts-node ./src/test/unittest/clienttest_server.ts",
     "testclient": "npx ts-node ./src/test/unittest/test_client.ts",
     "start:dev": "npx nodemon",
     "build": "rimraf ./build && tsc",

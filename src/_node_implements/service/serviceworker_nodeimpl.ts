@@ -76,7 +76,8 @@ export class serviceworker_nodeimpl implements serviceworker {
             "../service/_service_nodeworker_impl",
             {
                 conf:c,
-                si:this._service_index
+                si:this._service_index,
+                svrconfigfile:natrium_nodeimpl.impl.conf.svrconfigfile
             }
             // ,
             // // resource limits
