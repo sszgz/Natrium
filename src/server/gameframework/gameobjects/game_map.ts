@@ -112,7 +112,7 @@ export class game_map {
         
         // notify other player this player leave
         _Node_SessionContext.broadCastMsg(pl.session.session_id, this._player_sessionids, "player_leavezone", {
-            infos:[pl.runtimedata.instid]
+            instids:[pl.runtimedata.instid]
         });
         
     }

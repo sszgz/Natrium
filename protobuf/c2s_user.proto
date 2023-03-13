@@ -32,11 +32,6 @@ message changemap_end {
     required uint32 tomapid = 1;
 }
 
-
-message get_player_sinfo {
-    repeated uint32 playerids = 1;
-}
-
 message get_player_info {
     repeated uint32 playerids = 1;
 }
