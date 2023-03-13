@@ -9,6 +9,7 @@ import { _Node_SessionContext } from "../../../../_node_implements/_node/_thread
 import { outgameservice } from "../../../services/outgameservice";
 import { player_datas } from "../../player";
 import { ServerErrorCode } from "../../../../share/msgs/msgcode";
+import { generic_playerdata_comp } from "../../datacomponent/generic_playerdata";
 
 export async function user_login(s:service, ses:servicesession, pl:any, data:any):Promise<void> {
     if(pl != undefined){
@@ -61,7 +62,7 @@ export async function user_login(s:service, ses:servicesession, pl:any, data:any
     // TO DO : check player exist
     let res_data = {
         res:ServerErrorCode.ResOK, 
-        data:{name:data.name},
+        data:user_base_data,
         isNew:true
     }
 
@@ -94,16 +95,44 @@ export async function user_createplayer(s:service, ses:servicesession, pl:any, d
         _Node_SessionContext.sendWSMsg(ses.session_id, "create_player_res", {res:ServerErrorCode.ResSessionNotLogin});
         return;
     }
+    
+    let player_base_data = await nat.datas.read_player_data(ses_base_data.uid, "generic");
+    if(player_base_data != undefined) {
+        _Node_SessionContext.sendWSMsg(ses.session_id, "create_player_res", {res:ServerErrorCode.ResCreatePlayerAlreadyExist});
+        return;
+    }
+    
+    // TO DO : check msg data
+    data.gender;
+    data.pname;
 
-    const succ = await (s as outgameservice).create_player(ses, new player_datas(ses_base_data.uid));
-    if(!succ) {
+    // insert player data
+    let player_generic_data = {
+        playerid:await generic_playerdata_comp.generate_playerid(),
+        mapid:1, // TO DO : init map id
+        heroava:data.gender, // TO DO : get heroava from gender
+        gender:data.gender,
+        pname:data.pname,
+        heros:[]
+    };
+    await nat.datas.insert_player_data(data.uid, "generic", player_generic_data);
+
+    const pla = await (s as outgameservice).create_player(ses, new player_datas(ses_base_data.uid));
+    if(pla == null) {
         _Node_SessionContext.sendWSMsg(ses.session_id, "create_player_res", {res:ServerErrorCode.ResCreatePlayerError});
         return;
     }
     
-    _Node_SessionContext.sendWSMsg(ses.session_id, "create_player_res", {res:ServerErrorCode.ResOK});
+    _Node_SessionContext.sendWSMsg(ses.session_id, "create_player_res", {res:ServerErrorCode.ResOK, sinfo:player_generic_data});
 }
 
 export async function user_entergame(s:service, ses:servicesession, pl:any, data:any):Promise<void> {
+    
+    if(pl == undefined){
+        _Node_SessionContext.sendWSMsg(ses.session_id, "create_player_res", {res:ServerErrorCode.ResSessionNotLogin});
+        return;
+    }
 
+    // TO DO : calc service index by mapid
+    ses.changeservice("worldservice", 0);
 }

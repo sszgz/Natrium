@@ -10,4 +10,6 @@ export interface servicesession {
     readonly session_key:string;
 
     readonly current_service:service;
+
+    changeservice(tosn:string, tosi:number):void;
 }

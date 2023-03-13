@@ -4,6 +4,7 @@
 
 import { service } from "../../interface/service/service";
 import { servicesession } from "../../interface/service/servicesession";
+import { _Node_SessionContext } from "../_node/_thread_contexts";
 
 export class servicesession_nodeimpl implements servicesession {
 
@@ -27,5 +28,9 @@ export class servicesession_nodeimpl implements servicesession {
 
     public get current_service() {
         return this._current_service;
+    }
+    
+    public changeservice(tosn:string, tosi:number):void {
+        _Node_SessionContext.changeService(this._session_id, tosn, tosi);
     }
 }

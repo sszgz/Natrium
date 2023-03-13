@@ -8,17 +8,23 @@ import { debug_level_enum } from "../../interface/debug/debug_logger";
 import { service, natrium_services } from "../../interface/service/service";
 import { natrium_nodeimpl } from "../natrium_nodeimpl";
 import { _Service_M2W_MSG } from "../_node/_threads_msgs";
-import { _Node_ThreadContext } from "../_node/_thread_contexts";
+import { _Node_SessionContext, _Node_ThreadContext } from "../_node/_thread_contexts";
 import { _Node_Worker } from "../_node/_worker";
 import { serviceconf } from '../../interface/config/configs';
 
-class _Service_Node_Worker_Impl implements _Node_Worker {
+export class _Service_Node_Worker_Impl implements _Node_Worker {
 
     protected _uname:string = "";
     protected _service:service|null = null;
 
+    protected _changingservice_sids = new Map<number, any>();
+
     public get uname() {
         return this._uname;
+    }
+
+    mark_changeservice(sid:number, tosn:string, tosi:number):void {
+        this._changingservice_sids.set(sid, {tosn, tosi});
     }
 
     async startup(uname:string, workerData:any):Promise<void> {
@@ -78,7 +84,14 @@ class _Service_Node_Worker_Impl implements _Node_Worker {
                 await this._service.on_add_session(data.sid, data.skey);
                 break;
             case _Service_M2W_MSG._m2w_rmv_session:
-                await this._service.on_remove_session(data.sid);
+                {
+                    await this._service.on_remove_session(data.sid);
+                    const d = this._changingservice_sids.get(data.sid);
+                    if(d != undefined){
+                        this._changingservice_sids.delete(data.sid);
+                        _Node_SessionContext.changeServiceSesRmved(data.sid, d.tosn, d.tosi);
+                    }
+                }
                 break;
             case _Service_M2W_MSG._m2w_service_task:
                 await this._service.on_service_task(data.command, data.data);
@@ -105,5 +118,5 @@ class _Service_Node_Worker_Impl implements _Node_Worker {
 }
 
 export const w = new _Service_Node_Worker_Impl();
-//_Node_ThreadContext.initCurrentWorker(new _Service_Node_Worker_Impl());
+_Node_ThreadContext.initCurrentWorker(w);
 //console.log(`_Node_ThreadContext.currentWorker:${_Node_ThreadContext.currentWorker}`);

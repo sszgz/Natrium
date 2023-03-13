@@ -19,6 +19,9 @@ export enum _Service_W2M_MSG {
     // ...
     _w2m_session_msg = 104,
     // ...
+
+    _w2m_changeservice = 108,
+    _w2m_changeservice_sesrmved = 109,
 }
 
 export enum _Service_M2W_MSG {

@@ -12,6 +12,15 @@ export class network {
         return this._wslistener.length;
     }
 
+    public static get def_wslistener():wslistener {
+        // for debug
+        return this._wslistener[0];
+    }
+    public static get_wslistener_bycid(cid:number):wslistener {
+        // for deubg
+        return this._wslistener[0];
+    }
+
     public static get_wslistener(index:number) {
         return this._wslistener[index];
     }

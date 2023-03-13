@@ -8,19 +8,24 @@ message pos2d {
 
 // ----------------------------------------------------------------------------
 message user_data {
-    string name = 1;
+    required string name = 1;
+    required string uid = 2;
+    required string wallet = 3;
+    required uint64 lastlogintm = 4;
 }
 
 // ----------------------------------------------------------------------------
 
 message player_sinfo {
-    uint32 playerid = 1;
-    uint32 heroava = 2;
+    required uint32 playerid = 1;
+    required uint32 heroava = 2;
+    required uint32 gender = 3;
+    required string pname = 4;
 }
 
 message player_info {
     required player_sinfo sinfo = 1;
-    
+
 }
 
 message player_data {

@@ -60,7 +60,6 @@ export abstract class player_datacomp_base implements player_datacomponent{
             if(this._dataobj == null) {
 
                 // init from db
-                await this._on_create_data();
                 this._dataobj = await this._player.datas.init_dataobj(this.name);
                 if(this._dataobj == null) {
     
@@ -93,9 +92,6 @@ export abstract class player_datacomp_base implements player_datacomponent{
         this._dataobj.write_back(do_persisit);
     }
 
-    protected async _on_create_data():Promise<void> {
-
-    }
     protected _format_data_fromdbdata(dbdata:any):any {
         // format data
         return dbdata;

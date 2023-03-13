@@ -10,7 +10,8 @@ message login {
 }
 
 message create_player {
-    
+    required string pname = 1;
+    required uint32 gender = 2;
 }
 
 message enter_game {

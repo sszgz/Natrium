@@ -17,4 +17,7 @@ export enum ServerErrorCode {
     ResUserLoginedByOther = -1007,
     ResUserNotExist = -1008,
     ResSessionNotLogin = -1009,
+    ResServiceSessionNotExist = -1010,
+    ResServicePlayerNotExist = -1011,
+    ResPlayerDataNotExist = -1012
 }

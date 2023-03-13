@@ -3,6 +3,10 @@ syntax = "proto3";
 
 import "./share_structure.proto";
 
+message server_error {
+    required int32 res = 1;
+}
+
 message login_res {
     required int32 res = 1;
     optional bool isNew = 2;
@@ -11,7 +15,7 @@ message login_res {
 
 message create_player_res {
     required int32 res = 1;
-    optional uint32 playerid = 2;
+    optional player_sinfo sinfo = 2;
 }
 
 message enter_game_res {

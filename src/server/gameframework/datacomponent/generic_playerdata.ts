@@ -21,6 +21,10 @@ export class generic_playerdata_comp extends player_datacomp_base {
         return generic_playerdata_comp.comp_name;
     }
 
+    public static async generate_playerid():Promise<number> {
+        return await nat.datas.generate_autoinc_id("playerid");
+    }
+    
     public get generic_data():generic_playerdata{
         return this._data as generic_playerdata;
     }
@@ -31,15 +35,13 @@ export class generic_playerdata_comp extends player_datacomp_base {
         // set default data value
         this._data = {
             mapid:1,
-            def_heroava:1,
+            heroava:1,
+            gender:1,
+            pname:"",
             heros:[]
         };
     }
 
-    protected async _on_create_data():Promise<void> {
-        // generate unique id
-        this._data["playerid"] = await nat.datas.generate_autoinc_id("playerid");
-    }
     protected _format_data_fromdbdata(dbdata:any):any {
         // TO DO : format data
         return dbdata;

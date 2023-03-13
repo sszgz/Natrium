@@ -49,6 +49,9 @@ export class serviceworker_nodeimpl implements serviceworker {
     protected _channel:servicechannel_nodeimpl = new servicechannel_nodeimpl();
 
     protected _worker_thread:null|_Node_WorkerThread = null;
+    protected _sessions:Map<number, session> = new Map<number, session>();
+
+    protected _changing_svr_sessoins = new Map<number, session>();
 
     public get thread_id() {
         return this._thread_id;
@@ -120,23 +123,43 @@ export class serviceworker_nodeimpl implements serviceworker {
             return;
         }
 
+        if(this._sessions.has(s.session_id)){
+            natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `serviceworker_nodeimpl service:${this._service_name} index:${this._service_index} add session:${s.session_id} already added`);
+            return;
+        }
+        this._sessions.set(s.session_id, s);
+
         this._worker_thread.worker.postMessage({cmd:_Service_M2W_MSG._m2w_add_session, sid:s.session_id, skey:s.session_key});
         s.set_service(this);
     }
+
     public remove_session(s:session):void {
         if(this._worker_thread == null) {
             natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `serviceworker_nodeimpl service:${this._service_name} index:${this._service_index} rmv session:${s.session_id} thread not start`);
             return;
         }
 
+        if(!this._sessions.has(s.session_id)){
+            natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `serviceworker_nodeimpl service:${this._service_name} index:${this._service_index} rmv session:${s.session_id} not exist`);
+            return;
+        }
+        this._sessions.delete(s.session_id);
+
         this._worker_thread.worker.postMessage({cmd:_Service_M2W_MSG._m2w_rmv_session, sid:s.session_id});
         s.set_service(null);
     }
+
     public on_session_close(s:session):void {
         if(this._worker_thread == null) {
             natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `serviceworker_nodeimpl service:${this._service_name} index:${this._service_index} close session:${s.session_id} thread not start`);
             return;
         }
+
+        if(!this._sessions.has(s.session_id)){
+            natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `serviceworker_nodeimpl service:${this._service_name} index:${this._service_index} close session:${s.session_id} not exist`);
+            return;
+        }
+        this._sessions.delete(s.session_id);
 
         this._worker_thread.worker.postMessage({cmd:_Service_M2W_MSG._m2w_close_session, sid:s.session_id});
     }
@@ -147,18 +170,53 @@ export class serviceworker_nodeimpl implements serviceworker {
         case _Service_W2M_MSG._w2m_session_msg:
             {
                 // TO DO : send session message
-
-                // for Debug ...
-                let l = network.get_wslistener(0);
-
                 if(msg.is_rpc){
                     // send rpc
-                    l.send_packet(msg.sid, l.pcodec.create_protopkt(msg.msg.c, msg.msg.d)); // sid = cid
+                    network.def_wslistener.send_packet(msg.sid, network.def_wslistener.pcodec.create_protopkt(msg.msg.c, msg.msg.d)); // sid = cid
                 }
                 else {
                     // send json
-                    l.send_packet(msg.sid, l.pcodec.create_jsonpkt(msg.msg)); // sid = cid
+                    network.def_wslistener.send_packet(msg.sid, network.def_wslistener.pcodec.create_jsonpkt(msg.msg)); // sid = cid
                 }
+            }
+            break;
+        case _Service_W2M_MSG._w2m_changeservice:
+            {
+                let ses = this._sessions.get(msg.sid);
+                if(ses == undefined) {
+                    natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `serviceworker_nodeimpl service:${this._service_name} index:${this._service_index} change service to service:${msg.msg.tosn} index:${msg.msg.tosi} session:${msg.sid} not exist`);
+                    // TO DO : kick
+                    network.def_wslistener.disconnect(msg.sid,"service bind error");
+                    return;
+                }
+                this.remove_session(ses);
+                
+                this._changing_svr_sessoins.set(ses.session_id, ses);
+                // TO DO : wait remove finish
+            }
+            break;
+        case _Service_W2M_MSG._w2m_changeservice_sesrmved:
+            {
+                let ses = this._changing_svr_sessoins.get(msg.sid);
+                if(ses == undefined) {
+                    natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `serviceworker_nodeimpl service:${this._service_name} index:${this._service_index} change service to service:${msg.msg.tosn} index:${msg.msg.tosi} changing session:${msg.sid} not exist`);
+                    // TO DO : kick
+                    network.def_wslistener.disconnect(msg.sid,"service bind error");
+                    return;
+                }
+
+                this._changing_svr_sessoins.delete(msg.sid);
+
+                let uname = natrium_services.make_service_uname(msg.msg.tosn, msg.msg.tosi);
+                let serviceworker = natrium_services.get_worker(uname);
+                if(serviceworker == undefined){
+                    natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `serviceworker_nodeimpl service:${this._service_name} index:${this._service_index} change service to service:${msg.msg.tosn} index:${msg.msg.tosi} not exist`);
+                    // TO DO : kick
+                    // for Debug ...
+                    network.def_wslistener.disconnect(msg.sid,"service bind error");
+                    return;
+                }
+                serviceworker.add_session(ses);
             }
             break;
         }
