@@ -1,48 +1,56 @@
 package share;
 syntax = "proto3";
 
+// position 
 message pos2d {
-    int32 x = 1;
-    int32 y = 2;
+    int32 x = 1; // x in pixel
+    int32 y = 2; // y in pixel
 }
 
 // ----------------------------------------------------------------------------
+
+// user data
 message user_data {
-    required string name = 1;
-    required string uid = 2;
-    required string wallet = 3;
-    required uint64 lastlogintm = 4;
+    required string name = 1; // user name, ommited
+    required string uid = 2; // user id
+    required string wallet = 3; // wallet address
+    required uint64 lastlogintm = 4; // last login time, unix time stamp in ms
 }
 
 // ----------------------------------------------------------------------------
 
+// player simple info
 message player_sinfo {
-    required uint32 playerid = 1;
-    required uint32 heroava = 2;
-    required uint32 gender = 3;
-    required string pname = 4;
-    optional uint32 speed = 5;
+    required uint32 playerid = 1; // player id
+    required uint32 heroava = 2; // current avatar info
+    required uint32 gender = 3; // gender
+    required string pname = 4; // player name
+    optional uint32 speed = 5; // move speed (may not exist, in this case, set speed in default value)
 }
 
+// player info 
 message player_info {
-    required player_sinfo sinfo = 1;
+    required player_sinfo sinfo = 1; // player simple info
 
+    // TO DO : extend player info
 }
 
+// self player data
 message player_data {
-    uint32 mapid = 1;
-    required player_info info = 2;
+    uint32 mapid = 1; // current map id
+    required player_info info = 2; // player info
 
-    repeated hero_data heros = 3;
-    repeated pet_data pets = 4;
-    repeated ship_data ships = 5;
+    repeated hero_data heros = 3; // player heros
+    repeated pet_data pets = 4; // player pets
+    repeated ship_data ships = 5; // player ships
 
 }
 
+// move info
 message player_mov_info {
     
-    required share.pos2d from = 1;
-    required share.pos2d to = 2;
+    required share.pos2d from = 1; // from positon
+    required share.pos2d to = 2; // to position
 }
 
 message hero_data {

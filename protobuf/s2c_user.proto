@@ -3,61 +3,74 @@ syntax = "proto3";
 
 import "./share_structure.proto";
 
+// server error
 message server_error {
-    required int32 res = 1;
+    required int32 res = 1; // error code see {ServerErrorCode}
 }
 
+// login res
 message login_res {
-    required int32 res = 1;
-    optional bool isNew = 2;
-    optional share.user_data data = 3;
+    required int32 res = 1;  // error code see {ServerErrorCode}
+    optional bool isNew = 2; // =ture need create_player, else enter_game
+    optional share.user_data data = 3; // user data
 }
 
+// create player
 message create_player_res {
-    required int32 res = 1;
-    optional player_sinfo sinfo = 2;
+    required int32 res = 1; // error code see {ServerErrorCode}
+    optional player_sinfo sinfo = 2; // simple info of player
 }
 
+// enter game
 message enter_game_res {
-    required int32 res = 1;
-    optional share.player_data data = 2;
+    required int32 res = 1; // error code see {ServerErrorCode}
+    optional share.player_data data = 2; // full player data of self
 }
 
+// player in map zone info
 message playerinzoneinfo {
-    required uint32 instid = 1;
-    required uint32 playerid = 2;
-    required share.pos2d pos = 3;
-    optional share.player_mov_info goto = 4;
+    required uint32 instid = 1; // map instance id (player/monster/other obj...)
+    required uint32 playerid = 2; // player id
+    required share.pos2d pos = 3; // position
+    optional share.player_mov_info goto = 4; // current moving info
 }
 
+// player enter map zone
 message player_enterzone {
-    repeated playerinzoneinfo infos = 1;
+    repeated playerinzoneinfo infos = 1; // in zone player info
 }
+// player leave map zone
 message player_leavezone {
-    repeated uint32 instids = 1;
+    repeated uint32 instids = 1; // leave zone player instance ids
 }
 
+// move
 message player_goto {
-    required uint32 instid = 1;
-    required share.player_mov_info goto = 2;
+    required uint32 instid = 1; // map instance id (player/monster/other obj...)
+    required share.player_mov_info goto = 2; // goto move info
 }
+// stop move
 message player_stop {
-    required uint32 instid = 1;
-    required share.pos2d pos = 2;
+    required uint32 instid = 1; // map instance id (player/monster/other obj...)
+    required share.pos2d pos = 2; // stop position
 }
 
+// change map
 message changemap_res {
-    required uint32 tomapid = 1;
-    required uint32 selfInstid = 2;
-    required share.pos2d pos = 3;
+    required uint32 tomapid = 1; // target map id
+    required uint32 selfInstid = 2; // new map instance id, bind it with player
+    required share.pos2d pos = 3; // position
 }
 
+// get player simple info result
+// cahce it in client
 message get_player_sinfo_res {
-    repeated share.player_sinfo sinfos = 1;
+    repeated share.player_sinfo sinfos = 1; // player simple info
 }
 
+// get player info result
 message get_player_info_res {
-    repeated share.player_info infos = 1;
+    repeated share.player_info infos = 1; // player info
 }
 
 message manul_mine_res {
