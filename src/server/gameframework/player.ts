@@ -3,12 +3,12 @@
 // author : Sean Chen
 
 import { nat } from "../..";
-import { dataobject } from "../../interface/data/dataobj";
+import { datacomp, datacomp_map } from "../../interface/data/datacomp";
+import { rediscache } from "../../interface/data/rediscache";
 import { debug_level_enum } from "../../interface/debug/debug_logger";
 import { servicesession } from "../../interface/service/servicesession";
-import { pos2d } from "./datacomponent/generic_playerdata";
+import { pos2d } from "./datacomponent/define";
 import { game_map } from "./gameobjects/game_map";
-import { player_datacomponent, player_datas } from "./player_datas";
 
 export interface player_behaviour {
 
@@ -34,15 +34,24 @@ export interface runtimedata {
 export class player {
     protected _session:servicesession;
     protected _behaviours:player_behaviours_map;
-    protected _datas:player_datas;
-    protected _datacomponents:player_player_datacomponent_map;
     protected _runtimedata:runtimedata;
+    protected _pdatas:datacomp_map; // persist datas
+    protected _cdatas:datacomp_map; // cache datas
 
-    constructor(s:servicesession, d:player_datas) {
+    constructor(s:servicesession, datas:Array<datacomp>) {
         this._session = s;
         this._behaviours = {};
-        this._datas = d;
-        this._datacomponents = {};
+        this._pdatas = {};
+        this._cdatas = {};
+
+        for(let i=0; i<datas.length; ++i){
+            if(datas[i].is_persist) {
+                this._pdatas[datas[i].name] = datas[i];
+            }
+            else {
+                this._cdatas[datas[i].name] = datas[i];
+            }
+        }
 
         this._runtimedata = {
             instid:0,
@@ -58,27 +67,20 @@ export class player {
     public get behavoiurs() {
         return this._behaviours;
     }
-    public get datas() {
-        return this._datas;
-    }
-    public get datacomp() {
-        return this._datacomponents;
-    }
     public get runtimedata() {
         return this._runtimedata;
+    }
+    public get pdatas(){
+        return this._pdatas;
+    }
+    public get cdatas(){
+        return this._cdatas;
     }
 
     public add_behaviours(beh:player_behaviour):void{
         this._behaviours[beh.name] = beh;
     }
-    public add_datacomponent(dc:player_datacomponent):void{
-        this._datacomponents[dc.name] = dc;
-    }
-
     public async init():Promise<boolean> {
-        for(const key in this._datacomponents) {
-            this._datacomponents[key].prepare_default_data();
-        }
         //let promiseAry:Array<Promise<any>> = new Array<Promise<any>>();
         for(const key in this._behaviours) {
             //promiseAry.push(this._behaviours[key].init());
@@ -99,23 +101,45 @@ export class player {
         await Promise.all(promiseAry);
     }
 
-    public async sync_data_from_dbobj():Promise<boolean> {
-        //let promiseAry:Array<Promise<any>> = new Array<Promise<any>>();
-        for(const key in this._datacomponents) {
-            //promiseAry.push(this._datacomponents[key].sync_data_from_dbobj());
-            let succ = await this._datacomponents[key].sync_data_from_dbobj();
-            if(!succ){
-                return false;
-            }
+    public async sync_redis_data(
+        type: { new(rc:rediscache, tablename:string, key:string|number): datacomp ;}, 
+        dbname:string, tablename:string, key:string|number, persist:boolean):Promise<boolean>
+    {
+        let dc = nat.datas.create_redis_datacomp(type, dbname, tablename, key, persist);
+        if(dc == null){
+            return false;
         }
-        //await Promise.all(promiseAry);
+        if((dc.is_persist && dc.name in this._pdatas) ||
+            (!dc.is_persist && dc.name in this._cdatas) )
+        {
+            return false;
+        }
+
+        await dc.sync_from_db();
+        if(dc.rundata == undefined) {
+            return false;
+        }
+        if(dc.is_persist){
+            this._pdatas[dc.name] = dc;
+        }
+        else {
+            this._cdatas[dc.name] = dc;
+        }
 
         return true;
     }
+
+    public async sync_mysql_data():Promise<boolean>{
+        return true;
+    }
+
     public async flush_data_to_dbobj(do_persisit:boolean):Promise<void> {
         let promiseAry:Array<Promise<any>> = new Array<Promise<any>>();
-        for(const key in this._datacomponents) {
-            promiseAry.push(this._datacomponents[key].flush_data_to_dbobj(do_persisit));
+        for(const key in this._pdatas) {
+            promiseAry.push(this._pdatas[key].flush_to_db(do_persisit));
+        }
+        for(const key in this._cdatas) {
+            promiseAry.push(this._cdatas[key].flush_to_db(do_persisit));
         }
         await Promise.all(promiseAry);
     }
@@ -148,9 +172,3 @@ export abstract class player_behaviour_base implements player_behaviour{
 type player_behaviours_map = {
     [key: string]: player_behaviour;
   };
-
-type player_player_datacomponent_map = {
-    [key: string]: player_datacomponent;
-  };
-
-export { player_datas };

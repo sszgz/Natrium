@@ -2,7 +2,6 @@
 // license : MIT
 // author : Sean Chen
 
-import { datamanager } from "../interface/data/datamanager";
 import { inatrium } from "../interface/inatrium";
 import { httpconnecter } from "../interface/network/httpconnecter";
 import { httplistener, httplistener_handler } from "../interface/network/httplistener";
@@ -14,7 +13,7 @@ import { servicesession } from "../interface/service/servicesession";
 import { serviceworker } from "../interface/service/serviceworker";
 import { sessionmgr } from "../interface/session/sessionmgr";
 import { configs_nodeimpl } from "./config/configs_nodeimpl";
-import { datamanager_nodeimpl } from "./data/datamanager_nodeimpl";
+import { datahub_nodeimpl } from "./data/datahub_nodeimpl";
 import { debug_logger_nodeimpl } from "./debug/debug_logger_nodeimpl";
 import { httpconnecter_nodeimpl } from "./network/httpconnecter_nodeimpl";
 import { httplistener_nodeimpl } from "./network/httplistener_nodeimpl";
@@ -33,7 +32,7 @@ export class natrium_nodeimpl implements inatrium  {
     protected _dbg_logger:debug_logger_nodeimpl = new debug_logger_nodeimpl();
     protected _sys:sys_nodeimpl = new sys_nodeimpl();
     protected _conf:configs_nodeimpl = new configs_nodeimpl();
-    protected _datas:datamanager = new datamanager_nodeimpl();
+    protected _datas:datahub_nodeimpl = new datahub_nodeimpl();
 
     constructor(){
 

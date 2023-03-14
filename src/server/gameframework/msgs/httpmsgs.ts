@@ -6,8 +6,8 @@ import * as crypto from "node:crypto";
 import { http_request_like, http_response_like } from "../../../interface/network/httplistener";
 import { nat } from "../../../natrium";
 
-export const http_unknown_cmd_json = `{'res':'Unknown command'}`;
-export const http_param_err_json = `{'res':'Parameter error'}`;
+export const http_unknown_cmd_json = `{"res":"Unknown command"}`;
+export const http_param_err_json = `{"res":"Parameter error"}`;
 
 function _generate_login_token(uid:string):string {
     const timestamp = nat.sys.getTimeStamp();
@@ -55,7 +55,7 @@ export const on_verify_sign = async (req:http_request_like, res:http_response_li
         retdata.token = _generate_login_token(retdata.uid);
 
         // insert user data
-        await nat.datas.insert_user_data(retdata.uid, "base", retdata);
+        await nat.datas.persistcaches.user.insert_data("base", retdata.uid,  retdata);
     }
     else {
         retdata.uid = uid;
@@ -64,7 +64,7 @@ export const on_verify_sign = async (req:http_request_like, res:http_response_li
         retdata.token = _generate_login_token(uid);
 
         // update user data
-        await nat.datas.update_user_data(retdata.uid, "base", retdata, "."); // TO DO : only update token & last login time
+        await nat.datas.persistcaches.user.update_data("base", retdata.uid, retdata, "."); // TO DO : only update token & last login time
     }
 
     res.write(JSON.stringify({

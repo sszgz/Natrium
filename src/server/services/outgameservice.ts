@@ -12,7 +12,6 @@ import { game } from "../gameframework/game";
 import { player } from "../gameframework/player";
 import { servicebase } from "./servicebase";
 import { generic_behaviour } from "../gameframework/behaviours/generic_behaviour";
-import { generic_playerdata_comp } from "../gameframework/datacomponent/generic_playerdata";
 
 export class outgameservice extends servicebase {
 
@@ -28,9 +27,6 @@ export class outgameservice extends servicebase {
 
         // register behaviours
         game.impl.register_player_behaviours(generic_behaviour.beh_name, generic_behaviour.creater);
-
-        // register datacomponents
-        game.impl.register_player_datacomponents(generic_playerdata_comp.comp_name, generic_playerdata_comp.creater);
 
         return super.startup();
     }

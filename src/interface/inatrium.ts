@@ -3,7 +3,7 @@
 // author : Sean Chen
 
 import { configs } from "./config/configs";
-import { datamanager } from "./data/datamanager";
+import { datahub } from "./data/datahub";
 import { debug_logger } from "./debug/debug_logger";
 import { httpconnecter } from "./network/httpconnecter";
 import { httplistener, httplistener_handler } from "./network/httplistener";
@@ -21,7 +21,7 @@ export interface inatrium {
     readonly dbglog:debug_logger;
     readonly sys:sys;
     readonly conf:configs;
-    readonly datas:datamanager;
+    readonly datas:datahub;
 
     create_httplistener(h:httplistener_handler):httplistener;
     create_httpconnecter(usehttps:boolean):httpconnecter;

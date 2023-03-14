@@ -5,13 +5,14 @@
 
 import * as path from 'path';
 import { serviceconf } from "../../interface/config/configs";
+import { datacomp } from '../../interface/data/datacomp';
 import { debug_level_enum } from "../../interface/debug/debug_logger";
 import { service } from "../../interface/service/service";
 import { servicesession } from "../../interface/service/servicesession";
 import { msg_proc_func_map_type } from "../../interface/service/service_msgproc";
 import { nat } from "../../natrium";
 import { game } from "../gameframework/game";
-import { player, player_datas } from "../gameframework/player";
+import { player } from "../gameframework/player";
 
 export abstract class servicebase implements service {
     
@@ -90,16 +91,18 @@ export abstract class servicebase implements service {
         return this._sessions.get(sid);
     }
 
-    public async create_player(ses:servicesession, d:player_datas):Promise<player|null> {
-        const new_pl = game.impl.create_player(ses, d);
+    protected async _sync_playerdatas(new_pl:player):Promise<boolean> {
+
+        return true;
+    }
+
+    public async create_player(ses:servicesession, datas:Array<datacomp>):Promise<player|null> {
+        const new_pl = game.impl.create_player(ses, datas);
         let succ = await new_pl.init();
         if(!succ){
             return null;
         }
-        succ = await new_pl.sync_data_from_dbobj();
-        if(!succ){
-            return null;
-        }
+        await this._sync_playerdatas(new_pl);
         this._players.set(ses.session_id, new_pl);
 
         return new_pl;
@@ -151,14 +154,14 @@ export abstract class servicebase implements service {
 
     protected async _do_clear_session(sid:number):Promise<void> {
 
-        let ses_base_data = await nat.datas.read_session_data(sid, "base");
+        let ses_base_data = await nat.datas.memcaches.session.read_data("base", sid, ".");
         if(ses_base_data != null) {
             // delete user ses data
             await nat.datas.del_user_sessionid(ses_base_data.uid);
         }
 
         // delete base session data
-        await nat.datas.delete_session_data(sid, "base");
+        await nat.datas.memcaches.session.delete_data("base", sid);
     }
 
     protected async _do_remove_player(pl:player):Promise<void> {

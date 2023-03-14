@@ -1,7 +1,7 @@
-// natrium
-// license : MIT
-// author : Sean Chen
+// // natrium
+// // license : MIT
+// // author : Sean Chen
 
-export interface globaldatas {
+// export interface globaldatas {
     
-}
+// }

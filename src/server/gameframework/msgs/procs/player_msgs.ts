@@ -9,7 +9,6 @@ import { _Node_SessionContext } from "../../../../_node_implements/_node/_thread
 import { outgameservice } from "../../../services/outgameservice";
 import { ServerErrorCode } from "../../../../share/msgs/msgcode";
 import { player } from "../../player";
-import { generic_playerdata_comp } from "../../datacomponent/generic_playerdata";
 import { worldservice } from "../../../services/worldservice";
 import { game_map } from "../../gameobjects/game_map";
 
@@ -75,8 +74,8 @@ export async function player_changemapend(s:service, ses:servicesession, pl:any,
 
     // TO DO : check change map condition
 
-    pla.datacomp.generic.data.mapid = data.tomapid;
-    pla.datacomp.generic.data.pos = game_map.random_bornpos(mapconf.conf.bornpos[0]); // bornpos 0 is transfer point
+    pla.pdatas.player_gen.rundata.mapid = data.tomapid;
+    pla.pdatas.player_gen.rundata.pos = game_map.random_bornpos(mapconf.conf.bornpos[0]); // bornpos 0 is transfer point
 
     let new_map = (s as worldservice).get_map(data.tomapid);
     if(new_map != undefined){
@@ -108,7 +107,7 @@ export async function player_get_player_sinfo(s:service, ses:servicesession, pl:
         if(othpl == undefined){
             continue;
         }
-        ret.sinfos.push(othpl.datacomp.generic.data);
+        ret.sinfos.push(othpl.pdatas.player_gen.rundata);
     }
 
     _Node_SessionContext.sendWSMsg(ses.session_id, "get_player_sinfo_res", ret);
@@ -134,7 +133,7 @@ export async function player_get_player_info(s:service, ses:servicesession, pl:a
             continue;
         }
         ret.infos.push({
-            sinfo:othpl.datacomp.generic.data
+            sinfo:othpl.pdatas.player_gen.rundata
             // TO DO : add detail info
         });
     }

@@ -7,6 +7,7 @@ export enum ServerErrorCode {
     ResUnknown = 0,
 
     ResInternalError = -1,
+    ResDatacompCreateError = -2,
 
     ResAlreadyLogin = -1001,
     ResCreatePlayerError = -1002,

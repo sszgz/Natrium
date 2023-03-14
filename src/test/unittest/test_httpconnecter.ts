@@ -28,8 +28,8 @@ var testcmd = async ()=>{
             case "verify":
                 {
                     let obj = {
-                        "wallet_addr":"0xf226BeA06598b39f1508c6702900845928122B03",
-                        "signdata":"dddadfasdfasdfasdfadsfs"
+                        "walletaddr":"0xf226BeA06598b39f1508c6702900845928122B03",
+                        "signmsg":"dddadfasdfasdfasdfadsfs"
                     };
                     
                     let verify_res = await conn.post(url+"/verify", obj);

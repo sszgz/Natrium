@@ -5,26 +5,37 @@
         }
     },
     "redis":{
-        "main":{
+        "uniquename":{
             "url":"redis://127.0.0.1:6379",
             "username":"",
             "password":"",
-            "name":"",
-            "database":1
+            "name":"uniquename",
+            "database":1,
+            "persist":true
         },
         "session":{
             "url":"redis://127.0.0.1:6379",
             "username":"",
             "password":"",
-            "name":"",
-            "database":2
+            "name":"session",
+            "database":2,
+            "persist":false
         },
         "user":{
             "url":"redis://127.0.0.1:6379",
             "username":"",
             "password":"",
-            "name":"",
-            "database":3
+            "name":"user",
+            "database":3,
+            "persist":true
+        },
+        "player":{
+            "url":"redis://127.0.0.1:6379",
+            "username":"",
+            "password":"",
+            "name":"player",
+            "database":4,
+            "persist":true
         }
     },
     "services":[

@@ -42,10 +42,13 @@ export class natrium_server implements wslistener_handler, httplistener_handler 
         nat.conf.init(svrconfigfile);
 
         // init datas
-        await nat.datas.init();
+        let succ = await nat.datas.init();
+        if(!succ) {
+            return;
+        }
 
         // clear all session data
-        nat.datas.clear_session_datas();
+        nat.datas.memcaches.session.clear_datas();
 
         // start up service
         const svrconf = nat.conf.get_serverconf();
@@ -248,6 +251,7 @@ export class natrium_server implements wslistener_handler, httplistener_handler 
         catch(e){
             let err:Error = e as Error;
             nat.dbglog.log(debug_level_enum.dle_error, `natrium_server on http request ${req.url} exception:${err.message}\r\n ${err.stack}`);
+            res.end();
         }
     }
 }

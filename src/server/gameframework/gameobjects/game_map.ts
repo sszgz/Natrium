@@ -4,7 +4,7 @@
 
 import { nat } from "../../../natrium";
 import { _Node_SessionContext } from "../../../_node_implements/_node/_thread_contexts";
-import { pos2d } from "../datacomponent/generic_playerdata";
+import { pos2d } from "../datacomponent/define";
 import { player } from "../player";
 import { gamemap_object } from "./gamemap_object";
 
@@ -56,19 +56,19 @@ export class game_map {
         pl.runtimedata.instid = this.get_instid();
 
         // add player
-        this._pid_players.set(pl.datacomp.generic.data.playerid, pl);
+        this._pid_players.set(pl.pdatas.player_gen.rundata.playerid, pl);
         this._player_sessionids.push(pl.session.session_id);
 
-        if(!("pos" in pl.datacomp.generic.data)) {
+        if(!("pos" in pl.pdatas.player_gen.rundata)) {
             // new player, born
-            pl.datacomp.generic.data.pos = this.get_random_bornpos();
+            pl.pdatas.player_gen.rundata.pos = this.get_random_bornpos();
         }
 
         // notify change map
         _Node_SessionContext.sendWSMsg(pl.session.session_id, "changemap_res", {
             tomapid:this._mapconf.id,
             selfInstid:pl.runtimedata.instid, 
-            pos:pl.datacomp.generic.data.pos
+            pos:pl.pdatas.player_gen.rundata.pos
         });
 
         // TO DO : cut in zone player by range and number limit
@@ -81,8 +81,8 @@ export class game_map {
             }
             infos.push({
                 instid:othpl.runtimedata.instid, 
-                playerid:othpl.datacomp.generic.data.playerid,
-                pos:othpl.datacomp.generic.data.pos
+                playerid:othpl.pdatas.player_gen.rundata.playerid,
+                pos:othpl.pdatas.player_gen.rundata.pos
             });
         })
         _Node_SessionContext.sendWSMsg(pl.session.session_id, "player_enterzone", {infos});
@@ -92,8 +92,8 @@ export class game_map {
             infos:[
                 {
                     instid:pl.runtimedata.instid, 
-                    playerid:pl.datacomp.generic.data.playerid,
-                    pos:pl.datacomp.generic.data.pos
+                    playerid:pl.pdatas.player_gen.rundata.playerid,
+                    pos:pl.pdatas.player_gen.rundata.pos
                 }
             ]
         });
@@ -107,7 +107,7 @@ export class game_map {
         }
 
         // remove player
-        this._pid_players.delete(pl.datacomp.generic.data.playerid);
+        this._pid_players.delete(pl.pdatas.player_gen.rundata.playerid);
         let idx = this._player_sessionids.indexOf(pl.session.session_id);
         if(idx >= 0){
             this._player_sessionids.splice(idx, 1);
@@ -155,7 +155,7 @@ export class game_map {
 
         // TO DO : test 3000 player mov at same time
         // TO DO : check position
-        pl.datacomp.generic.data.pos = from;
+        pl.pdatas.player_gen.rundata.pos = from;
         pl.runtimedata.moving = {
             from,
             to
@@ -172,7 +172,7 @@ export class game_map {
     }
     public player_stop(pl:player, pos:pos2d):void {
         pl.runtimedata.moving = null;
-        pl.datacomp.generic.data.pos = pos;
+        pl.pdatas.player_gen.rundata.pos = pos;
 
         // notify other player this player stop
         _Node_SessionContext.broadCastMsg(pl.session.session_id, this._player_sessionids, "player_stop", {

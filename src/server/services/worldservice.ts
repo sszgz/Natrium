@@ -11,10 +11,11 @@ import { servicesession } from "../../interface/service/servicesession";
 import { ServerErrorCode } from "../../share/msgs/msgcode";
 import { _Node_SessionContext } from "../../_node_implements/_node/_thread_contexts";
 import { generic_behaviour } from "../gameframework/behaviours/generic_behaviour";
-import { generic_playerdata_comp } from "../gameframework/datacomponent/generic_playerdata";
+import { session_basedatacomp } from "../gameframework/datacomponent/session_datas";
+import { player_genericdatacomp, user_basedatacomp } from "../gameframework/datacomponent/user_datas";
 import { game } from "../gameframework/game";
 import { game_map } from "../gameframework/gameobjects/game_map";
-import { player, player_datas } from "../gameframework/player";
+import { player } from "../gameframework/player";
 import { outgameservice } from "./outgameservice";
 import { servicebase } from "./servicebase";
 
@@ -40,9 +41,6 @@ export class worldservice extends servicebase {
         // register behaviours
         game.impl.register_player_behaviours(generic_behaviour.beh_name, generic_behaviour.creater);
 
-        // register datacomponents
-        game.impl.register_player_datacomponents(generic_playerdata_comp.comp_name, generic_playerdata_comp.creater);
-
         // init map
         this.init_map();
 
@@ -57,6 +55,19 @@ export class worldservice extends servicebase {
     }
     public get_map(mapid:number):game_map|undefined {
         return this._gamemaps.get(mapid);
+    }
+    
+    protected override async _sync_playerdatas(new_pl:player):Promise<boolean> {
+        if(!await new_pl.sync_redis_data(session_basedatacomp, "session", "base", new_pl.session.session_id, false)) {
+            return false;
+        }
+        if(!await new_pl.sync_redis_data(user_basedatacomp, "user", "base", new_pl.cdatas.ses_base.rundata.uid, true)) {
+            return false;
+        }
+        if(!await new_pl.sync_redis_data(player_genericdatacomp, "player", "generic", new_pl.cdatas.ses_base.rundata.uid, true)) {
+            return false;
+        }
+        return true;
     }
 
     protected init_map():void {
@@ -88,59 +99,35 @@ export class worldservice extends servicebase {
         const new_ses = await super.on_add_session(sid, skey);
 
         nat.dbglog.log(debug_level_enum.dle_debug, `worldservice:${this._service_index} on add session  ${sid}, ${skey}`);
-        
-        let ses_base_data = await nat.datas.read_session_data(sid, "base");
-        if(ses_base_data == undefined) {
-            // error 
-            _Node_SessionContext.sendWSMsg(sid, "server_error", {res:ServerErrorCode.ResServiceSessionNotExist});
-            _Node_SessionContext.kickPlayer(sid, "no ses data");
-            return new_ses;
-        }
-        
-        let player_base_data = await nat.datas.read_player_data(ses_base_data.uid, "generic");
-        if(player_base_data == undefined) {
-            // error 
-            _Node_SessionContext.sendWSMsg(sid, "server_error", {res:ServerErrorCode.ResServicePlayerNotExist});
-            _Node_SessionContext.kickPlayer(sid, "no player data");
-            return new_ses;
-        }
 
-        const pl = await this.create_player(new_ses, new player_datas(ses_base_data.uid));
+        const pl = await this.create_player(new_ses, []);
         if(pl == null) {
             // error 
             _Node_SessionContext.sendWSMsg(new_ses.session_id, "server_error", {res:ServerErrorCode.ResCreatePlayerError});
             _Node_SessionContext.kickPlayer(sid, "create player error");
             return new_ses;
         }
-
-        let plgedata = pl.datas.get_dataobj(generic_playerdata_comp.comp_name);
-        if(plgedata == null){
-            // error 
-            _Node_SessionContext.sendWSMsg(new_ses.session_id, "server_error", {res:ServerErrorCode.ResPlayerDataNotExist});
-            _Node_SessionContext.kickPlayer(sid, "player data error");
-            return new_ses;
-        }
         
         // TO DO : add player to map
-        let map = this._gamemaps.get(plgedata.data.mapid);
+        let map = this._gamemaps.get(pl.pdatas.player_gen.rundata.mapid);
         if(map == undefined){
             // error 
             // TO DO : kick player
             _Node_SessionContext.sendWSMsg(new_ses.session_id, "server_error", {res:ServerErrorCode.ResPlayerDataNotExist});
-            _Node_SessionContext.kickPlayer(sid, `mapid:${plgedata.data.mapid} not in worldservice:${this._service_index}` );
+            _Node_SessionContext.kickPlayer(sid, `mapid:${pl.pdatas.player_gen.rundata.mapid} not in worldservice:${this._service_index}` );
             return new_ses;
         }
 
-        if(ses_base_data.firstin){
+        if(pl.cdatas.ses_base.rundata.firstin){
             // first in game, send entergame res
             let enter_game_res = {
                 res:ServerErrorCode.ResOK,
                 data:{
-                    mapid:plgedata.data.mapid,
+                    mapid:pl.pdatas.player_gen.rundata.mapid,
                     info:{
-                        sinfo:plgedata.data
+                        sinfo:pl.pdatas.player_gen.rundata
                     },
-                    heros:plgedata.data.heros,
+                    heros:pl.pdatas.player_gen.rundata.heros,
                     pets:[],
                     ships:[]
                 }
@@ -148,9 +135,10 @@ export class worldservice extends servicebase {
             _Node_SessionContext.sendWSMsg(new_ses.session_id, "enter_game_res", enter_game_res);
 
             // update firstinf data
-            nat.datas.update_session_data(sid, "base", false, "$.firstin");
+            //nat.datas.update_session_data(sid, "base", false, "$.firstin");
+            pl.cdatas.ses_base.rundata.firstin = true;
+            await pl.cdatas.ses_base.flush_to_db(false);
         }
-
 
         map.add_player(pl);
 
@@ -175,21 +163,12 @@ export class worldservice extends servicebase {
     protected override async _do_remove_player(pl:player):Promise<void> {
 
         // remove player from map
-        let plgedata = pl.datas.get_dataobj(generic_playerdata_comp.comp_name);
-        if(plgedata != null){
-
-            let map = this._gamemaps.get(plgedata.data.mapid);
-            if(map != undefined){
-                map.rmv_player(pl);
-            }
-            else {
-                // error
-                nat.dbglog.log(debug_level_enum.dle_error, `worldservice:${this._service_index} rmv player mapid:${plgedata.data.mapid} map not exist`);
-            }
+        if(pl.runtimedata.map != undefined){
+            pl.runtimedata.map.rmv_player(pl);
         }
         else {
             // error
-            nat.dbglog.log(debug_level_enum.dle_error, `worldservice:${this._service_index} rmv player uid:${pl.datas.uid}, generic data not exist`);
+            nat.dbglog.log(debug_level_enum.dle_error, `worldservice:${this._service_index} rmv player mapid:${pl.pdatas.player_gen.rundata.mapid} map not exist`);
         }
         
         return super._do_remove_player(pl);

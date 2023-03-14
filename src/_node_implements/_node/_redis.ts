@@ -25,8 +25,11 @@ export class _redis_client {
           });
     }
 
-    public get connected():Boolean{
+    public get connected():boolean{
         return this._client.isReady;
+    }
+    public get conf():redisconf {
+        return this._conf;
     }
 
     public async connect():Promise<void> {
