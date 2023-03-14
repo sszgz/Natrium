@@ -16,7 +16,7 @@ export class game_map {
     protected _player_sessionids = new Array<number>();
     protected _mapconf:any;
 
-    public get players(){
+    public get pid_players(){
         return this._pid_players;
     }
     public get mapconf(){
@@ -107,7 +107,7 @@ export class game_map {
         this._pid_players.delete(pl.datacomp.generic.data.playerid);
         let idx = this._player_sessionids.indexOf(pl.session.session_id);
         if(idx >= 0){
-            this._player_sessionids.splice(idx);
+            this._player_sessionids.splice(idx, 1);
         }
         
         // notify other player this player leave

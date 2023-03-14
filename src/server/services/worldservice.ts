@@ -18,9 +18,15 @@ import { player, player_datas } from "../gameframework/player";
 import { outgameservice } from "./outgameservice";
 import { servicebase } from "./servicebase";
 
+export interface gamemap_conf {
+    in_thissrevice:boolean;
+    conf:any;
+}
+
 export class worldservice extends servicebase {
 
     protected _gamemaps = new Map<number, game_map>();
+    protected _gamemapconfs = new Map<number, gamemap_conf>();
 
     public static create(c:serviceconf) {
         return new worldservice(c);
@@ -46,6 +52,13 @@ export class worldservice extends servicebase {
         return super.startup();
     }
 
+    public get_mapconf(mapid:number):gamemap_conf|undefined {
+        return this._gamemapconfs.get(mapid);
+    }
+    public get_map(mapid:number):game_map|undefined {
+        return this._gamemaps.get(mapid);
+    }
+
     protected init_map():void {
         let mapconfigs = nat.conf.get_config_data("map");
 
@@ -54,8 +67,11 @@ export class worldservice extends servicebase {
             let mc = mapconfigs.maps[i];
 
             if((mc.id % this._conf.service_count) != this._service_index){
+                this._gamemapconfs.set(mc.id, {in_thissrevice:false, conf:mc});
                 continue;
             }
+            
+            this._gamemapconfs.set(mc.id, {in_thissrevice:true, conf:mc});
 
             mapidarys.push(mc.id);
 
@@ -115,20 +131,26 @@ export class worldservice extends servicebase {
             return new_ses;
         }
 
-        let enter_game_res = {
-            res:ServerErrorCode.ResOK,
-            data:{
-                mapid:plgedata.data.mapid,
-                info:{
-                    sinfo:plgedata.data
-                },
-                heros:plgedata.data.heros,
-                pets:[],
-                ships:[]
+        if(ses_base_data.firstin){
+            // first in game, send entergame res
+            let enter_game_res = {
+                res:ServerErrorCode.ResOK,
+                data:{
+                    mapid:plgedata.data.mapid,
+                    info:{
+                        sinfo:plgedata.data
+                    },
+                    heros:plgedata.data.heros,
+                    pets:[],
+                    ships:[]
+                }
             }
+            _Node_SessionContext.sendWSMsg(new_ses.session_id, "enter_game_res", enter_game_res);
+
+            // update firstinf data
+            nat.datas.update_session_data(sid, "base", false, "$.firstin");
         }
 
-        _Node_SessionContext.sendWSMsg(new_ses.session_id, "enter_game_res", enter_game_res);
 
         map.add_player(pl);
 

@@ -60,13 +60,6 @@ message get_player_info_res {
     repeated share.player_info infos = 1;
 }
 
-message player_enter_zone {
-    repeated uint32 playerids = 1;
-}
-message player_leave_zone {
-    repeated uint32 playerids = 1;
-}
-
 message manul_mine_res {
 
 }

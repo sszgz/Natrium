@@ -19,5 +19,8 @@ export enum ServerErrorCode {
     ResSessionNotLogin = -1009,
     ResServiceSessionNotExist = -1010,
     ResServicePlayerNotExist = -1011,
-    ResPlayerDataNotExist = -1012
+    ResPlayerDataNotExist = -1012,
+    ResPlayerNotinMap = -1013,
+    ResPlayerToMapNotExist = -1014,
+    ResPlayerToSameMap = -1015,
 }

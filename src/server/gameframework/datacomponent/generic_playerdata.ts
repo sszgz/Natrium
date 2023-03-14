@@ -18,6 +18,7 @@ export interface generic_playerdata {
     readonly gender:number;
     readonly pname:number;
     readonly pos?:pos2d;
+    readonly speed?:number;
 }
 
 export class generic_playerdata_comp extends player_datacomp_base {

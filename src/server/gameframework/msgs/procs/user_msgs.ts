@@ -54,7 +54,12 @@ export async function user_login(s:service, ses:servicesession, pl:any, data:any
     }
     
     // insert session=>user data
-    await nat.datas.insert_session_data(ses.session_id, "base", {name:data.name, uid:data.uid, token:data.token});
+    await nat.datas.insert_session_data(ses.session_id, "base", {
+        name:data.name, 
+        uid:data.uid, 
+        token:data.token,
+        firstin:true
+    });
 
     // insert user=>session data
     await nat.datas.set_user_sessionid(data.uid, ses.session_id);

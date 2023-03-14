@@ -62,6 +62,10 @@ export class packetcodec_nodeimpl implements packetcodec {
             case prototype.proto_grpc:
                 {
                     const msgT = _protobuf_mgr.msgs[p.data.c];
+                    if(msgT == undefined){
+                        natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `encode_packet cmd[${p.data.c}] protobuf not define`);
+                        throw new Error(`Natrium: encode_packet cmd[${p.data.c}] protobuf not define`);
+                    }
                     const msg = msgT.create(p.data.d);
 
                     const msgbuf = msgT.encode(msg).finish();
