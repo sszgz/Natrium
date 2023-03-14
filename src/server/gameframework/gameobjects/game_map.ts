@@ -16,6 +16,12 @@ export class game_map {
     protected _player_sessionids = new Array<number>();
     protected _mapconf:any;
 
+    public static random_bornpos(bornsrc:any):pos2d {
+        let xadd = (nat.sys.random() % (2*bornsrc.radius)) - bornsrc.radius;
+        let yadd = (nat.sys.random() % (2*bornsrc.radius)) - bornsrc.radius;
+        return {x:bornsrc.x+xadd, y:bornsrc.y+yadd};
+    }
+
     public get pid_players(){
         return this._pid_players;
     }
@@ -32,10 +38,7 @@ export class game_map {
             return {x:0, y:0};
         }
         let index = nat.sys.random() % this._mapconf.bornpos.length;
-        let bornsrc = this._mapconf.bornpos[index];
-        let xadd = (nat.sys.random() % (2*bornsrc.radius)) - bornsrc.radius;
-        let yadd = (nat.sys.random() % (2*bornsrc.radius)) - bornsrc.radius;
-        return {x:bornsrc.x+xadd, y:bornsrc.y+yadd};
+        return game_map.random_bornpos(this._mapconf.bornpos[index]);
     }
     public get_instid():number {
         let instid = this._free_instid_list.pop();

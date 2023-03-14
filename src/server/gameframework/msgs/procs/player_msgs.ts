@@ -11,6 +11,7 @@ import { ServerErrorCode } from "../../../../share/msgs/msgcode";
 import { player } from "../../player";
 import { generic_playerdata_comp } from "../../datacomponent/generic_playerdata";
 import { worldservice } from "../../../services/worldservice";
+import { game_map } from "../../gameobjects/game_map";
 
 
 export async function player_goto(s:service, ses:servicesession, pl:any, data:any):Promise<void> {
@@ -67,10 +68,15 @@ export async function player_changemapend(s:service, ses:servicesession, pl:any,
         _Node_SessionContext.sendWSMsg(ses.session_id, "server_error", {res:ServerErrorCode.ResPlayerToMapNotExist});
         return;
     }
+    if(mapconf.conf.bornpos.length <= 0) {
+        _Node_SessionContext.sendWSMsg(ses.session_id, "server_error", {res:ServerErrorCode.ResPlayerMapNoBornPos});
+        return;
+    }
 
     // TO DO : check change map condition
 
     pla.datacomp.generic.data.mapid = data.tomapid;
+    pla.datacomp.generic.data.pos = game_map.random_bornpos(mapconf.conf.bornpos[0]); // bornpos 0 is transfer point
 
     let new_map = (s as worldservice).get_map(data.tomapid);
     if(new_map != undefined){

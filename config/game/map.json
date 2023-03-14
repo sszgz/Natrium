@@ -59,6 +59,11 @@
             "portid":2,
             "name":"london",
             "bornpos":[
+                {
+                    "x":33,
+                    "y":44,
+                    "radius":20
+                }
             ],
             "gotopos":{
                 "to1":{

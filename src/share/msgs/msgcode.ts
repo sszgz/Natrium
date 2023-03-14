@@ -23,4 +23,5 @@ export enum ServerErrorCode {
     ResPlayerNotinMap = -1013,
     ResPlayerToMapNotExist = -1014,
     ResPlayerToSameMap = -1015,
+    ResPlayerMapNoBornPos = -1016,
 }

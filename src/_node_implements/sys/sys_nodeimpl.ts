@@ -8,8 +8,10 @@ import { sys } from "../../interface/sys/sys";
 export class sys_nodeimpl implements sys {
 
     protected _start_tick:number = Date.now();
+    protected _randomarray = new Array<number>();
 
     constructor(){
+
     }
     
     public getTimeStamp() : number {
@@ -21,6 +23,6 @@ export class sys_nodeimpl implements sys {
     }
     
     public random(): number {
-        return random();
+        return random(0, Number.MAX_VALUE);
     }
 }
