@@ -28,6 +28,9 @@ export class game_map {
     public get mapconf(){
         return this._mapconf;
     }
+    public get player_sessionids() {
+        return this._player_sessionids;
+    }
 
     public init_map(mapconf:any):void {
         this._mapconf = mapconf;
@@ -88,7 +91,7 @@ export class game_map {
         _Node_SessionContext.sendWSMsg(pl.session.session_id, "player_enterzone", {infos});
 
         // notify other player this player enter
-        _Node_SessionContext.broadCastMsg(pl.session.session_id, this._player_sessionids, "player_enterzone", {
+        _Node_SessionContext.broadCastMsgWith(pl.session.session_id, this._player_sessionids, "player_enterzone", {
             infos:[
                 {
                     instid:pl.runtimedata.instid, 
@@ -114,7 +117,7 @@ export class game_map {
         }
         
         // notify other player this player leave
-        _Node_SessionContext.broadCastMsg(pl.session.session_id, this._player_sessionids, "player_leavezone", {
+        _Node_SessionContext.broadCastMsgWith(pl.session.session_id, this._player_sessionids, "player_leavezone", {
             instids:[pl.runtimedata.instid]
         });
         
@@ -162,7 +165,7 @@ export class game_map {
         };
 
         // notify other player this player move
-        _Node_SessionContext.broadCastMsg(pl.session.session_id, this._player_sessionids, "player_goto", {
+        _Node_SessionContext.broadCastMsgWith(pl.session.session_id, this._player_sessionids, "player_goto", {
             instid:pl.runtimedata.instid, 
             goto:{
                 from,
@@ -175,9 +178,31 @@ export class game_map {
         pl.pdatas.player_gen.rundata.pos = pos;
 
         // notify other player this player stop
-        _Node_SessionContext.broadCastMsg(pl.session.session_id, this._player_sessionids, "player_stop", {
+        _Node_SessionContext.broadCastMsgWith(pl.session.session_id, this._player_sessionids, "player_stop", {
             instid:pl.runtimedata.instid, 
             pos
         });
+    }
+
+    public get_player_nearby_sids(pl:player, width:number, height:number):Array<number> {
+        let cid_ary = new Array<number>();
+        this._pid_players.forEach((othpl)=>{
+            if(othpl == pl){
+                return;
+            }
+            if(othpl.pdatas.player_gen.rundata.pos == undefined){
+                return;
+            }
+            if(Math.abs(othpl.pdatas.player_gen.rundata.pos.x - pl.pdatas.player_gen.rundata.pos.x) > width) {
+                return;
+            }
+            if(Math.abs(othpl.pdatas.player_gen.rundata.pos.y - pl.pdatas.player_gen.rundata.pos.y) > height) {
+                return;
+            }
+
+            cid_ary.push(othpl.session.session_id);
+        });
+
+        return cid_ary;
     }
 }

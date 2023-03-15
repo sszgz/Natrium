@@ -13,6 +13,7 @@ export enum protobuf_c2s {
     get_player_sinfo = 104,
     get_player_info = 105,
     stop = 106,
+    chat = 107,
 
     manul_mine = 201,
 }
@@ -30,6 +31,8 @@ export enum protobuf_s2c {
     player_enterzone = 10106,
     player_leavezone = 10107,
     player_stop = 10108,
+    chat_msg = 10109,
+    borad_cast_msg = 10110,
 
     manul_mine_res = 10201,
 }

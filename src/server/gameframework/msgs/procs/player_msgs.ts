@@ -140,6 +140,44 @@ export async function player_get_player_info(s:service, ses:servicesession, pl:a
 
     _Node_SessionContext.sendWSMsg(ses.session_id, "get_player_info_res", ret);
 }
+
+export async function player_chat(s:service, ses:servicesession, pl:any, data:any):Promise<void> {
+    if(pl == null){
+        _Node_SessionContext.sendWSMsg(ses.session_id, "server_error", {res:ServerErrorCode.ResServicePlayerNotExist});
+        return;
+    }
+    let map = (pl as player).runtimedata.map;
+    if(map == null){
+        _Node_SessionContext.sendWSMsg(ses.session_id, "server_error", {res:ServerErrorCode.ResPlayerNotinMap});
+        return;
+    }
+
+    const MAX_CHAT_MSG_LENGTH = 10;
+    if(data.msg.length > MAX_CHAT_MSG_LENGTH){
+        data.msg = data.msg.slice(0, MAX_CHAT_MSG_LENGTH);
+    }
+
+    switch(data.channel){
+        case 1: // world
+            {
+                _Node_SessionContext.broadCastMsg("chat_msg", data);
+            }
+            break;
+        case 2: // current map
+            {
+                _Node_SessionContext.broadCastMsgWith(0, map.player_sessionids, "chat_msg", data);
+            }
+            break;
+        case 3: // near by
+            {
+                let cid_ary = map.get_player_nearby_sids(pl, 100, 100);
+                cid_ary.push(ses.session_id);
+                _Node_SessionContext.broadCastMsgWith(0, cid_ary, "chat_msg", data);
+            }
+            break;
+    }
+}
+
 export async function player_manulmine(s:service, ses:servicesession, pl:any, data:any):Promise<void> {
 
 }

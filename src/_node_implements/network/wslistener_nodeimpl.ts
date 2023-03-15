@@ -136,7 +136,7 @@ export class wslistener_nodeimpl implements wslistener {
         
         this._send_data(sockcid, data);
     }
-    public broadcast_packet(cid:number[], p:packet, exceptcid:number):void {
+    public broadcast_packet_with(cid:number[], p:packet, exceptcid:number):void {
         natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_debug, `wslistener_nodeimpl broadcast cids:${cid} packet:${p}`);
 
         var data:Buffer = this._pcodec.encode_packet(p);
@@ -157,6 +157,18 @@ export class wslistener_nodeimpl implements wslistener {
 
             this._send_data(sockcid, data);
         }
+    }
+    
+    public broadcast_packet(p:packet):void {
+        natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_debug, `wslistener_nodeimpl broadcast packet:${p}`);
+        var data:Buffer = this._pcodec.encode_packet(p);
+        if(data==null){
+            return;
+        }
+
+        this._cid_to_sock.forEach((sockcid)=>{
+            this._send_data(sockcid, data);
+        });
     }
     public check_activeconns():void{
         // TO DO : check & kick not active connections by lastpkttime

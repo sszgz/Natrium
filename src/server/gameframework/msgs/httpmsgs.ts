@@ -4,6 +4,7 @@
 
 import * as crypto from "node:crypto";
 import { http_request_like, http_response_like } from "../../../interface/network/httplistener";
+import { network } from "../../../interface/network/network";
 import { nat } from "../../../natrium";
 
 export const http_unknown_cmd_json = `{"res":"Unknown command"}`;
@@ -72,4 +73,23 @@ export const on_verify_sign = async (req:http_request_like, res:http_response_li
         data:retdata
     }));
     res.end();
+}
+
+export const on_broadcast_msg = async (req:http_request_like, res:http_response_like):Promise<void> => {
+    if(req.postdata == undefined){
+        res.write(http_param_err_json);
+        res.end();
+        return;
+    }
+    let postdata = JSON.parse(req.postdata);
+    if(!("type" in postdata) || !("msg" in postdata)){
+        res.write(http_param_err_json);
+        res.end();
+        return;
+    }
+
+    let pkt = network.def_wslistener.pcodec.create_protopkt("borad_cast_msg", postdata);
+    
+    // borad cast to whole server
+    network.def_wslistener.broadcast_packet(pkt);
 }

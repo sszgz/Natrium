@@ -40,6 +40,8 @@ let start_client = async () =>{
     pcodec.register_protobuf_msg(protobuf_s2c.player_goto, "player_goto", "s2c_user.player_goto");
     pcodec.register_protobuf_msg(protobuf_s2c.get_player_sinfo_res, "get_player_sinfo_res", "s2c_user.get_player_sinfo_res");
     pcodec.register_protobuf_msg(protobuf_s2c.get_player_info_res, "get_player_info_res", "s2c_user.get_player_info_res");
+    pcodec.register_protobuf_msg(protobuf_s2c.chat_msg, "chat_msg", "s2c_user.chat_msg");
+    pcodec.register_protobuf_msg(protobuf_s2c.borad_cast_msg, "borad_cast_msg", "s2c_user.borad_cast_msg");
     pcodec.register_protobuf_msg(protobuf_s2c.manul_mine_res, "manul_mine_res", "s2c_user.manul_mine_res");
     
     // register client msg
@@ -52,6 +54,7 @@ let start_client = async () =>{
     pcodec.register_protobuf_msg(protobuf_c2s.get_player_info, "get_player_info", "c2s_user.get_player_info");
     pcodec.register_protobuf_msg(protobuf_c2s.changemap_begin, "changemap_begin", "c2s_user.changemap_begin");
     pcodec.register_protobuf_msg(protobuf_c2s.changemap_end, "changemap_end", "c2s_user.changemap_end");
+    pcodec.register_protobuf_msg(protobuf_c2s.chat, "chat", "c2s_user.chat");
     pcodec.register_protobuf_msg(protobuf_c2s.manul_mine, "manul_mine", "c2s_user.manul_mine");
     
     client.on("connected", ()=>{
@@ -103,10 +106,10 @@ var testcmd = async ()=>{
                         c:"login",
                         d:{
                             "name": "",
-                            // "uid": "2",
-                            // "token": "ef4dbf70-1678811634142-2",
-                            "uid": "3",
-                            "token": "ef4dbf70-1678811634142-3",
+                            "uid": "2",
+                            "token": "ef4dbf70-1678811634142-2",
+                            // "uid": "3",
+                            // "token": "ef4dbf70-1678811634142-3",
                         }
                     };
     
@@ -212,6 +215,20 @@ var testcmd = async ()=>{
                         c:"changemap_end",
                         d:{
                             tomapid:cmds[1]
+                        }
+                    };
+
+                    let pkt = client.connecter.pcodec.create_protopkt(obj.c, obj.d);
+                    client.connecter.send_packet(pkt);
+                }
+                break;
+            case "chat":
+                {
+                    let obj = {
+                        c:"chat",
+                        d:{
+                            channel:cmds[1],
+                            msg:cmds[2]
                         }
                     };
 

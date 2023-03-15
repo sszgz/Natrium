@@ -12,7 +12,7 @@ import { packet, prototype } from "../interface/protocol/packet";
 import { natrium_services } from "../interface/service/service";
 import { serviceworker } from "../interface/service/serviceworker";
 import { sessionmgr } from "../interface/session/sessionmgr";
-import { http_unknown_cmd_json, on_verify_sign } from "./gameframework/msgs/httpmsgs";
+import { http_unknown_cmd_json, on_broadcast_msg, on_verify_sign } from "./gameframework/msgs/httpmsgs";
 
 export class natrium_server implements wslistener_handler, httplistener_handler {
 
@@ -112,6 +112,7 @@ export class natrium_server implements wslistener_handler, httplistener_handler 
 
         // reg http msg
         this.reg_httpmsg_proc("/verify", on_verify_sign);
+        this.reg_httpmsg_proc("/broadcast", on_broadcast_msg);
 
         // start up http listener
         this._httplistener = nat.create_httplistener(this);

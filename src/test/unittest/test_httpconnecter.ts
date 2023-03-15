@@ -37,6 +37,18 @@ var testcmd = async ()=>{
                     console.log("verify res:\r\n"+JSON.stringify(verify_res));
                 }
                 break;
+            case "broadcast":
+                {
+                    let obj = {
+                        "type":cmds[1],
+                        "msg":cmds[2]
+                    };
+                    
+                    let verify_res = await conn.post(url+"/broadcast", obj);
+
+                    console.log("verify res:\r\n"+JSON.stringify(verify_res));
+                }
+                break;
             default:
                 console.log("unknown command!");
 

@@ -15,6 +15,7 @@ import { _Service_M2W_MSG, _Service_W2M_MSG } from "../_node/_threads_msgs";
 import { _Node_MainTrhead, _Node_WorkerThread } from "../_node/_threads";
 import { _service_workers } from "./_service_workers";
 import { serviceconf } from "../../interface/config/configs";
+import { packet } from "../../interface/protocol/packet";
 
 export class servicechannel_nodeimpl implements servicechannel {
     
@@ -186,13 +187,23 @@ export class serviceworker_nodeimpl implements serviceworker {
             break;
         case _Service_W2M_MSG._w2m_boradcast_session_msg:
             {
+                let pkt:packet;
                 if(msg.is_rpc){
-                    // send rpc
-                    network.def_wslistener.broadcast_packet(msg.tosids, network.def_wslistener.pcodec.create_protopkt(msg.msg.c, msg.msg.d), msg.fromsid); // sid = cid
+                    // make rpc
+                    pkt = network.def_wslistener.pcodec.create_protopkt(msg.msg.c, msg.msg.d);
                 }
                 else {
-                    // send json
-                    network.def_wslistener.broadcast_packet(msg.tosids, network.def_wslistener.pcodec.create_jsonpkt(msg.msg), msg.fromsid); // sid = cid
+                    // make json
+                    pkt = network.def_wslistener.pcodec.create_jsonpkt(msg.msg);
+                }
+                
+                if("tosids" in msg){
+                    // broad cast with session id array
+                    network.def_wslistener.broadcast_packet_with(msg.tosids, pkt, msg.fromsid); // sid = cid
+                }
+                else {
+                    // borad cast to whole server
+                    network.def_wslistener.broadcast_packet(pkt);
                 }
             }
             break;

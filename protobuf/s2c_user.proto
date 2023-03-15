@@ -73,6 +73,17 @@ message get_player_info_res {
     repeated share.player_info infos = 1; // player info
 }
 
+// chat msg
+message chat_msg {
+    required uint32 channel = 1; // chat channel, 1=wolrd, 2=current map, 3=near by
+    required string msg = 2; // chat msg
+}
+// borad cast msg
+message borad_cast_msg {
+    required uint32 type = 1; // broad cast type
+    required string msg = 2; // broad cast msg
+}
+
 message manul_mine_res {
 
 }
