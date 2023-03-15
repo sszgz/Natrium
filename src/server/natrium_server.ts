@@ -12,7 +12,7 @@ import { packet, prototype } from "../interface/protocol/packet";
 import { natrium_services } from "../interface/service/service";
 import { serviceworker } from "../interface/service/serviceworker";
 import { sessionmgr } from "../interface/session/sessionmgr";
-import { http_unknown_cmd_json, on_broadcast_msg, on_verify_sign } from "./gameframework/msgs/httpmsgs";
+import { http_interal_json, http_unknown_cmd_json, on_broadcast_msg, on_verify_sign } from "./gameframework/msgs/httpmsgs";
 
 export class natrium_server implements wslistener_handler, httplistener_handler {
 
@@ -252,6 +252,7 @@ export class natrium_server implements wslistener_handler, httplistener_handler 
         catch(e){
             let err:Error = e as Error;
             nat.dbglog.log(debug_level_enum.dle_error, `natrium_server on http request ${req.url} exception:${err.message}\r\n ${err.stack}`);
+            res.write(http_interal_json);
             res.end();
         }
     }

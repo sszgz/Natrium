@@ -28,8 +28,10 @@ var testcmd = async ()=>{
             case "verify":
                 {
                     let obj = {
+                        "chainid":1,
                         "walletaddr":"0xf226BeA06598b39f1508c6702900845928122B03",
-                        "signmsg":"dddadfasdfasdfasdfadsfs"
+                        "signmsg":"dddadfasdfasdfasdfadsfs",
+                        "signature":"0xf226BeA065f226BeA065f226BeA065f226BeA065f226BeA065f226BeA065f226BeA065f226BeA065f226BeA065f226BeA065f226BeA065f226BeA065f226BeA065"
                     };
                     
                     let verify_res = await conn.post(url+"/verify", obj);

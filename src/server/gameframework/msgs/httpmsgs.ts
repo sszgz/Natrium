@@ -2,6 +2,7 @@
 // license : MIT
 // author : Sean Chen
 
+import { ethers } from "ethers";
 import * as crypto from "node:crypto";
 import { http_request_like, http_response_like } from "../../../interface/network/httplistener";
 import { network } from "../../../interface/network/network";
@@ -9,6 +10,8 @@ import { nat } from "../../../natrium";
 
 export const http_unknown_cmd_json = `{"res":"Unknown command"}`;
 export const http_param_err_json = `{"res":"Parameter error"}`;
+export const http_interal_json = `{"res":"Internal error"}`;
+export const verify_sign_error = `{"res":"verify sign error"}`;
 
 function _generate_login_token(uid:string):string {
     const timestamp = nat.sys.getTimeStamp();
@@ -25,11 +28,18 @@ export const on_verify_sign = async (req:http_request_like, res:http_response_li
         return;
     }
     let postdata = JSON.parse(req.postdata);
-    if(!("walletaddr" in postdata) || !("signmsg" in postdata)){
+    if(!("chainid" in postdata) || !("walletaddr" in postdata) || !("signmsg" in postdata) || !("signature" in postdata)){
         res.write(http_param_err_json);
         res.end();
         return;
     }
+
+    // check walletaddr & check sign message 
+    // if(postdata.walletaddr != ethers.verifyMessage(postdata.signmsg, postdata.signature)) {
+    //     res.write(verify_sign_error);
+    //     res.end();
+    //     return;
+    // }
 
     let retdata = {
         wallet:postdata.walletaddr,
@@ -38,10 +48,6 @@ export const on_verify_sign = async (req:http_request_like, res:http_response_li
         token:"132-12-BIG",
         lastlogintm:nat.sys.getTimeStamp()
     };
-
-    // TO DO : check walletaddr & check sign message 
-    postdata.walletaddr;
-    postdata.signmsg;
 
     let uid = await nat.datas.get_wallet_userid(retdata.wallet);
     if(uid == undefined || uid.length == 0){
