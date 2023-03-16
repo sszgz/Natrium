@@ -4,34 +4,34 @@
             {
                 "rate":10,
                 "itemid":1,
-                "count":1
+                "count":10
             },
             {
                 "rate":20,
                 "itemid":2,
-                "count":1
+                "count":10
             },
             {
                 "rate":70,
                 "itemid":3,
-                "count":1
+                "count":10
             }
         ],
         "2":[
             {
                 "rate":10,
-                "itemid":1,
-                "count":1
+                "itemid":101,
+                "count":10
             },
             {
                 "rate":20,
-                "itemid":2,
-                "count":1
+                "itemid":102,
+                "count":10
             },
             {
                 "rate":70,
-                "itemid":3,
-                "count":1
+                "itemid":103,
+                "count":10
             }
         ]
     },

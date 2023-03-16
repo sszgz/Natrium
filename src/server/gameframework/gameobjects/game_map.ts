@@ -152,58 +152,6 @@ export class game_map {
 
     // ------------------------------------------------------------------------
 
-    public player_goto(pl:player, path:Array<pathnode>):void {
-
-        // TO DO : test 3000 player mov at same time
-
-        // check position
-        let cur_pos = pl.pdatas.player_gen.rundata.pos;
-        if(Math.abs(cur_pos.x - path[0].x) > 100 || Math.abs(cur_pos.y - path[0].y) > 100) {
-            // correct client postion
-            _Node_SessionContext.broadCastMsgWith(pl.session.session_id, this._player_sessionids, "player_pos_correct", {
-                pos:cur_pos
-            });
-
-            return;
-        }
-
-        pl.pdatas.player_gen.rundata.pos = path[0];
-        pl.runtimedata.moving = {
-            path,
-            lasttm:nat.sys.getTickFromAppStart()
-        };
-
-        // notify other player this player move
-        _Node_SessionContext.broadCastMsgWith(pl.session.session_id, this._player_sessionids, "player_goto", {
-            instid:pl.runtimedata.instid, 
-            goto:{
-                path
-            }
-        });
-    }
-    public player_stop(pl:player, pos:pos2d):void {
-        pl.runtimedata.moving = null;
-        
-        // check position
-        let cur_pos = pl.pdatas.player_gen.rundata.pos;
-        if(Math.abs(cur_pos.x - pos.x) > 100 || Math.abs(cur_pos.y - pos.y) > 100) {
-            // correct client postion
-            _Node_SessionContext.broadCastMsgWith(pl.session.session_id, this._player_sessionids, "player_pos_correct", {
-                pos:cur_pos
-            });
-
-            return;
-        }
-
-        pl.pdatas.player_gen.rundata.pos = pos;
-
-        // notify other player this player stop
-        _Node_SessionContext.broadCastMsgWith(pl.session.session_id, this._player_sessionids, "player_stop", {
-            instid:pl.runtimedata.instid, 
-            pos
-        });
-    }
-
     public get_player_nearby_sids(pl:player, width:number, height:number):Array<number> {
         let cid_ary = new Array<number>();
         this._pid_players.forEach((othpl)=>{

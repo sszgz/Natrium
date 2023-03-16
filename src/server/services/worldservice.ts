@@ -11,6 +11,9 @@ import { servicesession } from "../../interface/service/servicesession";
 import { ServerErrorCode } from "../../share/msgs/msgcode";
 import { _Node_SessionContext } from "../../_node_implements/_node/_thread_contexts";
 import { generic_behaviour } from "../gameframework/behaviours/generic_behaviour";
+import { mine_beh } from "../gameframework/behaviours/mine_beh";
+import { product_beh } from "../gameframework/behaviours/product_beh";
+import { ship_beh } from "../gameframework/behaviours/ship_beh";
 import { session_basedatacomp } from "../gameframework/datacomponent/session_datas";
 import { player_genericdatacomp, user_basedatacomp } from "../gameframework/datacomponent/user_datas";
 import { game } from "../gameframework/game";
@@ -40,6 +43,9 @@ export class worldservice extends servicebase {
     public override async startup():Promise<boolean> {
         // register behaviours
         game.impl.register_player_behaviours(generic_behaviour.beh_name, generic_behaviour.creater);
+        game.impl.register_player_behaviours(mine_beh.beh_name, mine_beh.creater);
+        game.impl.register_player_behaviours(product_beh.beh_name, product_beh.creater);
+        game.impl.register_player_behaviours(ship_beh.beh_name, ship_beh.creater);
 
         // init map
         this.init_map();
@@ -70,7 +76,7 @@ export class worldservice extends servicebase {
 
         // for Debug ...
         new_pl.pdatas.player_gen.rundata.speed = nat.conf.get_config_data("game").base.movspeed;
-        
+
         return true;
     }
 
@@ -123,6 +129,15 @@ export class worldservice extends servicebase {
         }
 
         if(pl.cdatas.ses_base.rundata.firstin){
+            
+            let succ = await pl.firstin_init();
+            if(!succ){
+                // error 
+                _Node_SessionContext.sendWSMsg(new_ses.session_id, "server_error", {res:ServerErrorCode.ResPlayerFirstInitError});
+                _Node_SessionContext.kickPlayer(sid, `player first init error`);
+                return new_ses;
+            }
+
             // first in game, send entergame res
             let enter_game_res = {
                 res:ServerErrorCode.ResOK,

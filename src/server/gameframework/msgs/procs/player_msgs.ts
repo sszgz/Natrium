@@ -11,6 +11,7 @@ import { ServerErrorCode } from "../../../../share/msgs/msgcode";
 import { player } from "../../player";
 import { worldservice } from "../../../services/worldservice";
 import { game_map } from "../../gameobjects/game_map";
+import { generic_behaviour } from "../../behaviours/generic_behaviour";
 
 
 export async function player_goto(s:service, ses:servicesession, pl:any, data:any):Promise<void> {
@@ -29,21 +30,15 @@ export async function player_goto(s:service, ses:servicesession, pl:any, data:an
         return;
     }
 
-    (pl as player).runtimedata.map?.player_goto(pl, data.goto.path);
+    ((pl as player).behavoiurs.get("generic") as generic_behaviour).player_goto(pl, data.goto.path);
 }
 export async function player_stop(s:service, ses:servicesession, pl:any, data:any):Promise<void> {
     if(pl == null){
         _Node_SessionContext.sendWSMsg(ses.session_id, "server_error", {res:ServerErrorCode.ResServicePlayerNotExist});
         return;
     }
-
-    let map = (pl as player).runtimedata.map;
-    if(map == null){
-        _Node_SessionContext.sendWSMsg(ses.session_id, "server_error", {res:ServerErrorCode.ResPlayerNotinMap});
-        return;
-    }
-
-    map.player_stop(pl, data.pos);
+    
+    ((pl as player).behavoiurs.get("generic") as generic_behaviour).player_stop(pl, data.pos);
 }
 export async function player_changemapbegin(s:service, ses:servicesession, pl:any, data:any):Promise<void> {
     // TO DO : rmv player ?

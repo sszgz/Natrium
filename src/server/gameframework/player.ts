@@ -16,6 +16,7 @@ export interface player_behaviour {
     readonly name:string;
     readonly player:player;
     
+    firstin_init():Promise<boolean>;
     init():Promise<boolean>;
     fin():Promise<void>;
 
@@ -89,6 +90,20 @@ export class player {
     public add_behaviours(beh:player_behaviour):void{
         this._behaviours.set(beh.name, beh);
     }
+
+    public async firstin_init():Promise<boolean> {
+        //let promiseAry:Array<Promise<any>> = new Array<Promise<any>>();
+        for(const key in this._behaviours.keys) {
+            const succ = await this._behaviours.get(key)?.init();
+            if(!succ){
+                return false;
+            }
+        }
+        //await Promise.all(promiseAry);
+
+        return true;
+    }
+
     public async init():Promise<boolean> {
         //let promiseAry:Array<Promise<any>> = new Array<Promise<any>>();
         for(const key in this._behaviours.keys) {
@@ -174,6 +189,9 @@ export abstract class player_behaviour_base implements player_behaviour{
         return "base";
     }
     
+    public async firstin_init():Promise<boolean> {
+        return true;
+    }
     public async init():Promise<boolean> {
         return true;
     }
@@ -184,7 +202,3 @@ export abstract class player_behaviour_base implements player_behaviour{
         
     }
 }
-
-type player_behaviours_map = {
-    [key: string]: player_behaviour;
-  };
