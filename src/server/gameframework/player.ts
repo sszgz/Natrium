@@ -39,6 +39,7 @@ export interface runtimedata {
     instid:number;
     inzoneplayer:Array<player>;
     moving:movedata|null;
+    lastmvmsgtm:number;
     map:game_map|null;
 }
 
@@ -68,6 +69,7 @@ export class player {
             instid:0,
             moving:null,
             map:null,
+            lastmvmsgtm:0,
             inzoneplayer:new Array<player>
         }
     }

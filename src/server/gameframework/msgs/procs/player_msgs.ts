@@ -37,7 +37,7 @@ export async function player_stop(s:service, ses:servicesession, pl:any, data:an
         _Node_SessionContext.sendWSMsg(ses.session_id, "server_error", {res:ServerErrorCode.ResServicePlayerNotExist});
         return;
     }
-    
+
     ((pl as player).behavoiurs.get("generic") as generic_behaviour).player_stop(pl, data.pos);
 }
 export async function player_changemapbegin(s:service, ses:servicesession, pl:any, data:any):Promise<void> {
@@ -58,7 +58,20 @@ export async function player_changemapend(s:service, ses:servicesession, pl:any,
     }
 
     if(data.tomapid == map.mapconf.id) {
-        _Node_SessionContext.sendWSMsg(ses.session_id, "server_error", {res:ServerErrorCode.ResPlayerNotinMap});
+        _Node_SessionContext.sendWSMsg(ses.session_id, "server_error", {res:ServerErrorCode.ResPlayerInSameMap});
+        return;
+    }
+
+    // get change map point
+    if(!((data.tomapid.toString()) in map.mapconf.gotopos)) {
+        _Node_SessionContext.sendWSMsg(ses.session_id, "server_error", {res:ServerErrorCode.ResPlayerToMapPointNotExist});
+        return;
+    }
+
+    // check is near by change map point
+    const cmpoint = map.mapconf.gotopos[data.tomapid.toString()];
+    if(!map.is_player_nearby(pl, cmpoint, cmpoint.radius)) {
+        _Node_SessionContext.sendWSMsg(ses.session_id, "server_error", {res:ServerErrorCode.ResPlayerToMapPointTooFar});
         return;
     }
 

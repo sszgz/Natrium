@@ -173,4 +173,21 @@ export class game_map {
 
         return cid_ary;
     }
+
+    public is_npc_nearby(pl:player, npc_name:string):Boolean {
+        // TO DO : check npc position
+        return true;
+    }
+
+    public is_player_nearby(pl:player, pos:pos2d, radius:number):boolean {
+        
+        if(Math.abs(pos.x - pl.pdatas.player_gen.rundata.pos.x) > radius) {
+            return false;
+        }
+        if(Math.abs(pos.y - pl.pdatas.player_gen.rundata.pos.y) > radius) {
+            return false;
+        }
+
+        return true;
+    }
 }

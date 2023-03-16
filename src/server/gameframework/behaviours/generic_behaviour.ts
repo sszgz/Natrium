@@ -51,11 +51,27 @@ export class generic_behaviour extends player_behaviour_base {
 
         // TO DO : test 3000 player mov at same time
 
-        // check position
+        let curr_tick = nat.sys.getTickFromAppStart();
         let cur_pos = pl.pdatas.player_gen.rundata.pos;
+
+        if(pl.runtimedata.lastmvmsgtm != undefined){
+            // check last move msg tm
+            if(curr_tick - pl.runtimedata.lastmvmsgtm < 300){
+                // msg too frequent
+                // correct client postion
+                _Node_SessionContext.sendWSMsg(pl.session.session_id, "player_pos_correct", {
+                    pos:cur_pos
+                });
+                return;
+            }
+        }
+
+        pl.runtimedata.lastmvmsgtm = curr_tick;
+
+        // check position
         if(Math.abs(cur_pos.x - path[0].x) > 100 || Math.abs(cur_pos.y - path[0].y) > 100) {
             // correct client postion
-            _Node_SessionContext.broadCastMsgWith(pl.session.session_id, pl.runtimedata.map.player_sessionids, "player_pos_correct", {
+            _Node_SessionContext.sendWSMsg(pl.session.session_id, "player_pos_correct", {
                 pos:cur_pos
             });
 
@@ -65,7 +81,7 @@ export class generic_behaviour extends player_behaviour_base {
         pl.pdatas.player_gen.rundata.pos = path[0];
         pl.runtimedata.moving = {
             path,
-            lasttm:nat.sys.getTickFromAppStart()
+            lasttm:curr_tick
         };
 
         // notify other player this player move
@@ -83,7 +99,7 @@ export class generic_behaviour extends player_behaviour_base {
         let cur_pos = pl.pdatas.player_gen.rundata.pos;
         if(Math.abs(cur_pos.x - pos.x) > 100 || Math.abs(cur_pos.y - pos.y) > 100) {
             // correct client postion
-            _Node_SessionContext.broadCastMsgWith(pl.session.session_id, pl.runtimedata.map.player_sessionids, "player_pos_correct", {
+            _Node_SessionContext.sendWSMsg(pl.session.session_id, "player_pos_correct", {
                 pos:cur_pos
             });
 

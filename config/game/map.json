@@ -14,18 +14,22 @@
                 }
             ],
             "gotopos":{
-                "to1":{
-                    "x":10,
-                    "y":10,
-                    "radius":10,
-                    "tomapids":[101,102]
+                "1001":{
+                    "x":256,
+                    "y":4772,
+                    "radius":50
                 },
-                "portto":{
-                    "x":10,
-                    "y":10,
-                    "radius":10,
-                    "tomapids":[2,3,4]
+                "1002":{
+                    "x":150,
+                    "y":150,
+                    "radius":50
                 }
+            },
+            "portto":{
+                "x":10,
+                "y":10,
+                "radius":10,
+                "toports":[2,3,4]
             },
             "npcs":{
                 "john_bartender":{
@@ -45,6 +49,48 @@
             }
         },
         {
+            "id":1001,
+            "portid":1,
+            "name":"pizza_wild1",
+            "bornpos":[
+                {
+                    "x":10,
+                    "y":10,
+                    "radius":5
+                }
+            ],
+            "gotopos":{
+                "1":{
+                    "x":10,
+                    "y":10,
+                    "radius":50
+                }
+            },
+            "npcs":{
+            }
+        },
+        {
+            "id":1002,
+            "portid":1,
+            "name":"pizza_wild2",
+            "bornpos":[
+                {
+                    "x":10,
+                    "y":10,
+                    "radius":5
+                }
+            ],
+            "gotopos":{
+                "1":{
+                    "x":10,
+                    "y":10,
+                    "radius":50
+                }
+            },
+            "npcs":{
+            }
+        },
+        {
             "id":2,
             "portid":2,
             "name":"london",
@@ -56,18 +102,22 @@
                 }
             ],
             "gotopos":{
-                "to1":{
+                "2001":{
                     "x":10,
                     "y":10,
-                    "radius":10,
-                    "tomapids":[201,202]
+                    "radius":50
                 },
-                "portto":{
-                    "x":10,
-                    "y":10,
-                    "radius":10,
-                    "tomapids":[1,3,4,5]
+                "2002":{
+                    "x":150,
+                    "y":150,
+                    "radius":50
                 }
+            },
+            "portto":{
+                "x":10,
+                "y":10,
+                "radius":10,
+                "toports":[1,3,4,5]
             },
             "npcs":{
             }
