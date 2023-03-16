@@ -103,6 +103,7 @@ export abstract class servicebase implements service {
             return null;
         }
         await this._sync_playerdatas(new_pl);
+        new_pl.prepare_behdata();
         this._players.set(ses.session_id, new_pl);
 
         return new_pl;
@@ -178,7 +179,7 @@ export abstract class servicebase implements service {
     public async on_session_message(sid:number, command:string, data:any):Promise<void> {
 
         nat.dbglog.log(debug_level_enum.dle_debug, `on_session_message session ${sid} c:${command} d:${JSON.stringify(data)}`);
-        
+
         const ses = this._sessions.get(sid);
         if(ses == undefined) {
             nat.dbglog.log(debug_level_enum.dle_error, `on_session_message session ${sid} c:${command} d:${data}, session not exist`);

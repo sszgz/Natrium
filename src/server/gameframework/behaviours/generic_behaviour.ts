@@ -20,6 +20,8 @@ export class generic_behaviour extends player_behaviour_base {
     }
 
     protected _gridsize:number = 32;
+
+    protected _gendata:generic_playerdata;
     protected _gridtime:number = 0;
 
     constructor(p:player){
@@ -28,6 +30,11 @@ export class generic_behaviour extends player_behaviour_base {
     
     public override async firstin_init(): Promise<boolean> {
         return true;
+    }
+
+    public override prepare_data():void {
+        this._gendata = this._player.pdatas.player_gen.rundata;
+        this._gridtime = this._gridsize * 1000 / this._gendata.speed;
     }
 
     public override async init():Promise<boolean> {
@@ -92,7 +99,7 @@ export class generic_behaviour extends player_behaviour_base {
         });
     }
 
-    protected _update_mov(gendata:generic_playerdata):void {
+    protected _update_mov():void {
         if(this._player.runtimedata.moving == null) {
             return;
         }
@@ -109,16 +116,15 @@ export class generic_behaviour extends player_behaviour_base {
         }
         
         let moving = this._player.runtimedata.moving;
-        let gridtime = this._gridsize * 1000 / gendata.speed;
 
         let currtick = nat.sys.getTickFromAppStart();
 
         while(moving.lasttm < currtick) {
-            let timecost = gridtime * nextpos.cost;
+            let timecost = this._gridtime * nextpos.cost;
             if(moving.lasttm + timecost <= currtick) {
                 
                 moving.lasttm += timecost;
-                gendata.pos = nextpos;
+                this._gendata.pos = nextpos;
 
                 //console.log(`mov reached [${nextpos.x},${nextpos.y}]`);
 
@@ -135,7 +141,6 @@ export class generic_behaviour extends player_behaviour_base {
     }
 
     public override on_update():void {
-        let gendata = this._player.pdatas.player_gen.rundata;
-        this._update_mov(gendata);
+        this._update_mov();
     }
 }

@@ -17,6 +17,7 @@ export interface player_behaviour {
     readonly player:player;
     
     firstin_init():Promise<boolean>;
+    prepare_data():void;
     init():Promise<boolean>;
     fin():Promise<void>;
 
@@ -102,6 +103,12 @@ export class player {
         //await Promise.all(promiseAry);
 
         return true;
+    }
+
+    public prepare_behdata():void {
+        this._behaviours.forEach((beh)=>{
+            beh.prepare_data();
+        })
     }
 
     public async init():Promise<boolean> {
@@ -191,6 +198,9 @@ export abstract class player_behaviour_base implements player_behaviour{
     
     public async firstin_init():Promise<boolean> {
         return true;
+    }
+    public prepare_data():void {
+
     }
     public async init():Promise<boolean> {
         return true;

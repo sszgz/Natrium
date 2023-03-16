@@ -20,6 +20,11 @@ export class product_beh extends player_behaviour_base {
     public override async firstin_init():Promise<boolean> {
         return true;
     }
+
+    public override prepare_data():void {
+        
+    }
+    
     public override async init():Promise<boolean> {
         return true;
     }
