@@ -33,6 +33,7 @@ export enum protobuf_s2c {
     player_stop = 10108,
     chat_msg = 10109,
     borad_cast_msg = 10110,
+    player_pos_correct = 10111,
 
     manul_mine_res = 10201,
 }

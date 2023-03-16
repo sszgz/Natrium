@@ -42,6 +42,7 @@ let start_client = async () =>{
     pcodec.register_protobuf_msg(protobuf_s2c.get_player_info_res, "get_player_info_res", "s2c_user.get_player_info_res");
     pcodec.register_protobuf_msg(protobuf_s2c.chat_msg, "chat_msg", "s2c_user.chat_msg");
     pcodec.register_protobuf_msg(protobuf_s2c.borad_cast_msg, "borad_cast_msg", "s2c_user.borad_cast_msg");
+    pcodec.register_protobuf_msg(protobuf_s2c.player_pos_correct, "player_pos_correct", "s2c_user.player_pos_correct");
     pcodec.register_protobuf_msg(protobuf_s2c.manul_mine_res, "manul_mine_res", "s2c_user.manul_mine_res");
     
     // register client msg
@@ -106,10 +107,12 @@ var testcmd = async ()=>{
                         c:"login",
                         d:{
                             "name": "",
-                            "uid": "2",
-                            "token": "ef4dbf70-1678811634142-2",
+                            // "uid": "2",
+                            // "token": "ef4dbf70-1678811634142-2",
                             // "uid": "3",
                             // "token": "ef4dbf70-1678811634142-3",
+                            "uid": "4",
+                            "token": "c82b90d4-1678951061593-4",
                         }
                     };
     
@@ -151,14 +154,16 @@ var testcmd = async ()=>{
                         c:"goto",
                         d:{
                             goto:{
-                                from:{
-                                    x:11,
-                                    y:11,
-                                },
-                                to:{
-                                    x:22,
-                                    y:23
-                                }
+                                path:[
+                                    {
+                                        x:11,
+                                        y:11,
+                                    },
+                                    {
+                                        x:22,
+                                        y:23
+                                    }
+                                ]
                             }
                         }
                     };

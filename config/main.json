@@ -2,6 +2,15 @@
     "map":{
         "file":"game/map.json"
     },
+    "mine":{
+        "file":"game/mine.json"
+    },
+    "drop":{
+        "file":"game/drop.json"
+    },
+    "item":{
+        "file":"game/item.json"
+    },
     "game":{
         "file":"game/game.json"
     }

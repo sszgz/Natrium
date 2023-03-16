@@ -176,6 +176,9 @@ export abstract class servicebase implements service {
 
     }
     public async on_session_message(sid:number, command:string, data:any):Promise<void> {
+
+        nat.dbglog.log(debug_level_enum.dle_debug, `on_session_message session ${sid} c:${command} d:${JSON.stringify(data)}`);
+        
         const ses = this._sessions.get(sid);
         if(ses == undefined) {
             nat.dbglog.log(debug_level_enum.dle_error, `on_session_message session ${sid} c:${command} d:${data}, session not exist`);
@@ -190,8 +193,6 @@ export abstract class servicebase implements service {
         const pl = this._players.get(sid);
 
         await this._msg_procs[command](this, ses, pl, data);
-
-        nat.dbglog.log(debug_level_enum.dle_debug, `on_session_message session ${sid} c:${command} d:${data}`);
     }
 
     //on_session_rpc_sync(sid:number, cmd:string, data:any):any;

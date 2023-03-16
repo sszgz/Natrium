@@ -54,6 +54,10 @@ message player_stop {
     required uint32 instid = 1; // map instance id (player/monster/other obj...)
     required share.pos2d pos = 2; // stop position
 }
+// send when clinet pos not same with server pos in range
+message player_pos_correct {
+    required share.pos2d pos = 1; // current self position
+}
 
 // change map
 message changemap_res {

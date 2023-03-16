@@ -38,6 +38,7 @@ export let start_server = async (svrconffile:string) =>{
     pcodec.register_protobuf_msg(protobuf_s2c.get_player_info_res, "get_player_info_res", "s2c_user.get_player_info_res");
     pcodec.register_protobuf_msg(protobuf_s2c.chat_msg, "chat_msg", "s2c_user.chat_msg");
     pcodec.register_protobuf_msg(protobuf_s2c.borad_cast_msg, "borad_cast_msg", "s2c_user.borad_cast_msg");
+    pcodec.register_protobuf_msg(protobuf_s2c.player_pos_correct, "player_pos_correct", "s2c_user.player_pos_correct");
     pcodec.register_protobuf_msg(protobuf_s2c.manul_mine_res, "manul_mine_res", "s2c_user.manul_mine_res");
     
     // register client msg

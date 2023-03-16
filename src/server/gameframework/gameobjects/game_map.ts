@@ -5,7 +5,7 @@
 import { nat } from "../../../natrium";
 import { _Node_SessionContext } from "../../../_node_implements/_node/_thread_contexts";
 import { pos2d } from "../datacomponent/define";
-import { player } from "../player";
+import { pathnode, player } from "../player";
 import { gamemap_object } from "./gamemap_object";
 
 export class game_map {
@@ -144,37 +144,57 @@ export class game_map {
         return undefined;
     }
 
-    public on_player_move():void {
-
-    }
-
     public on_update():void {
-        
+        this._pid_players.forEach((pl)=>{
+            pl.on_update();
+        });
     }
 
     // ------------------------------------------------------------------------
 
-    public player_goto(pl:player, from:pos2d, to:pos2d):void {
+    public player_goto(pl:player, path:Array<pathnode>):void {
 
         // TO DO : test 3000 player mov at same time
-        // TO DO : check position
-        pl.pdatas.player_gen.rundata.pos = from;
+
+        // check position
+        let cur_pos = pl.pdatas.player_gen.rundata.pos;
+        if(Math.abs(cur_pos.x - path[0].x) > 100 || Math.abs(cur_pos.y - path[0].y) > 100) {
+            // correct client postion
+            _Node_SessionContext.broadCastMsgWith(pl.session.session_id, this._player_sessionids, "player_pos_correct", {
+                pos:cur_pos
+            });
+
+            return;
+        }
+
+        pl.pdatas.player_gen.rundata.pos = path[0];
         pl.runtimedata.moving = {
-            from,
-            to
+            path,
+            lasttm:nat.sys.getTickFromAppStart()
         };
 
         // notify other player this player move
         _Node_SessionContext.broadCastMsgWith(pl.session.session_id, this._player_sessionids, "player_goto", {
             instid:pl.runtimedata.instid, 
             goto:{
-                from,
-                to
+                path
             }
         });
     }
     public player_stop(pl:player, pos:pos2d):void {
         pl.runtimedata.moving = null;
+        
+        // check position
+        let cur_pos = pl.pdatas.player_gen.rundata.pos;
+        if(Math.abs(cur_pos.x - pos.x) > 100 || Math.abs(cur_pos.y - pos.y) > 100) {
+            // correct client postion
+            _Node_SessionContext.broadCastMsgWith(pl.session.session_id, this._player_sessionids, "player_pos_correct", {
+                pos:cur_pos
+            });
+
+            return;
+        }
+
         pl.pdatas.player_gen.rundata.pos = pos;
 
         // notify other player this player stop

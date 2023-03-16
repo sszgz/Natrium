@@ -24,7 +24,12 @@ export async function player_goto(s:service, ses:servicesession, pl:any, data:an
         return;
     }
 
-    (pl as player).runtimedata.map?.player_goto(pl, data.goto.from, data.goto.to);
+    if(data.goto.path.length < 1 || data.goto.path.length > 32){
+        _Node_SessionContext.sendWSMsg(ses.session_id, "server_error", {res:ServerErrorCode.ResMsgParamError});
+        return;
+    }
+
+    (pl as player).runtimedata.map?.player_goto(pl, data.goto.path);
 }
 export async function player_stop(s:service, ses:servicesession, pl:any, data:any):Promise<void> {
     if(pl == null){

@@ -1,3 +1,6 @@
 {
-    
+    "base":{
+        "movspeed":160,
+        "gridsize":32
+    }
 }

@@ -46,11 +46,16 @@ message player_data {
 
 }
 
+// mov info path node
+message mov_path_node {
+    int32 x = 1; // x in pixel
+    int32 y = 2; // y in pixel
+    float cost = 3; // time cost rate
+}
+
 // move info
 message player_mov_info {
-    
-    required share.pos2d from = 1; // from positon
-    required share.pos2d to = 2; // to position
+    repeated share.mov_path_node path = 1; // mov path
 }
 
 message hero_data {

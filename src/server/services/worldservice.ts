@@ -67,6 +67,10 @@ export class worldservice extends servicebase {
         if(!await new_pl.sync_redis_data(player_genericdatacomp, "player", "generic", new_pl.cdatas.ses_base.rundata.uid, true)) {
             return false;
         }
+
+        // for Debug ...
+        new_pl.pdatas.player_gen.rundata.speed = nat.conf.get_config_data("game").base.movspeed;
+        
         return true;
     }
 

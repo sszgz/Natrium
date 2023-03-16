@@ -198,7 +198,11 @@ class _Node_Thread {
         this._worker = w;
 
         let thisptr = this;
-        this._timer = setInterval(()=>{thisptr._on_update}, updateTickMS);
+        this._timer = setInterval(
+            ()=>{
+                thisptr._on_update();
+            }, 
+            updateTickMS);
 
         _Node_Thread._lastUpdateTime = natrium_nodeimpl.impl.sys.getTimeStamp();
     }
@@ -258,16 +262,17 @@ class _Node_Thread {
         await this._worker.onmsg(fromport, data);
     }
 
-    protected async _on_update():Promise<void>{
+    protected _on_update():void{
         let now = natrium_nodeimpl.impl.sys.getTimeStamp();
         _Node_Thread._deltaTimeMS = now - _Node_Thread._lastUpdateTime;
+        _Node_Thread._lastUpdateTime = now;
         if(_Node_Thread._deltaTimeMS < 0) {
             _Node_Thread._deltaTimeMS = 0;
         }
 
         _Node_ThreadContext.setDeltaTimeMS(_Node_Thread._deltaTimeMS);
 
-        await this._worker.onupdate();
+        this._worker.onupdate();
     }
 }
 

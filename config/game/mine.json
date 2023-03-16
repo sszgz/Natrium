@@ -1,0 +1,54 @@
+{
+    "output":{
+        "1":[
+            {
+                "rate":10,
+                "itemid":1,
+                "count":1
+            },
+            {
+                "rate":20,
+                "itemid":2,
+                "count":1
+            },
+            {
+                "rate":70,
+                "itemid":3,
+                "count":1
+            }
+        ],
+        "2":[
+            {
+                "rate":10,
+                "itemid":1,
+                "count":1
+            },
+            {
+                "rate":20,
+                "itemid":2,
+                "count":1
+            },
+            {
+                "rate":70,
+                "itemid":3,
+                "count":1
+            }
+        ]
+    },
+
+    "map":{
+        "101":{
+            "wood1":{
+                "maxminner":2,
+                "maxoutputcount":100,
+                "recovertm":60,
+                "output":1
+            }
+        },
+        "102":{
+            "iron1":{
+                
+            }
+        }
+    }
+}

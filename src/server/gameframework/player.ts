@@ -2,6 +2,7 @@
 // license : MIT
 // author : Sean Chen
 
+import { forEach } from "lodash";
 import { nat } from "../..";
 import { datacomp, datacomp_map } from "../../interface/data/datacomp";
 import { rediscache } from "../../interface/data/rediscache";
@@ -17,11 +18,19 @@ export interface player_behaviour {
     
     init():Promise<boolean>;
     fin():Promise<void>;
+
+    on_update():void;
+}
+
+export interface pathnode {
+    x:number;
+    y:number;
+    cost:number;
 }
 
 export interface movedata {
-    from:pos2d;
-    to:pos2d;
+    path:Array<pathnode>;
+    lasttm:number;
 }
 
 export interface runtimedata {
@@ -33,14 +42,14 @@ export interface runtimedata {
 
 export class player {
     protected _session:servicesession;
-    protected _behaviours:player_behaviours_map;
+    protected _behaviours:Map<string, player_behaviour>;
     protected _runtimedata:runtimedata;
     protected _pdatas:datacomp_map; // persist datas
     protected _cdatas:datacomp_map; // cache datas
 
     constructor(s:servicesession, datas:Array<datacomp>) {
         this._session = s;
-        this._behaviours = {};
+        this._behaviours = new Map<string, player_behaviour>();
         this._pdatas = {};
         this._cdatas = {};
 
@@ -78,13 +87,12 @@ export class player {
     }
 
     public add_behaviours(beh:player_behaviour):void{
-        this._behaviours[beh.name] = beh;
+        this._behaviours.set(beh.name, beh);
     }
     public async init():Promise<boolean> {
         //let promiseAry:Array<Promise<any>> = new Array<Promise<any>>();
-        for(const key in this._behaviours) {
-            //promiseAry.push(this._behaviours[key].init());
-            const succ = await this._behaviours[key].init();
+        for(const key in this._behaviours.keys) {
+            const succ = await this._behaviours.get(key)?.init();
             if(!succ){
                 return false;
             }
@@ -95,9 +103,9 @@ export class player {
     }
     public async fin():Promise<void>{
         let promiseAry:Array<Promise<any>> = new Array<Promise<any>>();
-        for(const key in this._behaviours) {
-            promiseAry.push(this._behaviours[key].fin());
-        }
+        this._behaviours.forEach((beh)=>{
+            promiseAry.push(beh.fin());
+        })
         await Promise.all(promiseAry);
     }
 
@@ -144,6 +152,11 @@ export class player {
         await Promise.all(promiseAry);
     }
 
+    public on_update():void {
+        this._behaviours.forEach((beh)=>{
+            beh.on_update();
+        })
+    }
 }
 
 export abstract class player_behaviour_base implements player_behaviour{
@@ -166,6 +179,9 @@ export abstract class player_behaviour_base implements player_behaviour{
     }
     public async fin():Promise<void> {
 
+    }
+    public on_update(): void {
+        
     }
 }
 
