@@ -64,7 +64,7 @@ export class generic_behaviour extends player_behaviour_base {
                 moving.lasttm += timecost;
                 gendata.pos = nextpos;
 
-                console.log(`mov reached [${nextpos.x},${nextpos.y}]`);
+                //console.log(`mov reached [${nextpos.x},${nextpos.y}]`);
 
                 nextpos = this._player.runtimedata.moving.path.shift();
                 if(nextpos == undefined) {
