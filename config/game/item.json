@@ -1,6 +1,15 @@
 {
-    "1":{
-        "name":"food",
-        "repoload":1
+    "goods":{
+        "1000001":{
+            "name":"food",
+            "type":"commodity",
+            "repoload":1
+        }
+    },
+    "inventory":{
+        "1":{
+            "name":"corss",
+            "type":"parts"
+        }
     }
 }

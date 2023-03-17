@@ -7,7 +7,6 @@ import * as fs from "node:fs";
 import { threadId } from "node:worker_threads";
 import { debug_logger, debug_level_enum } from "../../interface/debug/debug_logger";
 
-
 export class debug_logger_nodeimpl implements debug_logger {
     protected _debug_level:debug_level_enum = debug_level_enum.dle_debug;
 

@@ -1,6 +1,7 @@
 .github/
 .vscode/
 src/
+doc/
 src/test/
 dist/test/
 .deepsource.toml
