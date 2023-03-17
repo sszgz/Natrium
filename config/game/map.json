@@ -11,36 +11,45 @@
                     "x":256,
                     "y":4772,
                     "radius":50
+                },
+                {
+                    "x":100,
+                    "y":4772,
+                    "radius":50
                 }
             ],
             "gotopos":{
                 "1001":{
                     "x":256,
                     "y":4772,
+                    "tox":10,
+                    "toy":10,
                     "radius":50
                 },
                 "1002":{
                     "x":150,
                     "y":150,
+                    "tox":10,
+                    "toy":10,
                     "radius":50
                 }
             },
             "portto":{
                 "x":10,
                 "y":10,
-                "radius":10,
+                "radius":100,
                 "toports":[2,3,4]
             },
             "npcs":{
-                "john_bartender":{
-                    "name":"john_bartender",
+                "map1_john_bartender":{
+                    "name":"map1_john_bartender",
                     "pos":{
                         "x":50,
                         "y":50
                     }
                 },
-                "george_blacksmith":{
-                    "name":"george_blacksmith",
+                "map1_george_blacksmith":{
+                    "name":"map1_george_blacksmith",
                     "pos":{
                         "x":100,
                         "y":100
@@ -63,6 +72,8 @@
                 "1":{
                     "x":10,
                     "y":10,
+                    "tox":256,
+                    "toy":4772,
                     "radius":50
                 }
             },
@@ -84,6 +95,8 @@
                 "1":{
                     "x":10,
                     "y":10,
+                    "tox":256,
+                    "toy":4772,
                     "radius":50
                 }
             },
@@ -105,11 +118,15 @@
                 "2001":{
                     "x":10,
                     "y":10,
+                    "tox":256,
+                    "toy":4772,
                     "radius":50
                 },
                 "2002":{
                     "x":150,
                     "y":150,
+                    "tox":256,
+                    "toy":4772,
                     "radius":50
                 }
             },

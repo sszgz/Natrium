@@ -1,51 +1,17 @@
 {
-    "output":{
-        "1":[
-            {
-                "rate":10,
-                "itemid":1,
-                "count":10
-            },
-            {
-                "rate":20,
-                "itemid":2,
-                "count":10
-            },
-            {
-                "rate":70,
-                "itemid":3,
-                "count":10
-            }
-        ],
-        "2":[
-            {
-                "rate":10,
-                "itemid":101,
-                "count":10
-            },
-            {
-                "rate":20,
-                "itemid":102,
-                "count":10
-            },
-            {
-                "rate":70,
-                "itemid":103,
-                "count":10
-            }
-        ]
-    },
-
     "map":{
-        "101":{
+        "1001":{
             "wood1":{
+                "x":100,
+                "y":100,
+                "type":"wood",
                 "maxminner":2,
                 "maxoutputcount":100,
                 "recovertm":60,
-                "output":1
+                "outputid":1
             }
         },
-        "102":{
+        "1002":{
             "iron1":{
                 
             }
