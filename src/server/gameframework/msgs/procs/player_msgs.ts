@@ -62,33 +62,66 @@ export async function player_changemapend(s:service, ses:servicesession, pl:any,
         return;
     }
 
+    // check change map condition
+
     // get change map point
     if(!((data.tomapid.toString()) in map.mapconf.gotopos)) {
-        _Node_SessionContext.sendWSMsg(ses.session_id, "server_error", {res:ServerErrorCode.ResPlayerToMapPointNotExist});
-        return;
-    }
+        if(data.tomapid > 1000) {
+            // not port map id
+            _Node_SessionContext.sendWSMsg(ses.session_id, "server_error", {res:ServerErrorCode.ResPlayerToMapPointNotExist});
+            return;
+        }
 
-    // check is near by change map point
-    const cmpoint = map.mapconf.gotopos[data.tomapid.toString()];
-    if(!map.is_player_nearby(pl, cmpoint, cmpoint.radius)) {
-        _Node_SessionContext.sendWSMsg(ses.session_id, "server_error", {res:ServerErrorCode.ResPlayerToMapPointTooFar});
-        return;
-    }
+        // port map id
 
-    let mapconf = (s as worldservice).get_mapconf(data.tomapid);
-    if(mapconf == undefined){
-        _Node_SessionContext.sendWSMsg(ses.session_id, "server_error", {res:ServerErrorCode.ResPlayerToMapNotExist});
-        return;
-    }
-    if(mapconf.conf.bornpos.length <= 0) {
-        _Node_SessionContext.sendWSMsg(ses.session_id, "server_error", {res:ServerErrorCode.ResPlayerMapNoBornPos});
-        return;
-    }
+        // check if this map has portto
+        if(!("portto" in map.mapconf)) {
+            _Node_SessionContext.sendWSMsg(ses.session_id, "server_error", {res:ServerErrorCode.ResPlayerToMapPointNotExist});
+            return;
+        }
 
-    // TO DO : check change map condition
+        // check is near by port
+        if(!map.is_player_nearby(pl, map.mapconf.portto, map.mapconf.portto.radius)) {
+            _Node_SessionContext.sendWSMsg(ses.session_id, "server_error", {res:ServerErrorCode.ResPlayerToMapPointTooFar});
+            return;
+        }
 
-    pla.pdatas.player_gen.rundata.mapid = data.tomapid;
-    pla.pdatas.player_gen.rundata.pos = game_map.random_bornpos(mapconf.conf.bornpos[0]); // bornpos 0 is transfer point
+        // check target port is in toports list
+        if(map.mapconf.portto.toports.indexOf(data.tomapid) < 0){
+            _Node_SessionContext.sendWSMsg(ses.session_id, "server_error", {res:ServerErrorCode.ResPlayerToMapPointNotExist});
+            return;
+        }
+
+        let mapconf = (s as worldservice).get_mapconf(data.tomapid);
+        if(mapconf == undefined){
+            _Node_SessionContext.sendWSMsg(ses.session_id, "server_error", {res:ServerErrorCode.ResPlayerToMapNotExist});
+            return;
+        }
+        if(mapconf.conf.bornpos.length <= 0) {
+            _Node_SessionContext.sendWSMsg(ses.session_id, "server_error", {res:ServerErrorCode.ResPlayerMapNoBornPos});
+            return;
+        }
+        pla.pdatas.player_gen.rundata.mapid = data.tomapid;
+        pla.pdatas.player_gen.rundata.pos = game_map.random_bornpos(mapconf.conf.bornpos[0]); // bornpos 0 is transfer point
+    }
+    else {
+
+        // check is near by change map point
+        const cmpoint = map.mapconf.gotopos[data.tomapid.toString()];
+        if(!map.is_player_nearby(pl, cmpoint, cmpoint.radius)) {
+            _Node_SessionContext.sendWSMsg(ses.session_id, "server_error", {res:ServerErrorCode.ResPlayerToMapPointTooFar});
+            return;
+        }
+
+        let mapconf = (s as worldservice).get_mapconf(data.tomapid);
+        if(mapconf == undefined){
+            _Node_SessionContext.sendWSMsg(ses.session_id, "server_error", {res:ServerErrorCode.ResPlayerToMapNotExist});
+            return;
+        }
+        pla.pdatas.player_gen.rundata.mapid = data.tomapid;
+        pla.pdatas.player_gen.rundata.pos.x = cmpoint.tox;
+        pla.pdatas.player_gen.rundata.pos.y = cmpoint.toy;
+    }
 
     let new_map = (s as worldservice).get_map(data.tomapid);
     if(new_map != undefined){

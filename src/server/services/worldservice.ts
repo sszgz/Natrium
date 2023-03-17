@@ -155,7 +155,7 @@ export class worldservice extends servicebase {
 
             // update firstinf data
             //nat.datas.update_session_data(sid, "base", false, "$.firstin");
-            pl.cdatas.ses_base.rundata.firstin = true;
+            pl.cdatas.ses_base.rundata.firstin = false;
             await pl.cdatas.ses_base.flush_to_db(false);
         }
 
