@@ -35,4 +35,32 @@ export class mine_beh extends player_behaviour_base {
     public override  on_update(): void {
         
     }
+
+    // ------------------------------------------------------------------------
+    public get_mineinfo(mineid:string):void {
+        
+    }
+
+    public start_manulmine(mineid:string):void {
+
+    }
+    public stop_manulmine():void {
+
+    }
+    public manulmine():void {
+
+    }
+
+    public start_heromine(mineid:string, heronftid:number) {
+
+    }
+    public stop_heromine(heronftid:number){
+
+    }
+    public get_heromine_infos(heronftid:Array<number>){
+
+    }
+    public fetch_heromine_output(heronftid:number){
+
+    }
 }

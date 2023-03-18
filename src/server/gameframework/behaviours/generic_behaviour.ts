@@ -68,15 +68,16 @@ export class generic_behaviour extends player_behaviour_base {
 
         pl.runtimedata.lastmvmsgtm = curr_tick;
 
-        // check position
-        if(Math.abs(cur_pos.x - path[0].x) > 100 || Math.abs(cur_pos.y - path[0].y) > 100) {
-            // correct client postion
-            _Node_SessionContext.sendWSMsg(pl.session.session_id, "player_pos_correct", {
-                pos:cur_pos
-            });
+        // for debug ...
+        // // check position
+        // if(Math.abs(cur_pos.x - path[0].x) > 100 || Math.abs(cur_pos.y - path[0].y) > 100) {
+        //     // correct client postion
+        //     _Node_SessionContext.sendWSMsg(pl.session.session_id, "player_pos_correct", {
+        //         pos:cur_pos
+        //     });
 
-            return;
-        }
+        //     return;
+        // }
 
         pl.pdatas.player_gen.rundata.pos = path[0];
         pl.runtimedata.moving = {

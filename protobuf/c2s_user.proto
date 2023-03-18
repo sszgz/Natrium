@@ -58,7 +58,31 @@ message chat {
     required string msg = 2; // chat msg
 }
 
-message manul_mine {
-    required uint32 mineid = 1;
+
+// ----------------------------------------------------------------------------
+message get_mineinfo {
+    required string mineid = 1;
 }
 
+message start_manulmine {
+    required string mineid = 1;
+}
+message stop_manulmine {
+    
+}
+message manul_mine {
+}
+
+message start_heromine {
+    required number heronftid = 1;
+    required string mineid = 2;
+}
+message stop_heromine {
+    required number heronftid = 1;
+}
+message get_heromine_infos {
+    repeated number heronftid = 1;
+}
+message fetch_heromine_output {
+    required number heronftid = 1;
+}

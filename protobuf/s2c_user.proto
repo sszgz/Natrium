@@ -88,6 +88,33 @@ message borad_cast_msg {
     required string msg = 2; // broad cast msg
 }
 
+// ----------------------------------------------------------------------------
+message get_mineinfo {
+    required int32 res = 1; // error code see {ServerErrorCode}
+    required string mineid = 2;
+}
+
+message start_manulmine_res {
+    required int32 res = 1; // error code see {ServerErrorCode}
+    required string mineid = 2;
+}
+message stop_manulmine_res {
+    required int32 res = 1; // error code see {ServerErrorCode}
+}
 message manul_mine_res {
 
+}
+
+message start_heromine {
+    required number heronftid = 1;
+    required string mineid = 2;
+}
+message stop_heromine {
+    required number heronftid = 1;
+}
+message get_heromine_infos {
+    repeated number heronftid = 1;
+}
+message fetch_heromine_output {
+    required number heronftid = 1;
 }
