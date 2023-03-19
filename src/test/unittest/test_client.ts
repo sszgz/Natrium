@@ -40,6 +40,10 @@ let start_client = async () =>{
     pcodec.register_protobuf_msg(protobuf_s2c.player_goto, "player_goto", "s2c_user.player_goto");
     pcodec.register_protobuf_msg(protobuf_s2c.get_player_sinfo_res, "get_player_sinfo_res", "s2c_user.get_player_sinfo_res");
     pcodec.register_protobuf_msg(protobuf_s2c.get_player_info_res, "get_player_info_res", "s2c_user.get_player_info_res");
+    pcodec.register_protobuf_msg(protobuf_s2c.get_hero_info_res, "get_hero_info_res", "s2c_user.get_hero_info_res");
+    pcodec.register_protobuf_msg(protobuf_s2c.get_pet_info_res, "get_pet_info_res", "s2c_user.get_pet_info_res");
+    pcodec.register_protobuf_msg(protobuf_s2c.get_ship_info_res, "get_ship_info_res", "s2c_user.get_ship_info_res");
+    pcodec.register_protobuf_msg(protobuf_s2c.player_change_ava_res, "player_change_ava_res", "s2c_user.player_change_ava_res");
     pcodec.register_protobuf_msg(protobuf_s2c.chat_msg, "chat_msg", "s2c_user.chat_msg");
     pcodec.register_protobuf_msg(protobuf_s2c.borad_cast_msg, "borad_cast_msg", "s2c_user.borad_cast_msg");
     pcodec.register_protobuf_msg(protobuf_s2c.player_pos_correct, "player_pos_correct", "s2c_user.player_pos_correct");
@@ -61,10 +65,14 @@ let start_client = async () =>{
     pcodec.register_protobuf_msg(protobuf_c2s.enter_game, "enter_game", "c2s_user.enter_game");
     pcodec.register_protobuf_msg(protobuf_c2s.goto, "goto", "c2s_user.goto");
     pcodec.register_protobuf_msg(protobuf_c2s.stop, "stop", "c2s_user.stop");
-    pcodec.register_protobuf_msg(protobuf_c2s.get_player_sinfo, "get_player_sinfo", "c2s_user.get_player_sinfo");
-    pcodec.register_protobuf_msg(protobuf_c2s.get_player_info, "get_player_info", "c2s_user.get_player_info");
     pcodec.register_protobuf_msg(protobuf_c2s.changemap_begin, "changemap_begin", "c2s_user.changemap_begin");
     pcodec.register_protobuf_msg(protobuf_c2s.changemap_end, "changemap_end", "c2s_user.changemap_end");
+    pcodec.register_protobuf_msg(protobuf_c2s.get_player_sinfo, "get_player_sinfo", "c2s_user.get_player_sinfo");
+    pcodec.register_protobuf_msg(protobuf_c2s.get_player_info, "get_player_info", "c2s_user.get_player_info");
+    pcodec.register_protobuf_msg(protobuf_c2s.get_hero_info, "get_hero_info", "c2s_user.get_hero_info");
+    pcodec.register_protobuf_msg(protobuf_c2s.get_pet_info, "get_pet_info", "c2s_user.get_pet_info");
+    pcodec.register_protobuf_msg(protobuf_c2s.get_ship_info, "get_ship_info", "c2s_user.get_ship_info");
+    pcodec.register_protobuf_msg(protobuf_c2s.change_avatar, "change_avatar", "c2s_user.change_avatar");
     pcodec.register_protobuf_msg(protobuf_c2s.chat, "chat", "c2s_user.chat");
     pcodec.register_protobuf_msg(protobuf_c2s.get_portdata, "get_portdata", "c2s_user.get_portdata");
     pcodec.register_protobuf_msg(protobuf_c2s.get_mineinfo, "get_mineinfo", "c2s_user.get_mineinfo");
@@ -127,11 +135,11 @@ var testcmd = async ()=>{
                         d:{
                             "name": "",
                             // "uid": "2",
-                            // "token": "ef4dbf70-1678811634142-2",
-                            // "uid": "3",
-                            // "token": "ef4dbf70-1678811634142-3",
-                            "uid": "4",
-                            "token": "ec3e1df1-1678966035165-4",
+                            // "token": "b79ba618-1678880290643-2",
+                            "uid": "3",
+                            "token": "267ba1a4-1678979779149-3",
+                            // "uid": "4",
+                            // "token": "ec3e1df1-1678966035165-4",
                         }
                     };
     
@@ -212,7 +220,7 @@ var testcmd = async ()=>{
                     let obj = {
                         c:"get_player_sinfo",
                         d:{
-                            playerids:[10,11]
+                            playerids:[2,3]
                         }
                     };
 
@@ -225,7 +233,7 @@ var testcmd = async ()=>{
                     let obj = {
                         c:"get_player_info",
                         d:{
-                            playerids:[10,11]
+                            playerids:[2,3]
                         }
                     };
 
@@ -233,6 +241,74 @@ var testcmd = async ()=>{
                     client.connecter.send_packet(pkt);
                 }
                 break;
+
+            case "get_hinfo":
+                {
+                    let obj = {
+                        c:"get_hero_info",
+                        d:{
+                            playerid:cmds[1]
+                        }
+                    };
+
+                    let pkt = client.connecter.pcodec.create_protopkt(obj.c, obj.d);
+                    client.connecter.send_packet(pkt);
+                }
+                break;
+            case "get_peinfo":
+                {
+                    let obj = {
+                        c:"get_pet_info",
+                        d:{
+                            playerid:cmds[1]
+                        }
+                    };
+
+                    let pkt = client.connecter.pcodec.create_protopkt(obj.c, obj.d);
+                    client.connecter.send_packet(pkt);
+                }
+                break;
+            case "get_shinfo":
+                {
+                    let obj = {
+                        c:"get_ship_info",
+                        d:{
+                            playerid:cmds[1]
+                        }
+                    };
+
+                    let pkt = client.connecter.pcodec.create_protopkt(obj.c, obj.d);
+                    client.connecter.send_packet(pkt);
+                }
+                break;
+            case "change_ava":
+                {
+                    let obj = {
+                        c:"change_avatar",
+                        d:{
+                            heronftid:"1111111",
+                            heroava:cmds[1]
+                        }
+                    };
+
+                    let pkt = client.connecter.pcodec.create_protopkt(obj.c, obj.d);
+                    client.connecter.send_packet(pkt);
+                }
+                break;
+            case "get_portd":
+                {
+                    let obj = {
+                        c:"get_portdata",
+                        d:{
+                            portid:1
+                        }
+                    };
+
+                    let pkt = client.connecter.pcodec.create_protopkt(obj.c, obj.d);
+                    client.connecter.send_packet(pkt);
+                }
+                break;
+
             case "changemap_end":
                 {
                     let obj = {

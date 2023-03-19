@@ -30,4 +30,7 @@ export enum ServerErrorCode {
     ResPlayerToMapPointNotExist = -1018,
     ResPlayerInSameMap = -1019,
     ResPlayerToMapPointTooFar = -1020,
+    ResTargetPlayerNotExist = -1021,
+
+    ResPort_PortNotExist = -2001,
 }

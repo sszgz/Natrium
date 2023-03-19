@@ -52,6 +52,28 @@ message get_player_info {
     repeated uint32 playerids = 1; // to get info player id aray
 }
 
+// get palyer hero info (self or others)
+message get_hero_info {
+    required uint32 playerid = 1; // to get info player id
+
+}
+
+// get palyer pet info (self or others)
+message get_pet_info {
+    required uint32 playerid = 1; // to get info player id
+}
+
+// get palyer pet info (self or others)
+message get_ship_info {
+    required uint32 playerid = 1; // to get info player id
+}
+
+// change player avatar info by HeroNFT
+message change_avatar {
+    required string heronftid = 1; // hero nft id, see in {sc:HeroNFT}
+    required uint32 heroava = 2; // avatar info, use hero job as hero avatar see {sc:HeroNFT}
+}
+
 // send chat msg
 message chat {
     required uint32 channel = 1; // chat channel, 1=wolrd, 2=current map, 3=near by
@@ -84,7 +106,7 @@ message manulmine {}
 message fetch_manulmine_output{}
 
 // start hero mine
-// need bind hero usage as "mine" first, see in {sc:bindHeroUsage}
+// need bind hero usage as "mine" first, see in {sc:bindNFTUsage}
 message start_heromine {
     required string heronftid = 1; // hero nft id, see in {sc:HeroNFT}
     required uint32 mineid = 2; // mine id, see in mine config

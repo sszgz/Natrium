@@ -15,7 +15,7 @@ import { mine_beh } from "../gameframework/behaviours/mine_beh";
 import { product_beh } from "../gameframework/behaviours/product_beh";
 import { ship_beh } from "../gameframework/behaviours/ship_beh";
 import { session_basedatacomp } from "../gameframework/datacomponent/session_datas";
-import { player_genericdatacomp, user_basedatacomp } from "../gameframework/datacomponent/user_datas";
+import { player_genericdatacomp, player_herodatacomp, player_petdatacomp, player_shipdatacomp, user_basedatacomp } from "../gameframework/datacomponent/user_datas";
 import { game } from "../gameframework/game";
 import { game_map } from "../gameframework/gameobjects/game_map";
 import { player } from "../gameframework/player";
@@ -71,6 +71,15 @@ export class worldservice extends servicebase {
             return false;
         }
         if(!await new_pl.sync_redis_data(player_genericdatacomp, "player", "generic", new_pl.cdatas.ses_base.rundata.uid, true)) {
+            return false;
+        }
+        if(!await new_pl.sync_redis_data(player_herodatacomp, "player", "hero", new_pl.cdatas.ses_base.rundata.uid, true)) {
+            return false;
+        }
+        if(!await new_pl.sync_redis_data(player_petdatacomp, "player", "pet", new_pl.cdatas.ses_base.rundata.uid, true)) {
+            return false;
+        }
+        if(!await new_pl.sync_redis_data(player_shipdatacomp, "player", "ship", new_pl.cdatas.ses_base.rundata.uid, true)) {
             return false;
         }
 
@@ -138,6 +147,19 @@ export class worldservice extends servicebase {
                 return new_ses;
             }
 
+            let heros = [];
+            if("player_hero" in pl.pdatas){
+                heros = pl.pdatas.player_hero.rundata.heros;
+            }
+            let pets = [];
+            if("player_pet" in pl.pdatas){
+                pets = pl.pdatas.player_pet.rundata.pets;
+            }
+            let ships = [];
+            if("player_ship" in pl.pdatas){
+                ships = pl.pdatas.player_ship.rundata.ships;
+            }
+
             // first in game, send entergame res
             let enter_game_res = {
                 res:ServerErrorCode.ResOK,
@@ -146,9 +168,9 @@ export class worldservice extends servicebase {
                     info:{
                         sinfo:pl.pdatas.player_gen.rundata
                     },
-                    heros:pl.pdatas.player_gen.rundata.heros,
-                    pets:[],
-                    ships:[]
+                    heros:heros,
+                    pets:pets,
+                    ships:ships
                 }
             }
             _Node_SessionContext.sendWSMsg(new_ses.session_id, "enter_game_res", enter_game_res);

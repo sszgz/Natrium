@@ -22,7 +22,7 @@ message user_data {
 // player simple info
 message player_sinfo {
     required uint32 playerid = 1; // player id
-    required uint32 heroava = 2; // current avatar info
+    required uint32 heroava = 2; // current avatar info, use hero job as hero avatar see {sc:HeroNFT}
     required uint32 gender = 3; // gender
     required string pname = 4; // player name
     optional uint32 speed = 5; // move speed (may not exist, in this case, set speed in default value)
@@ -58,12 +58,28 @@ message player_mov_info {
     repeated share.mov_path_node path = 1; // mov path
 }
 
+// hero data
 message hero_data {
-    
+    required string heronftid = 1;  // hero nft id
+    required uint32 mintType = 2; // = 0 normal mint, = 1 genesis mint
+    required uint32 job = 3; // job, see hero config
+    required uint32 grade = 4; // grade, from 1-10: D、C、B、A、S, N、R、SR、SSR、UR
+    required uint32 mineAttr = 5; // mine attr, see hero config
+    required uint32 battleAttr = 6; // battle attr, see hero config
+    required uint32 bindFinTms = 7; // hero usage bind finish time stamp in second, see {sc:bindNFTUsage}
+    required string bindType = 8; // hero usage bind type, see {sc:bindNFTUsage}
 }
 
+// pet data
 message pet_data {
-    
+    required string heronftid = 1;  // pet hero nft id (pet & hero use same nft contract)
+    required uint32 mintType = 2; // = 0 normal mint, = 1 genesis mint
+    required uint32 petId = 3; // pet id, see pet config
+    repeated uint32 avatarSlots = 4; // avatar slot, see pet config
+    required uint32 mineAttr = 5; // mine attr, see pet config
+    required uint32 battleAttr = 6; // battle attr, see pet config
+    required uint32 bindFinTms = 7; // pet usage bind finish time stamp in second, see {sc:bindNFTUsage}
+    required string bindType = 8; // pet usage bind type, see {sc:bindNFTUsage}
 }
 
 message ship_data {

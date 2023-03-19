@@ -14,6 +14,10 @@ export enum protobuf_c2s {
     get_player_info = 105,
     stop = 106,
     chat = 107,
+    get_hero_info = 108,
+    get_pet_info = 109,
+    get_ship_info = 110,
+    change_avatar = 111,
 
     get_portdata = 201,
 
@@ -44,6 +48,10 @@ export enum protobuf_s2c {
     chat_msg = 10109,
     borad_cast_msg = 10110,
     player_pos_correct = 10111,
+    get_hero_info_res = 10112,
+    get_pet_info_res = 10113,
+    get_ship_info_res = 10114,
+    player_change_ava_res = 10115,
 
     get_portdata_res = 10201,
     storhouse_change = 10202,

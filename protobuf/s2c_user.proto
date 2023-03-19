@@ -32,8 +32,9 @@ message enter_game_res {
 message playerinzoneinfo {
     required uint32 instid = 1; // map instance id (player/monster/other obj...)
     required uint32 playerid = 2; // player id
-    required share.pos2d pos = 3; // position
-    optional share.player_mov_info goto = 4; // current moving info
+    required uint32 ver = 3;  // avatar version, +1 each time avatar/showinfo is changed
+    required share.pos2d pos = 4; // position
+    optional share.player_mov_info goto = 5; // current moving info
 }
 
 // player enter map zone
@@ -67,15 +68,45 @@ message changemap_res {
     required share.pos2d pos = 3; // position
 }
 
+// player simple info with version
+message player_sinfo_with_ver {
+    required uint32 ver = 1; // avatar version, +1 each time avatar/showinfo is changed
+    required share.player_sinfo sinfo = 2; // player simple info
+}
+
 // get player simple info result
 // cahce it in client
 message get_player_sinfo_res {
-    repeated share.player_sinfo sinfos = 1; // player simple info
+    repeated player_sinfo_with_ver versinfos = 2; // player simple info with version
 }
 
 // get player info result
 message get_player_info_res {
-    repeated share.player_info infos = 1; // player info
+    repeated share.player_info infos = 2; // player info
+}
+
+// get palyer hero info (self or others)
+message get_hero_info_res {
+    required uint32 playerid = 1; // to get info player id
+    repeated hero_data heros = 2; // player heros
+}
+
+// get palyer pet info (self or others)
+message get_pet_info_res {
+    required uint32 playerid = 1; // to get info player id
+    repeated pet_data pets = 2; // player pets
+}
+
+// get palyer pet info (self or others)
+message get_ship_info_res {
+    required uint32 playerid = 1; // to get info player id
+    repeated ship_data ships = 2; // player ships
+}
+
+// player changed avatar info
+message player_change_ava_res {
+    required uint32 playerid = 1; // change avatar player id
+    required uint32 heroava = 2; // avatar info, use hero job as hero avatar see {sc:HeroNFT}
 }
 
 // chat msg
@@ -88,7 +119,6 @@ message borad_cast_msg {
     required uint32 type = 1; // broad cast type
     required string msg = 2; // broad cast msg
 }
-
 // ----------------------------------------------------------------------------
 
 // storehouse changed
@@ -99,7 +129,7 @@ message storhouse_change {
 
 // get port data res
 message get_portdata_res {
-    required share.port_data data = 2; // port data
+    required share.port_data data = 1; // port data
 }
 
 // ----------------------------------------------------------------------------

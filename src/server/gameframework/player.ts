@@ -41,6 +41,7 @@ export interface runtimedata {
     moving:movedata|null;
     lastmvmsgtm:number;
     map:game_map|null;
+    ver:number;
 }
 
 export class player {
@@ -67,6 +68,7 @@ export class player {
 
         this._runtimedata = {
             instid:0,
+            ver:0,
             moving:null,
             map:null,
             lastmvmsgtm:0,

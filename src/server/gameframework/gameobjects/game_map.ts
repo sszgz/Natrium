@@ -85,7 +85,9 @@ export class game_map {
             infos.push({
                 instid:othpl.runtimedata.instid, 
                 playerid:othpl.pdatas.player_gen.rundata.playerid,
-                pos:othpl.pdatas.player_gen.rundata.pos
+                ver:othpl.runtimedata.ver,
+                pos:othpl.pdatas.player_gen.rundata.pos,
+                goto:othpl.runtimedata.moving
             });
         })
         _Node_SessionContext.sendWSMsg(pl.session.session_id, "player_enterzone", {infos});
@@ -96,7 +98,9 @@ export class game_map {
                 {
                     instid:pl.runtimedata.instid, 
                     playerid:pl.pdatas.player_gen.rundata.playerid,
-                    pos:pl.pdatas.player_gen.rundata.pos
+                    ver:pl.runtimedata.ver,
+                    pos:pl.pdatas.player_gen.rundata.pos,
+                    goto:pl.runtimedata.moving
                 }
             ]
         });

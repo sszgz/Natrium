@@ -36,6 +36,10 @@ export let start_server = async (svrconffile:string) =>{
     pcodec.register_protobuf_msg(protobuf_s2c.player_goto, "player_goto", "s2c_user.player_goto");
     pcodec.register_protobuf_msg(protobuf_s2c.get_player_sinfo_res, "get_player_sinfo_res", "s2c_user.get_player_sinfo_res");
     pcodec.register_protobuf_msg(protobuf_s2c.get_player_info_res, "get_player_info_res", "s2c_user.get_player_info_res");
+    pcodec.register_protobuf_msg(protobuf_s2c.get_hero_info_res, "get_hero_info_res", "s2c_user.get_hero_info_res");
+    pcodec.register_protobuf_msg(protobuf_s2c.get_pet_info_res, "get_pet_info_res", "s2c_user.get_pet_info_res");
+    pcodec.register_protobuf_msg(protobuf_s2c.get_ship_info_res, "get_ship_info_res", "s2c_user.get_ship_info_res");
+    pcodec.register_protobuf_msg(protobuf_s2c.player_change_ava_res, "player_change_ava_res", "s2c_user.player_change_ava_res");
     pcodec.register_protobuf_msg(protobuf_s2c.chat_msg, "chat_msg", "s2c_user.chat_msg");
     pcodec.register_protobuf_msg(protobuf_s2c.borad_cast_msg, "borad_cast_msg", "s2c_user.borad_cast_msg");
     pcodec.register_protobuf_msg(protobuf_s2c.player_pos_correct, "player_pos_correct", "s2c_user.player_pos_correct");
@@ -57,10 +61,14 @@ export let start_server = async (svrconffile:string) =>{
     pcodec.register_protobuf_msg(protobuf_c2s.enter_game, "enter_game", "c2s_user.enter_game");
     pcodec.register_protobuf_msg(protobuf_c2s.goto, "goto", "c2s_user.goto");
     pcodec.register_protobuf_msg(protobuf_c2s.stop, "stop", "c2s_user.stop");
-    pcodec.register_protobuf_msg(protobuf_c2s.get_player_sinfo, "get_player_sinfo", "c2s_user.get_player_sinfo");
-    pcodec.register_protobuf_msg(protobuf_c2s.get_player_info, "get_player_info", "c2s_user.get_player_info");
     pcodec.register_protobuf_msg(protobuf_c2s.changemap_begin, "changemap_begin", "c2s_user.changemap_begin");
     pcodec.register_protobuf_msg(protobuf_c2s.changemap_end, "changemap_end", "c2s_user.changemap_end");
+    pcodec.register_protobuf_msg(protobuf_c2s.get_player_sinfo, "get_player_sinfo", "c2s_user.get_player_sinfo");
+    pcodec.register_protobuf_msg(protobuf_c2s.get_player_info, "get_player_info", "c2s_user.get_player_info");
+    pcodec.register_protobuf_msg(protobuf_c2s.get_hero_info, "get_hero_info", "c2s_user.get_hero_info");
+    pcodec.register_protobuf_msg(protobuf_c2s.get_pet_info, "get_pet_info", "c2s_user.get_pet_info");
+    pcodec.register_protobuf_msg(protobuf_c2s.get_ship_info, "get_ship_info", "c2s_user.get_ship_info");
+    pcodec.register_protobuf_msg(protobuf_c2s.change_avatar, "change_avatar", "c2s_user.change_avatar");
     pcodec.register_protobuf_msg(protobuf_c2s.chat, "chat", "c2s_user.chat");
     pcodec.register_protobuf_msg(protobuf_c2s.get_portdata, "get_portdata", "c2s_user.get_portdata");
     pcodec.register_protobuf_msg(protobuf_c2s.get_mineinfo, "get_mineinfo", "c2s_user.get_mineinfo");
