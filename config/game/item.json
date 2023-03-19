@@ -1,8 +1,15 @@
 {
+    "commodity":{
+        "2000001":{
+            "name":"food",
+            "type":"crop",
+            "repoload":1
+        }
+    },
     "goods":{
         "1000001":{
-            "name":"food",
-            "type":"commodity",
+            "name":"t1",
+            "type":"t1",
             "repoload":1
         }
     },

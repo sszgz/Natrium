@@ -15,7 +15,17 @@ export enum protobuf_c2s {
     stop = 106,
     chat = 107,
 
-    manul_mine = 201,
+    get_portdata = 201,
+
+    get_mineinfo = 301,
+    start_manulmine = 302,
+    stop_manulmine = 303,
+    manulmine = 304,
+    fetch_manulmine_output = 305,
+    start_heromine = 306,
+    stop_heromine = 307,
+    get_heromine_infos = 308,
+    fetch_heromine_output = 309,
 }
 
 export enum protobuf_s2c {
@@ -35,5 +45,16 @@ export enum protobuf_s2c {
     borad_cast_msg = 10110,
     player_pos_correct = 10111,
 
-    manul_mine_res = 10201,
+    get_portdata_res = 10201,
+    storhouse_change = 10202,
+    
+    get_mineinfo_res = 10301,
+    start_manulmine_res = 10302,
+    stop_manulmine_res = 10303,
+    manulmine_res = 10304,
+    fetch_manulmine_output_res = 10305,
+    start_heromine_res = 10306,
+    stop_heromine_res = 10307,
+    get_heromine_infos_res = 10308,
+    fetch_heromine_output_res = 10309,
 }

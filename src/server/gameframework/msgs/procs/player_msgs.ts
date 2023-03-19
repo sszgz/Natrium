@@ -224,6 +224,42 @@ export async function player_chat(s:service, ses:servicesession, pl:any, data:an
     }
 }
 
+export async function player_get_portdata(s:service, ses:servicesession, pl:any, data:any):Promise<void> {
+
+}
+
+export async function player_get_mineinfo(s:service, ses:servicesession, pl:any, data:any):Promise<void> {
+
+}
+
+export async function player_start_manulmine(s:service, ses:servicesession, pl:any, data:any):Promise<void> {
+
+}
+
+export async function player_stop_manulmine(s:service, ses:servicesession, pl:any, data:any):Promise<void> {
+
+}
+
 export async function player_manulmine(s:service, ses:servicesession, pl:any, data:any):Promise<void> {
+
+}
+
+export async function player_fetch_manulmine_output(s:service, ses:servicesession, pl:any, data:any):Promise<void> {
+
+}
+
+export async function player_start_heromine(s:service, ses:servicesession, pl:any, data:any):Promise<void> {
+
+}
+
+export async function player_stop_heromine(s:service, ses:servicesession, pl:any, data:any):Promise<void> {
+
+}
+
+export async function player_get_heromine_infos(s:service, ses:servicesession, pl:any, data:any):Promise<void> {
+
+}
+
+export async function player_fetch_heromine_output(s:service, ses:servicesession, pl:any, data:any):Promise<void> {
 
 }

@@ -25,6 +25,7 @@ message create_player_res {
 message enter_game_res {
     required int32 res = 1; // error code see {ServerErrorCode}
     optional share.player_data data = 2; // full player data of self
+    optional share.port_data portdata = 3; // full port data of current port
 }
 
 // player in map zone info
@@ -89,32 +90,64 @@ message borad_cast_msg {
 }
 
 // ----------------------------------------------------------------------------
-message get_mineinfo {
-    required int32 res = 1; // error code see {ServerErrorCode}
-    required string mineid = 2;
+
+// storehouse changed
+message storhouse_change {
+    repeated share.item_data iteminfo = 1; // change info, add or sub numbers in iteminfo array
+    optional uint32 maxrepoload = 2; // max load space changed
 }
 
+// get port data res
+message get_portdata_res {
+    required share.port_data data = 2; // port data
+}
+
+// ----------------------------------------------------------------------------
+
+// get mine point info res
+message get_mineinfo_res {
+    required int32 res = 1; // error code see {ServerErrorCode}
+    repeated share.mine_info info = 2; // see {share.mine_info}
+}
+
+// start manul mine res
 message start_manulmine_res {
     required int32 res = 1; // error code see {ServerErrorCode}
-    required string mineid = 2;
+    required uint32 mineid = 2;
 }
+// stop manul mine res
 message stop_manulmine_res {
     required int32 res = 1; // error code see {ServerErrorCode}
 }
-message manul_mine_res {
-
+// performe a manul mine output res
+message manulmine_res {
+    required share.item_data outputitem = 1; // output commodity item info
+}
+// fetch current manulmine res
+// will trigger a {storhouse_change} msg if success
+message fetch_manulmine_output_res {
+    required int32 res = 1; // error code see {ServerErrorCode}
 }
 
-message start_heromine {
-    required number heronftid = 1;
-    required string mineid = 2;
+// start hero mine res
+message start_heromine_res {
+    required int32 res = 1; // error code see {ServerErrorCode}
+    optional string heronftid = 2; // hero nft id, see in {sc:HeroNFT}
+    optional uint32 mineid = 3;
 }
-message stop_heromine {
-    required number heronftid = 1;
+// stop hero mine res
+message stop_heromine_res {
+    required int32 res = 1; // error code see {ServerErrorCode}
+    required string heronftid = 2; // hero nft id, see in {sc:HeroNFT}
 }
-message get_heromine_infos {
-    repeated number heronftid = 1;
+// get hero mine infos res
+message get_heromine_infos_res {
+    required int32 res = 1; // error code see {ServerErrorCode}
+    repeated shared.minning_data infos = 2; // see in {shared.minning_data}
 }
-message fetch_heromine_output {
-    required number heronftid = 1;
+// fetch heromine output res
+// will trigger a {storhouse_change} msg if success
+message fetch_heromine_output_res {
+    required int32 res = 1; // error code see {ServerErrorCode}
+    required string heronftid = 2; // hero nft id, see in {sc:HeroNFT}
 }

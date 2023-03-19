@@ -62,10 +62,14 @@ file: config/game/drop.json
 ### Item config
 file: config/game/item.json
 
-- goods: goods map, key: item id, range:>1000000
+- commodity: commodity map, key: item id, range:>2000000
+  - name: commodity name
+  - type: commodity type, ["crop", "minerals", "wood", ...]
+  - repoload: weight load of single product
+- goods: goods map, key: item id, range:[1000001, 9999999]
   - name: goods name
-  - type: goods type, ["commodity", "product", ...]
+  - type: goods type, ["TBD", "TBD", ...]
   - repoload: weight load of single product
 - inventory: inventory map, key: item id, range:[1, 999999] 
   - name: inventory name
-  - type: inventory type, ["parts", ...]
+  - type: inventory type, ["TBD", ...]

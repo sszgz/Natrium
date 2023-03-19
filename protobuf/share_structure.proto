@@ -70,18 +70,48 @@ message ship_data {
 
 }
 
-// ----------------------------------------------------------------------------
-message port_data {
-    uint32 portid = 1;
-
-    repeated minning_data minnings = 2;
-    repeated factory_data factories = 3;
-    repeated shop_data shops = 4;
-    repeated shipyard_data shipyards = 5;
+// item data
+message item_data {
+    required uint32 itemid = 1; // item id, see in item config
+    required int64 count = 2; // count
 }
 
-message minning_data {
+// ----------------------------------------------------------------------------
 
+// mine point info
+message mine_info {
+    required uint32 mineid = 1; // mine point id
+    required uint32 mineCountLeft = 2; // current minning count left
+    required uint32 mineRecoverTms = 3; // next recover time stamp in second
+    required uint32 mineCurMinningPls = 4; // current minning player count
+}
+
+// ----------------------------------------------------------------------------
+
+// port data 
+message port_data {
+    uint32 portid = 1;  // port id
+
+    repeated minning_data minnings = 2; // current hero minning info, not include manual mine
+    optional storehouse_data storehouse = 3; // store house info
+    optional factory_data factory = 4; // port factory info
+    optional shop_data shop = 5; // shop info
+    optional shipyard_data shipyard = 6; // ship yard info
+}
+
+// storehouse info
+message storehouse_data {
+    required uint32 maxrepoload = 1; // max load space
+    repeated item_data items = 2; // goods/commodities in storehouse
+}
+
+// minning data
+message minning_data {
+    required string heronftid = 1;  // current minning hero nft id
+    required uint32 mineid = 2; // current minnng id, see in mine config
+    required uint32 startminetms = 3; // start minning time stamp, in second
+    required uint32 lastoutputtms = 4; // last output time stamp, in secode
+    required uint32 unfetchedoutput = 5; // unfetched output count
 }
 
 message factory_data {

@@ -58,31 +58,46 @@ message chat {
     required string msg = 2; // chat msg
 }
 
+// ----------------------------------------------------------------------------
+
+// get port data
+message get_portdata {
+    required uint32 portid = 1; // port id
+}
 
 // ----------------------------------------------------------------------------
+
+// get mine info
 message get_mineinfo {
-    required string mineid = 1;
+    repeated uint32 mineid = 1; // mine id, see in mine config
 }
 
+// start manul mine
 message start_manulmine {
-    required string mineid = 1;
+    required uint32 mineid = 1; // mine id, see in mine config
 }
-message stop_manulmine {
-    
-}
-message manul_mine {
-}
+// stop manul mine
+message stop_manulmine {}
+// performe a manul mine output
+message manulmine {}
+// fetch current manulmine
+message fetch_manulmine_output{}
 
+// start hero mine
+// need bind hero usage as "mine" first, see in {sc:bindHeroUsage}
 message start_heromine {
-    required number heronftid = 1;
-    required string mineid = 2;
+    required string heronftid = 1; // hero nft id, see in {sc:HeroNFT}
+    required uint32 mineid = 2; // mine id, see in mine config
 }
+// stop hero mine
 message stop_heromine {
-    required number heronftid = 1;
+    required string heronftid = 1; // hero nft id, see in {sc:HeroNFT}
 }
+// get hero mine infos
 message get_heromine_infos {
-    repeated number heronftid = 1;
+    repeated string heronftids = 1; // hero nft id array, see in {sc:HeroNFT}
 }
+// fetch hero mine outputs
 message fetch_heromine_output {
-    required number heronftid = 1;
+    required string heronftid = 1; // hero nft id, see in {sc:HeroNFT}
 }
