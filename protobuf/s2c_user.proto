@@ -77,12 +77,12 @@ message player_sinfo_with_ver {
 // get player simple info result
 // cahce it in client
 message get_player_sinfo_res {
-    repeated player_sinfo_with_ver versinfos = 2; // player simple info with version
+    repeated player_sinfo_with_ver versinfos = 1; // player simple info with version
 }
 
 // get player info result
 message get_player_info_res {
-    repeated share.player_info infos = 2; // player info
+    repeated share.player_info infos = 1; // player info
 }
 
 // get palyer hero info (self or others)
