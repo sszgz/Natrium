@@ -371,7 +371,11 @@ export async function player_change_avatar(s:service, ses:servicesession, pl:any
     ++pla.runtimedata.ver;
 
     // broad cast message to all map player
-    _Node_SessionContext.broadCastMsgWith(0, map.player_sessionids, "player_change_ava_res", pla.pdatas.player_gen.rundata);
+    _Node_SessionContext.broadCastMsgWith(0, map.player_sessionids, "player_change_ava_res", {
+        playerid:pla.pdatas.player_gen.rundata.playerid,
+        heroava:pla.pdatas.player_gen.rundata.heroava,
+        ver:pla.runtimedata.ver
+    });
 }
 
 
@@ -400,6 +404,7 @@ export async function player_get_portdata(s:service, ses:servicesession, pl:any,
             minnings:[],
             storehouse:{
                 maxrepoload:nat.conf.get_config_data("game").port.init_repoload,
+                level:1,
                 items:[]
             }
         }];

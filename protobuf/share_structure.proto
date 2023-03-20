@@ -118,7 +118,8 @@ message port_data {
 // storehouse info
 message storehouse_data {
     required uint32 maxrepoload = 1; // max load space
-    repeated item_data items = 2; // goods/commodities in storehouse
+    required uint32 level = 2; // storehouse level
+    repeated item_data items = 3; // goods/commodities in storehouse
 }
 
 // minning data

@@ -15,7 +15,7 @@ import { mine_beh } from "../gameframework/behaviours/mine_beh";
 import { product_beh } from "../gameframework/behaviours/product_beh";
 import { ship_beh } from "../gameframework/behaviours/ship_beh";
 import { session_basedatacomp } from "../gameframework/datacomponent/session_datas";
-import { player_genericdatacomp, player_herodatacomp, player_petdatacomp, player_shipdatacomp, user_basedatacomp } from "../gameframework/datacomponent/user_datas";
+import { player_genericdatacomp, player_herodatacomp, player_petdatacomp, player_portdatacomp, player_shipdatacomp, user_basedatacomp } from "../gameframework/datacomponent/user_datas";
 import { game } from "../gameframework/game";
 import { game_map } from "../gameframework/gameobjects/game_map";
 import { player } from "../gameframework/player";
@@ -73,15 +73,10 @@ export class worldservice extends servicebase {
         if(!await new_pl.sync_redis_data(player_genericdatacomp, "player", "generic", new_pl.cdatas.ses_base.rundata.uid, true)) {
             return false;
         }
-        if(!await new_pl.sync_redis_data(player_herodatacomp, "player", "hero", new_pl.cdatas.ses_base.rundata.uid, true)) {
-            return false;
-        }
-        if(!await new_pl.sync_redis_data(player_petdatacomp, "player", "pet", new_pl.cdatas.ses_base.rundata.uid, true)) {
-            return false;
-        }
-        if(!await new_pl.sync_redis_data(player_shipdatacomp, "player", "ship", new_pl.cdatas.ses_base.rundata.uid, true)) {
-            return false;
-        }
+        await new_pl.sync_redis_data(player_herodatacomp, "player", "hero", new_pl.cdatas.ses_base.rundata.uid, true);
+        await new_pl.sync_redis_data(player_petdatacomp, "player", "pet", new_pl.cdatas.ses_base.rundata.uid, true);
+        await new_pl.sync_redis_data(player_shipdatacomp, "player", "ship", new_pl.cdatas.ses_base.rundata.uid, true);
+        await new_pl.sync_redis_data(player_portdatacomp, "player", "port", new_pl.cdatas.ses_base.rundata.uid, true);
 
         // for Debug ...
         new_pl.pdatas.player_gen.rundata.speed = nat.conf.get_config_data("game").base.movspeed;
@@ -160,6 +155,15 @@ export class worldservice extends servicebase {
                 ships = pl.pdatas.player_ship.rundata.ships;
             }
 
+            let portdata = undefined;
+            if("player_port" in pl.pdatas){
+                for(let i=0; i<pl.pdatas.player_port.rundata.ports.length; ++i){
+                    if(pl.pdatas.player_port.rundata.ports[i].portid == pl.pdatas.player_gen.rundata.mapid) { // port id = port city map id
+                        portdata = pl.pdatas.player_port.rundata.ports[i];
+                    }
+                }
+            }
+
             // first in game, send entergame res
             let enter_game_res = {
                 res:ServerErrorCode.ResOK,
@@ -171,7 +175,8 @@ export class worldservice extends servicebase {
                     heros:heros,
                     pets:pets,
                     ships:ships
-                }
+                },
+                portdata:portdata
             }
             _Node_SessionContext.sendWSMsg(new_ses.session_id, "enter_game_res", enter_game_res);
 

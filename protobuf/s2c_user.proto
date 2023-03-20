@@ -107,6 +107,7 @@ message get_ship_info_res {
 message player_change_ava_res {
     required uint32 playerid = 1; // change avatar player id
     required uint32 heroava = 2; // avatar info, use hero job as hero avatar see {sc:HeroNFT}
+    required uint32 ver = 3; // avatar version, +1 each time avatar/showinfo is changed
 }
 
 // chat msg
@@ -125,6 +126,7 @@ message borad_cast_msg {
 message storhouse_change {
     repeated share.item_data iteminfo = 1; // change info, add or sub numbers in iteminfo array
     optional uint32 maxrepoload = 2; // max load space changed
+    optional uint32 level = 3; // level changed
 }
 
 // get port data res
