@@ -126,7 +126,8 @@ message borad_cast_msg {
 message storhouse_change {
     repeated share.item_data iteminfo = 1; // change info, add or sub numbers in iteminfo array
     optional uint32 maxrepoload = 2; // max load space changed
-    optional uint32 level = 3; // level changed
+    optional uint32 curload = 3; // max load space changed
+    optional uint32 level = 4; // level changed
 }
 
 // get port data res

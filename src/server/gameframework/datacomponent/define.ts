@@ -69,23 +69,22 @@ export interface ship_playerdata {
 
 export interface item_data {
     readonly itemid:number;
-    readonly count:number;
+    count:number;
 }
 
 export interface minning_data {
     readonly mineid:number;
     readonly startminetms:number;
-    readonly lastoutputtms:number;
     readonly unfetchedoutput:number;
-    readonly heronftid:string;
 }
 export interface storehouse_data {
+    readonly level:number;
     readonly maxrepoload:number;
-    readonly items:Array<item_data>
+    readonly curload:number;
+    readonly items:{[key:number]:number}; // itemid=>count
 }
 export interface port_data {
     readonly portid:number;
-    readonly minnings:Array<minning_data>;
     readonly storehouse:storehouse_data;
 }
 export interface port_playerdata {

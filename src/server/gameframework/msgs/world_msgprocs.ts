@@ -3,6 +3,7 @@
 // author : Sean Chen
 
 import * as pm from "./procs/player_msgs";
+import * as mm from "./procs/mine_msgs";
 
 export const procs = {
     "goto":pm.player_goto,
@@ -19,13 +20,13 @@ export const procs = {
     
     "get_portdata":pm.player_get_portdata,
     
-    "get_mineinfo":pm.player_get_mineinfo,
-    "start_manulmine":pm.player_start_manulmine,
-    "stop_manulmine":pm.player_stop_manulmine,
-    "manulmine":pm.player_manulmine,
-    "fetch_manulmine_output":pm.player_fetch_manulmine_output,
-    "start_heromine":pm.player_start_heromine,
-    "stop_heromine":pm.player_stop_heromine,
-    "get_heromine_infos":pm.player_get_heromine_infos,
-    "fetch_heromine_output":pm.player_fetch_heromine_output,
+    "get_mineinfo":mm.mine_get_mineinfo,
+    "start_manulmine":mm.mine_start_manulmine,
+    "stop_manulmine":mm.mine_stop_manulmine,
+    "manulmine":mm.mine_manulmine,
+    "fetch_manulmine_output":mm.mine_fetch_manulmine_output,
+    "start_heromine":mm.mine_start_heromine,
+    "stop_heromine":mm.mine_stop_heromine,
+    "get_heromine_infos":mm.mine_get_heromine_infos,
+    "fetch_heromine_output":mm.mine_fetch_heromine_output,
 }

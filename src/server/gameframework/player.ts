@@ -8,7 +8,7 @@ import { datacomp, datacomp_map } from "../../interface/data/datacomp";
 import { rediscache } from "../../interface/data/rediscache";
 import { debug_level_enum } from "../../interface/debug/debug_logger";
 import { servicesession } from "../../interface/service/servicesession";
-import { pos2d } from "./datacomponent/define";
+import { item_data, pos2d } from "./datacomponent/define";
 import { game_map } from "./gameobjects/game_map";
 
 export interface player_behaviour {
@@ -42,6 +42,8 @@ export interface runtimedata {
     lastmvmsgtm:number;
     map:game_map|null;
     ver:number;
+    manulmineid:number;
+    manulminedrops:Map<number, item_data>;
 }
 
 export class player {
@@ -50,6 +52,9 @@ export class player {
     protected _runtimedata:runtimedata;
     protected _pdatas:datacomp_map; // persist datas
     protected _cdatas:datacomp_map; // cache datas
+
+    protected _last_flushdb_time:number;
+    protected static _flushdb_interval:number = 0;
 
     constructor(s:servicesession, datas:Array<datacomp>) {
         this._session = s;
@@ -72,7 +77,17 @@ export class player {
             moving:null,
             map:null,
             lastmvmsgtm:0,
-            inzoneplayer:new Array<player>
+            manulmineid:0,
+            inzoneplayer:new Array<player>,
+            manulminedrops:new Map<number, item_data>()
+        }
+
+        this._last_flushdb_time = nat.sys.getTimeStamp();
+        if(player._flushdb_interval == 0) {
+            player._flushdb_interval = nat.conf.get_config_data("game").base.playerflushtime_ms;
+            if(player._flushdb_interval == undefined){
+                player._flushdb_interval = 300000;
+            }
         }
     }
 
@@ -181,7 +196,13 @@ export class player {
     public on_update():void {
         this._behaviours.forEach((beh)=>{
             beh.on_update();
-        })
+        });
+
+        let curtm_ms = nat.sys.getTimeStamp();
+        if(curtm_ms - this._last_flushdb_time > player._flushdb_interval){
+            this.flush_data_to_dbobj(true); // TO DO : await?
+            this._last_flushdb_time = curtm_ms;
+        }
     }
 }
 

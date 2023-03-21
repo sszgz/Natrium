@@ -33,4 +33,12 @@ export enum ServerErrorCode {
     ResTargetPlayerNotExist = -1021,
 
     ResPort_PortNotExist = -2001,
+    ResPort_MapMineNotExist = -2002,
+    ResPort_MapMineTooFar = -2003,
+    ResPort_ManulMineNotStart = -2004,
+    ResPort_MapMinePlyaerFull = -2005,
+    ResPort_PlayerNotInThisManulMine = -2006,
+    ResPort_AlreadyInManulMine = -2007,
+    ResPort_ManulMineNothingToFetch = -2008,
+    ResPort_PlayerNoPortWarrant = -2009,
 }

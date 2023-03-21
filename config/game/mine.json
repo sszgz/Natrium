@@ -7,7 +7,7 @@
                 "type":"wood",
                 "maxminner":2,
                 "maxoutputcount":100,
-                "recovertm":60,
+                "recovertms":60,
                 "outputid":1
             }
         },

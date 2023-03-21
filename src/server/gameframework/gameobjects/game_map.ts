@@ -2,19 +2,30 @@
 // license : MIT
 // author : Sean Chen
 
+import { datacomp } from "../../../interface/data/datacomp";
 import { nat } from "../../../natrium";
 import { _Node_SessionContext } from "../../../_node_implements/_node/_thread_contexts";
 import { pos2d } from "../datacomponent/define";
+import { map_minedatacomp, mine_conf } from "../datacomponent/map_data";
 import { pathnode, player } from "../player";
 import { gamemap_object } from "./gamemap_object";
 
+export interface map_mine {
+    dc:map_minedatacomp;
+    conf:mine_conf;
+}
+
 export class game_map {
+
+    protected static _minning_cds:number = 0;
 
     protected _instid_seed = 1;
     protected _free_instid_list = new Array<number>();
     protected _pid_players = new Map<number, player>();
     protected _player_sessionids = new Array<number>();
     protected _mapconf:any;
+
+    protected _map_mine_datas = new Map<number, map_mine>();
 
     public static random_bornpos(bornsrc:any):pos2d {
         let xadd = (nat.sys.random() % (2*bornsrc.radius)) - bornsrc.radius;
@@ -31,9 +42,20 @@ export class game_map {
     public get player_sessionids() {
         return this._player_sessionids;
     }
+    public get portid():number {
+        return this._mapconf.portid;
+    }
 
     public init_map(mapconf:any):void {
         this._mapconf = mapconf;
+
+        if(game_map._minning_cds == 0){
+            // read from config
+            game_map._minning_cds = nat.conf.get_config_data("game").port.minning_cds;
+            if(game_map._minning_cds == undefined){
+                game_map._minning_cds = 5;
+            }
+        }
     }
 
     public get_random_bornpos():pos2d {
@@ -149,8 +171,121 @@ export class game_map {
     }
 
     public on_update():void {
+
+        this._update_mine();
+
         this._pid_players.forEach((pl)=>{
             pl.on_update();
+        });
+    }
+    
+    // ------------------------------------------------------------------------
+    public get_mine_conf(mineid:number):mine_conf|null {
+        // get config
+        let minemaps = nat.conf.get_config_data("mine").map;
+        if(!(this._mapconf.id.toString() in minemaps)) {
+            return null;
+        }
+        let minemap = minemaps[this._mapconf.id.toString()];
+        if(!(mineid.toString() in minemap)){
+            return null;
+        }
+        return minemap[mineid.toString()];
+    }
+    public async get_mapmine_datacomp(mineid:number, mc:mine_conf):Promise<map_minedatacomp|null> {
+        let mapmine:map_mine = this._map_mine_datas.get(mineid);
+        if(mapmine != undefined){
+            return mapmine.dc;
+        }
+
+        let dc = nat.datas.create_redis_datacomp(map_minedatacomp, "world", "mapmine", mineid, true) as map_minedatacomp;
+        if(dc == null){
+            return null;
+        }
+
+        await dc.sync_from_db();
+        if(dc.rundata != undefined) {
+            this._map_mine_datas.set(mineid, {dc, conf:mc});
+            return dc;
+        }
+
+        // new map mine data
+        dc.mod_rundata({
+            mineid:mineid,
+            countleft:mc.maxoutputcount,
+            recovertms:0,
+            lastoutputtms:nat.sys.getTimeStamp()/1000,
+            curminingplys:0,
+            players:{}
+        });
+        dc.flush_to_db(true);
+
+        this._map_mine_datas.set(mineid, {dc, conf:mc});
+        return dc;
+    }
+
+    protected _update_mine():void {
+        const curtm_s = nat.sys.getTimeStamp()/1000;
+        this._map_mine_datas.forEach(async (mapmine)=>{
+
+            if(mapmine.dc.minedata.curminingplys <= 0){
+                // no players
+                return;
+            }
+
+            // check count
+            if(mapmine.dc.minedata.countleft <= 0){
+                if(mapmine.dc.minedata.recovertms > curtm_s){
+                    return;
+                }
+                // recover
+                mapmine.dc.minedata.countleft = mapmine.conf.maxoutputcount;
+            }
+
+            // check update time
+            const updateinterval = curtm_s - mapmine.dc.minedata.lastoutputtms;
+            if(updateinterval < game_map._minning_cds){
+                return;
+            }
+            mapmine.dc.minedata.lastoutputtms = curtm_s;
+            
+            // update player minning
+            let tormv_ary = new Array<string>();
+            for(const k in mapmine.dc.minedata.players){
+                const plmine = mapmine.dc.minedata.players[k];
+
+                if(plmine.heronftid == ""){
+                    // manul mine
+                    let user_sid = await nat.datas.get_user_sessionid(plmine.uid);
+                    if(user_sid == undefined){
+                        // not online now, kick
+                        tormv_ary.push(k);
+                    }
+                    
+                    continue;
+                }
+
+                if(plmine.bindfintms <= curtm_s) {
+                    // bind time over
+                    continue;
+                }
+
+                ++plmine.unfetchedoutput;
+
+                --mapmine.dc.minedata.countleft;
+                if(mapmine.dc.minedata.countleft<=0){
+                    mapmine.dc.minedata.countleft=0;
+                    mapmine.dc.minedata.recovertms = curtm_s + mapmine.conf.recovertms;
+                    break;
+                }
+            }
+            for(let i=0; i<tormv_ary.length; ++i){
+                delete mapmine.dc.minedata.players[tormv_ary[i]];
+            }
+            mapmine.dc.minedata.curminingplys -= tormv_ary.length;
+
+            // write back
+            mapmine.dc.flush_to_db(true);
         });
     }
 

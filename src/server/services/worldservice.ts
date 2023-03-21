@@ -158,7 +158,7 @@ export class worldservice extends servicebase {
             let portdata = undefined;
             if("player_port" in pl.pdatas){
                 for(let i=0; i<pl.pdatas.player_port.rundata.ports.length; ++i){
-                    if(pl.pdatas.player_port.rundata.ports[i].portid == pl.pdatas.player_gen.rundata.mapid) { // port id = port city map id
+                    if(pl.pdatas.player_port.rundata.ports[i].portid == map.portid) {
                         portdata = pl.pdatas.player_port.rundata.ports[i];
                     }
                 }

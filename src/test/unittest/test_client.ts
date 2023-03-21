@@ -134,10 +134,10 @@ var testcmd = async ()=>{
                         c:"login",
                         d:{
                             "name": "",
-                            // "uid": "2",
-                            // "token": "b79ba618-1678880290643-2",
-                            "uid": "3",
-                            "token": "267ba1a4-1678979779149-3",
+                            "uid": "2",
+                            "token": "b79ba618-1678880290643-2",
+                            // "uid": "3",
+                            // "token": "267ba1a4-1678979779149-3",
                             // "uid": "4",
                             // "token": "ec3e1df1-1678966035165-4",
                         }
@@ -329,6 +329,68 @@ var testcmd = async ()=>{
                         d:{
                             channel:cmds[1],
                             msg:cmds[2]
+                        }
+                    };
+
+                    let pkt = client.connecter.pcodec.create_protopkt(obj.c, obj.d);
+                    client.connecter.send_packet(pkt);
+                }
+                break;
+            case "get_mineinfo":
+                {
+                    let obj = {
+                        c:"get_mineinfo",
+                        d:{
+                            mineids:[parseInt(cmds[1])]
+                        }
+                    };
+
+                    let pkt = client.connecter.pcodec.create_protopkt(obj.c, obj.d);
+                    client.connecter.send_packet(pkt);
+                }
+                break;
+            case "start_manulmine":
+                {
+                    let obj = {
+                        c:"start_manulmine",
+                        d:{
+                            mineid:cmds[1]
+                        }
+                    };
+
+                    let pkt = client.connecter.pcodec.create_protopkt(obj.c, obj.d);
+                    client.connecter.send_packet(pkt);
+                }
+                break;
+            case "stop_manulmine":
+                {
+                    let obj = {
+                        c:"stop_manulmine",
+                        d:{
+                        }
+                    };
+
+                    let pkt = client.connecter.pcodec.create_protopkt(obj.c, obj.d);
+                    client.connecter.send_packet(pkt);
+                }
+                break;
+            case "manulmine":
+                {
+                    let obj = {
+                        c:"manulmine",
+                        d:{
+                        }
+                    };
+
+                    let pkt = client.connecter.pcodec.create_protopkt(obj.c, obj.d);
+                    client.connecter.send_packet(pkt);
+                }
+                break;
+            case "fetch_manulmine_output":
+                {
+                    let obj = {
+                        c:"fetch_manulmine_output",
+                        d:{
                         }
                     };
 

@@ -91,7 +91,7 @@ message get_portdata {
 
 // get mine info
 message get_mineinfo {
-    repeated uint32 mineid = 1; // mine id, see in mine config
+    repeated uint32 mineids = 1; // mine id, see in mine config
 }
 
 // start manul mine

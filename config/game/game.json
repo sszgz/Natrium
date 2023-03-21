@@ -1,10 +1,12 @@
 {
     "base":{
         "movspeed":160,
-        "gridsize":32
+        "gridsize":32,
+        "playerflushtime_ms":60000
     },
     "port":{
         "maxminning_herocount":10,
+        "minning_cds":5,
         "init_repoload":10000
     }
 }

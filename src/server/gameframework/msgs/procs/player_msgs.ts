@@ -13,7 +13,6 @@ import { game_map } from "../../gameobjects/game_map";
 import { generic_behaviour } from "../../behaviours/generic_behaviour";
 import { player_herodatacomp, player_petdatacomp, player_portdatacomp } from "../../datacomponent/user_datas";
 
-
 export async function player_goto(s:service, ses:servicesession, pl:any, data:any):Promise<void> {
     if(pl == null){
         _Node_SessionContext.sendWSMsg(ses.session_id, "server_error", {res:ServerErrorCode.ResServicePlayerNotExist});
@@ -401,11 +400,11 @@ export async function player_get_portdata(s:service, ses:servicesession, pl:any,
         // insert port data
         ports = [{
             portid:1,
-            minnings:[],
             storehouse:{
                 maxrepoload:nat.conf.get_config_data("game").port.init_repoload,
                 level:1,
-                items:[]
+                curload:0,
+                items:{}
             }
         }];
         player_portdata.mod_rundata({ports:ports});
@@ -428,40 +427,4 @@ export async function player_get_portdata(s:service, ses:servicesession, pl:any,
         playerid:pla.pdatas.player_gen.rundata.playerid,
         data:target_port
     });
-}
-
-export async function player_get_mineinfo(s:service, ses:servicesession, pl:any, data:any):Promise<void> {
-
-}
-
-export async function player_start_manulmine(s:service, ses:servicesession, pl:any, data:any):Promise<void> {
-
-}
-
-export async function player_stop_manulmine(s:service, ses:servicesession, pl:any, data:any):Promise<void> {
-
-}
-
-export async function player_manulmine(s:service, ses:servicesession, pl:any, data:any):Promise<void> {
-
-}
-
-export async function player_fetch_manulmine_output(s:service, ses:servicesession, pl:any, data:any):Promise<void> {
-
-}
-
-export async function player_start_heromine(s:service, ses:servicesession, pl:any, data:any):Promise<void> {
-
-}
-
-export async function player_stop_heromine(s:service, ses:servicesession, pl:any, data:any):Promise<void> {
-
-}
-
-export async function player_get_heromine_infos(s:service, ses:servicesession, pl:any, data:any):Promise<void> {
-
-}
-
-export async function player_fetch_heromine_output(s:service, ses:servicesession, pl:any, data:any):Promise<void> {
-
 }

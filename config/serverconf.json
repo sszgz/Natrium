@@ -36,6 +36,22 @@
             "name":"player",
             "database":4,
             "persist":true
+        },
+        "world":{
+            "url":"redis://127.0.0.1:6379",
+            "username":"",
+            "password":"",
+            "name":"world",
+            "database":5,
+            "persist":true
+        },
+        "global":{
+            "url":"redis://127.0.0.1:6379",
+            "username":"",
+            "password":"",
+            "name":"global",
+            "database":6,
+            "persist":true
         }
     },
     "services":[
