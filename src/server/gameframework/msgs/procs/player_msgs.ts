@@ -310,7 +310,7 @@ export async function player_get_pet_info(s:service, ses:servicesession, pl:any,
         pets = [{
             mintType:0,
             petId:1,
-            avatarSlots:[1,1,1,1,1,1,1,1],
+            avatarSlots:[1,1,1,1,1,1],
             mineAttr:1,
             battleAttr:2,
             bindFinTms:nat.sys.getTimeStamp()/1000 + 600,
@@ -320,7 +320,7 @@ export async function player_get_pet_info(s:service, ses:servicesession, pl:any,
         {
             mintType:1,
             petId:2,
-            avatarSlots:[2,2,2,2,2,2,2,2],
+            avatarSlots:[2,2,2,2,2,2],
             mineAttr:3,
             battleAttr:4,
             bindFinTms:nat.sys.getTimeStamp()/1000 + 600,
@@ -362,11 +362,29 @@ export async function player_change_avatar(s:service, ses:servicesession, pl:any
     }
     let pla = pl as player;
 
-    // TO DO : check nft card owner
-    // data.heronftid;
-    // pla.pdatas.player_gen.rundata.heros;
+    // check nft card owner
+    let heros = [];
+    if("player_hero" in pla.pdatas){
+        heros = pla.pdatas.player_hero.rundata.heros;
+    }
+    else {
+        _Node_SessionContext.sendWSMsg(ses.session_id, "server_error", {res:ServerErrorCode.ResPlayer_HeroNotExist});
+        return;
+    }
 
-    pla.pdatas.player_gen.rundata.heroava = data.heroava;
+    let hero = null;
+    for(let i=0; i<heros.length; ++i){
+        if(heros[i].heronftid == data.heronftid){
+            hero = heros[i];
+            break;
+        }
+    }
+    if(hero == null) {
+        _Node_SessionContext.sendWSMsg(ses.session_id, "server_error", {res:ServerErrorCode.ResPlayer_HeroNotExist});
+        return;
+    }
+
+    pla.pdatas.player_gen.rundata.heroava = hero.job;
     ++pla.runtimedata.ver;
 
     // broad cast message to all map player
@@ -377,6 +395,53 @@ export async function player_change_avatar(s:service, ses:servicesession, pl:any
     });
 }
 
+export async function player_change_pet(s:service, ses:servicesession, pl:any, data:any):Promise<void> {
+    if(pl == null){
+        _Node_SessionContext.sendWSMsg(ses.session_id, "server_error", {res:ServerErrorCode.ResServicePlayerNotExist});
+        return;
+    }
+    let map = (pl as player).runtimedata.map;
+    if(map == null){
+        _Node_SessionContext.sendWSMsg(ses.session_id, "server_error", {res:ServerErrorCode.ResPlayerNotinMap});
+        return;
+    }
+    let pla = pl as player;
+
+    // check nft card owner
+    let pets = [];
+    if("player_pet" in pla.pdatas){
+        pets = pla.pdatas.player_pet.rundata.pets;
+    }
+    else {
+        _Node_SessionContext.sendWSMsg(ses.session_id, "server_error", {res:ServerErrorCode.ResPlayer_PetNotExist});
+        return;
+    }
+
+    let pet = null;
+    for(let i=0; i<pets.length; ++i){
+        if(pets[i].heronftid == data.heronftid){
+            pet = pets[i];
+            break;
+        }
+    }
+    if(pet == null) {
+        _Node_SessionContext.sendWSMsg(ses.session_id, "server_error", {res:ServerErrorCode.ResPlayer_PetNotExist});
+        return;
+    }
+
+    pla.pdatas.player_gen.rundata.petava = {
+        petId:pet.petId,
+        avatarSlots:pet.avatarSlots
+    };
+    ++pla.runtimedata.ver;
+
+    // broad cast message to all map player
+    _Node_SessionContext.broadCastMsgWith(0, map.player_sessionids, "player_change_pet_res", {
+        playerid:pla.pdatas.player_gen.rundata.playerid,
+        petava:pla.pdatas.player_gen.rundata.petava,
+        ver:pla.runtimedata.ver
+    });
+}
 
 export async function player_get_portdata(s:service, ses:servicesession, pl:any, data:any):Promise<void> {
     if(pl == null){

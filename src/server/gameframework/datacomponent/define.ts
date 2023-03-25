@@ -23,6 +23,11 @@ export interface session_basedata {
     readonly firstin:boolean;
 }
 
+export interface pet_showdata {
+    readonly petId:number;
+    readonly avatarSlots:Array<number>;
+}
+
 export interface generic_playerdata {
     readonly playerid:number;
     readonly mapid:number;
@@ -30,6 +35,7 @@ export interface generic_playerdata {
     readonly gender:number;
     readonly pname:number;
     readonly speed?:number;
+    readonly petava?:pet_showdata;
     pos?:pos2d;
 }
 

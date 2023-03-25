@@ -71,8 +71,13 @@ message get_ship_info {
 // change player avatar info by HeroNFT
 message change_avatar {
     required string heronftid = 1; // hero nft id, see in {sc:HeroNFT}
-    required uint32 heroava = 2; // avatar info, use hero job as hero avatar see {sc:HeroNFT}
 }
+
+// change pet avatar info by HeroNFT
+message change_pet {
+    required string heronftid = 1; // hero nft id, see in {sc:HeroNFT}
+}
+
 
 // send chat msg
 message chat {

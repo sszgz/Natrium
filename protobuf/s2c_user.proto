@@ -110,6 +110,13 @@ message player_change_ava_res {
     required uint32 ver = 3; // avatar version, +1 each time avatar/showinfo is changed
 }
 
+// player change pet avatar info
+message player_change_pet_res {
+    required uint32 playerid = 1; // change avatar player id
+    required pet_showinfo petava = 2; // pet avatar info, use petid and slots as pet avatar see {sc:HeroNFT}
+    required uint32 ver = 3; // avatar version, +1 each time avatar/showinfo is changed
+}
+
 // chat msg
 message chat_msg {
     required uint32 channel = 1; // chat channel, 1=wolrd, 2=current map, 3=near by

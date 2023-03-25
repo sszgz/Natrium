@@ -19,6 +19,11 @@ message user_data {
 
 // ----------------------------------------------------------------------------
 
+message pet_showinfo {
+    required uint32 petId = 3; // pet id, see pet config
+    repeated uint32 avatarSlots = 4; // avatar slot, see pet config
+}
+
 // player simple info
 message player_sinfo {
     required uint32 playerid = 1; // player id
@@ -26,6 +31,7 @@ message player_sinfo {
     required uint32 gender = 3; // gender
     required string pname = 4; // player name
     optional uint32 speed = 5; // move speed (may not exist, in this case, set speed in default value)
+    optional pet_showinfo petava = 6; // current pet avatar info, use petid and slots as pet avatar see {sc:HeroNFT}
 }
 
 // player info 

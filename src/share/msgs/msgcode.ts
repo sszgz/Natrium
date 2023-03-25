@@ -41,4 +41,7 @@ export enum ServerErrorCode {
     ResPort_AlreadyInManulMine = -2007,
     ResPort_ManulMineNothingToFetch = -2008,
     ResPort_PlayerNoPortWarrant = -2009,
+
+    ResPlayer_PetNotExist = -2101,
+    ResPlayer_HeroNotExist = -2102,
 }

@@ -18,6 +18,7 @@ export enum protobuf_c2s {
     get_pet_info = 109,
     get_ship_info = 110,
     change_avatar = 111,
+    change_pet = 112,
 
     get_portdata = 201,
 
@@ -52,6 +53,7 @@ export enum protobuf_s2c {
     get_pet_info_res = 10113,
     get_ship_info_res = 10114,
     player_change_ava_res = 10115,
+    player_change_pet_res = 10116,
 
     get_portdata_res = 10201,
     storhouse_change = 10202,
