@@ -5,7 +5,7 @@
 import { nat } from "..";
 import { serverconf } from "../interface/config/configs";
 import { debug_level_enum } from "../interface/debug/debug_logger";
-import { httplistener, httplistener_handler, http_request_like, http_response_like } from "../interface/network/httplistener";
+import { httplistener, httplistener_handler, httpmsgproc_map_type, httpmsgproc_type, http_request_like, http_response_like } from "../interface/network/httplistener";
 import { network } from "../interface/network/network";
 import { wslistener, wslistener_handler } from "../interface/network/wslistener";
 import { packet, prototype } from "../interface/protocol/packet";
@@ -257,8 +257,3 @@ export class natrium_server implements wslistener_handler, httplistener_handler 
         }
     }
 }
-
-export type httpmsgproc_type = (req:http_request_like, res:http_response_like) => Promise<void>;
-type httpmsgproc_map_type = {
-    [key:string]:httpmsgproc_type
-};

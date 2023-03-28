@@ -29,3 +29,8 @@ export interface httplistener {
     
 
 }
+
+export type httpmsgproc_type = (req:http_request_like, res:http_response_like) => Promise<void>;
+export type httpmsgproc_map_type = {
+    [key:string]:httpmsgproc_type
+};

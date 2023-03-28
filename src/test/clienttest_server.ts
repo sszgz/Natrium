@@ -2,7 +2,7 @@
 // license : MIT
 // author : Sean Chen
 
-import { start_server, server } from "./server_init";
+import { start_server, server } from "./unittest/server_init";
 
 let start = async  () => {
     await start_server("../../../config/clienttest_serverconf.json");
