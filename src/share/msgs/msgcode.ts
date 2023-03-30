@@ -44,4 +44,8 @@ export enum ServerErrorCode {
 
     ResPlayer_PetNotExist = -2101,
     ResPlayer_HeroNotExist = -2102,
+    ResPlayer_HeroNotBindToMine = -2103,
+    ResPlayer_HeroAlreadyInMine = -2104,
+    ResPlayer_HeroNotInMine = -2105,
+    ResPlayer_NotInThisMine = -2106,
 }

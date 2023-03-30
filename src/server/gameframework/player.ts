@@ -8,7 +8,7 @@ import { datacomp, datacomp_map } from "../../interface/data/datacomp";
 import { rediscache } from "../../interface/data/rediscache";
 import { debug_level_enum } from "../../interface/debug/debug_logger";
 import { servicesession } from "../../interface/service/servicesession";
-import { item_data, pos2d } from "./datacomponent/define";
+import { hero_data, item_data, pet_data, pos2d } from "./datacomponent/define";
 import { game_map } from "./gameobjects/game_map";
 
 export interface player_behaviour {
@@ -203,6 +203,57 @@ export class player {
             this.flush_data_to_dbobj(true); // TO DO : await?
             this._last_flushdb_time = curtm_ms;
         }
+    }
+
+    public get_player_hero(heronftid:string):hero_data|null {
+        
+        // check nft card owner
+        let heros = [];
+        if(!("player_hero" in this._pdatas)){
+            return null;
+        }
+        heros = this._pdatas.player_hero.rundata.heros;
+
+        let hero = null;
+        for(let i=0; i<heros.length; ++i){
+            if(heros[i].heronftid == heronftid){
+                hero = heros[i];
+                break;
+            }
+        }
+        
+        return hero;
+    }
+
+    public get_player_pet(heronftid:string):pet_data|null {
+        
+        let pets = [];
+        if(!("player_pet" in this._pdatas)){
+            return null;
+        }
+        pets = this._pdatas.player_pet.rundata.pets;
+
+        let pet = null;
+        for(let i=0; i<pets.length; ++i){
+            if(pets[i].heronftid == heronftid){
+                pet = pets[i];
+                break;
+            }
+        }
+        return pet;
+    }
+
+    public get_player_curr_port() {
+        // TO DO : create port store house for player
+        if(!("player_port" in this._pdatas)){
+            return null;
+        }
+        for(let i=0; i<this._pdatas.player_port.rundata.ports.length; ++i){
+            if(this._pdatas.player_port.rundata.ports[i].portid == this.runtimedata.map.portid){
+                return this._pdatas.player_port.rundata.ports[i];
+            }
+        }
+        return undefined;
     }
 }
 

@@ -183,7 +183,8 @@ message stop_heromine_res {
 // get hero mine infos res
 message get_heromine_infos_res {
     required int32 res = 1; // error code see {ServerErrorCode}
-    repeated shared.minning_data infos = 2; // see in {shared.minning_data}
+    required shared.minning_data info = 2; // see in {shared.minning_data}
+    required uint32 unfetchedoutput = 3; // unfetched mine output count
 }
 // fetch heromine output res
 // will trigger a {storhouse_change} msg if success

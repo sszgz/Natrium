@@ -72,7 +72,6 @@ message hero_data {
     required uint32 grade = 4; // grade, from 1-10: D、C、B、A、S, N、R、SR、SSR、UR
     required uint32 mineAttr = 5; // mine attr, see hero config
     required uint32 battleAttr = 6; // battle attr, see hero config
-    required uint32 bindFinTms = 7; // hero usage bind finish time stamp in second, see {sc:bindNFTUsage}
     required string bindType = 8; // hero usage bind type, see {sc:bindNFTUsage}
     
     optional minning_data minnings = 9; // current hero minning info
@@ -86,7 +85,6 @@ message pet_data {
     repeated uint32 avatarSlots = 4; // avatar slot, see pet config
     required uint32 mineAttr = 5; // mine attr, see pet config
     required uint32 battleAttr = 6; // battle attr, see pet config
-    required uint32 bindFinTms = 7; // pet usage bind finish time stamp in second, see {sc:bindNFTUsage}
     required string bindType = 8; // pet usage bind type, see {sc:bindNFTUsage}
     
     optional minning_data minnings = 9; // current hero minning info
@@ -137,7 +135,6 @@ message storehouse_data {
 message minning_data {
     required uint32 mineid = 1; // current minnng id, see in mine config
     required uint32 startminetms = 2; // start minning time stamp, in second
-    required uint32 unfetchedoutput = 3; // unfetched output count
 }
 
 message factory_data {

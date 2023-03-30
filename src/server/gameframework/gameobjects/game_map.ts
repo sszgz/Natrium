@@ -265,11 +265,6 @@ export class game_map {
                     continue;
                 }
 
-                if(plmine.bindfintms <= curtm_s) {
-                    // bind time over
-                    continue;
-                }
-
                 ++plmine.unfetchedoutput;
 
                 --mapmine.dc.minedata.countleft;

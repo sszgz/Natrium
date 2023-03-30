@@ -122,7 +122,7 @@ message stop_heromine {
 }
 // get hero mine infos
 message get_heromine_infos {
-    repeated string heronftids = 1; // hero nft id array, see in {sc:HeroNFT}
+    required string heronftid = 1; // hero nft id array, see in {sc:HeroNFT}
 }
 // fetch hero mine outputs
 message fetch_heromine_output {

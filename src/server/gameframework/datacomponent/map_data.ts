@@ -18,7 +18,6 @@ export interface mine_conf {
 export interface player_minning_data {
     uid:string;
     heronftid:string; // heronftid = "", means manul mine
-    bindfintms:number;
     startminetms:number;
     unfetchedoutput:number;
 }

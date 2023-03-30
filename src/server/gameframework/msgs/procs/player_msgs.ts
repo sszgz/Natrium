@@ -258,7 +258,6 @@ export async function player_get_hero_info(s:service, ses:servicesession, pl:any
             grade:1,
             mineAttr:1,
             battleAttr:2,
-            bindFinTms:nat.sys.getTimeStamp()/1000 + 600,
             bindType:"mine",
             heronftid:nat.sys.getTimeStamp().toString(),
         },
@@ -268,7 +267,6 @@ export async function player_get_hero_info(s:service, ses:servicesession, pl:any
             grade:2,
             mineAttr:3,
             battleAttr:4,
-            bindFinTms:nat.sys.getTimeStamp()/1000 + 600,
             bindType:"mine",
             heronftid:(nat.sys.getTimeStamp()+1).toString(),
         }];
@@ -313,7 +311,6 @@ export async function player_get_pet_info(s:service, ses:servicesession, pl:any,
             avatarSlots:[1,1,1,1,1,1],
             mineAttr:1,
             battleAttr:2,
-            bindFinTms:nat.sys.getTimeStamp()/1000 + 600,
             bindType:"mine",
             heronftid:nat.sys.getTimeStamp().toString(),
         },
@@ -323,7 +320,6 @@ export async function player_get_pet_info(s:service, ses:servicesession, pl:any,
             avatarSlots:[2,2,2,2,2,2],
             mineAttr:3,
             battleAttr:4,
-            bindFinTms:nat.sys.getTimeStamp()/1000 + 600,
             bindType:"mine",
             heronftid:(nat.sys.getTimeStamp()+1).toString(),
         }];
@@ -363,22 +359,7 @@ export async function player_change_avatar(s:service, ses:servicesession, pl:any
     let pla = pl as player;
 
     // check nft card owner
-    let heros = [];
-    if("player_hero" in pla.pdatas){
-        heros = pla.pdatas.player_hero.rundata.heros;
-    }
-    else {
-        _Node_SessionContext.sendWSMsg(ses.session_id, "server_error", {res:ServerErrorCode.ResPlayer_HeroNotExist});
-        return;
-    }
-
-    let hero = null;
-    for(let i=0; i<heros.length; ++i){
-        if(heros[i].heronftid == data.heronftid){
-            hero = heros[i];
-            break;
-        }
-    }
+    let hero = pla.get_player_hero(data.heronftid);
     if(hero == null) {
         _Node_SessionContext.sendWSMsg(ses.session_id, "server_error", {res:ServerErrorCode.ResPlayer_HeroNotExist});
         return;
@@ -406,24 +387,9 @@ export async function player_change_pet(s:service, ses:servicesession, pl:any, d
         return;
     }
     let pla = pl as player;
-
+    
     // check nft card owner
-    let pets = [];
-    if("player_pet" in pla.pdatas){
-        pets = pla.pdatas.player_pet.rundata.pets;
-    }
-    else {
-        _Node_SessionContext.sendWSMsg(ses.session_id, "server_error", {res:ServerErrorCode.ResPlayer_PetNotExist});
-        return;
-    }
-
-    let pet = null;
-    for(let i=0; i<pets.length; ++i){
-        if(pets[i].heronftid == data.heronftid){
-            pet = pets[i];
-            break;
-        }
-    }
+    let pet = pla.get_player_pet(data.heronftid);
     if(pet == null) {
         _Node_SessionContext.sendWSMsg(ses.session_id, "server_error", {res:ServerErrorCode.ResPlayer_PetNotExist});
         return;

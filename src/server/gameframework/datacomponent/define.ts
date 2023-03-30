@@ -39,15 +39,20 @@ export interface generic_playerdata {
     pos?:pos2d;
 }
 
+export interface hero_mining_data {
+    readonly mineid:number;
+    readonly startminetms:number;
+}
 export interface hero_data {
     readonly mintType:number;
     readonly job:number;
     readonly grade:number;
     readonly mineAttr:number;
     readonly battleAttr:number;
-    readonly bindFinTms:number;
     readonly bindType:string;
     readonly heronftid:string;
+
+    minnings?:hero_mining_data;
 }
 export interface hero_playerdata {
     readonly heros:Array<hero_data>
@@ -59,9 +64,10 @@ export interface pet_data {
     readonly avatarSlots:Array<number>;
     readonly mineAttr:number;
     readonly battleAttr:number;
-    readonly bindFinTms:number;
     readonly bindType:string;
     readonly heronftid:string;
+    
+    minnings?:hero_mining_data;
 }
 export interface pet_playerdata {
     readonly pets:Array<pet_data>
