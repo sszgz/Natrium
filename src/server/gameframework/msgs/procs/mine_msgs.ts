@@ -7,7 +7,7 @@ import { service } from "../../../../interface/service/service";
 import { servicesession } from "../../../../interface/service/servicesession";
 import { _Node_SessionContext } from "../../../../_node_implements/_node/_thread_contexts";
 import { ServerErrorCode } from "../../../../share/msgs/msgcode";
-import { player } from "../../player";
+import { hero_bind_type, player } from "../../player";
 import { worldservice } from "../../../services/worldservice";
 import { game_map } from "../../gameobjects/game_map";
 import { generic_behaviour } from "../../behaviours/generic_behaviour";
@@ -212,27 +212,23 @@ export async function mine_fetch_manulmine_output(s:service, ses:servicesession,
     }
 
     let addeditems = pla.runtimedata.manulminedrops;
-    pla.runtimedata.manulminedrops = new Map<number, item_data>();
 
+    let additemary = new Array<item_data>();
+    addeditems.forEach((itemdata)=>{
+        additemary.push(itemdata);
+    });
     // TO DO : check item load is full
 
-    let additemary = [];
-    addeditems.forEach((itemdata)=>{
+    if(!pla.add_player_storehouse_items(additemary)){
+        _Node_SessionContext.sendWSMsg(ses.session_id, "fetch_manulmine_output_res", {res:ServerErrorCode.ResPort_AddStoreHouseItemFailed});
+        return;
+    }
 
-        if(itemdata.itemid in curplyport.storehouse.items){
-            curplyport.storehouse.items[itemdata.itemid] += itemdata.count;
-        }
-        else {
-            curplyport.storehouse.items[itemdata.itemid] = itemdata.count;
-        }
-
-        additemary.push(itemdata);
-
-        // TO DO : load item config and read item load
-        curplyport.storehouse.curload += 1;
-    });
-
+    // clear drop data
+    pla.runtimedata.manulminedrops = new Map<number, item_data>();
     
+    pla.pdatas.player_port.flush_to_db(false); // sync to cache
+
     _Node_SessionContext.sendWSMsg(ses.session_id, "storhouse_change", {
         iteminfo:additemary,
         curload:curplyport.storehouse.curload
@@ -278,16 +274,9 @@ export async function mine_start_heromine(s:service, ses:servicesession, pl:any,
     
     // check nft card owner
     let hero = pla.get_player_hero(data.heronftid);
-    if(hero == null) {
-        _Node_SessionContext.sendWSMsg(ses.session_id, "start_heromine_res", {res:ServerErrorCode.ResPlayer_HeroNotExist});
-        return;
-    }
-    if(hero.bindType != "mine") {
-        _Node_SessionContext.sendWSMsg(ses.session_id, "start_heromine_res", {res:ServerErrorCode.ResPlayer_HeroNotBindToMine});
-        return;
-    }
-    if(hero.minnings != undefined) {
-        _Node_SessionContext.sendWSMsg(ses.session_id, "start_heromine_res", {res:ServerErrorCode.ResPlayer_HeroAlreadyInMine});
+    let checkres = pla.check_player_hero_usage(hero, hero_bind_type.mine);
+    if(checkres != ServerErrorCode.ResOK) {
+        _Node_SessionContext.sendWSMsg(ses.session_id, "start_heromine_res", {res:checkres});
         return;
     }
 
@@ -307,6 +296,9 @@ export async function mine_start_heromine(s:service, ses:servicesession, pl:any,
         unfetchedoutput:0
     };
     ++minedc.minedata.curminingplys;
+    
+    minedc.flush_to_db(false); // sync to cache
+    pla.pdatas.player_hero.flush_to_db(false); // sync to cache
 
     _Node_SessionContext.sendWSMsg(ses.session_id, "start_heromine_res", {res:ServerErrorCode.ResOK, heronftid:data.heronftid, mineid:data.mineid});
 }
@@ -329,7 +321,7 @@ export async function mine_stop_heromine(s:service, ses:servicesession, pl:any, 
         _Node_SessionContext.sendWSMsg(ses.session_id, "stop_heromine_res", {res:ServerErrorCode.ResPlayer_HeroNotExist});
         return;
     }
-    if(hero.bindType != "mine") {
+    if(hero.bindType != hero_bind_type.mine) {
         _Node_SessionContext.sendWSMsg(ses.session_id, "stop_heromine_res", {res:ServerErrorCode.ResPlayer_HeroNotBindToMine});
         return;
     }
@@ -360,7 +352,7 @@ export async function mine_stop_heromine(s:service, ses:servicesession, pl:any, 
     delete minedc.minedata.players[pla.pdatas.player_gen.rundata.playerid];
     --minedc.minedata.curminingplys;
 
-    hero.minnings = undefined;
+    delete hero.minnings;
     pla.pdatas.player_hero.flush_to_db(false); // sync to cache
 
     if(minedc.minedata.curminingplys <= 0){
@@ -391,7 +383,7 @@ export async function mine_get_heromine_infos(s:service, ses:servicesession, pl:
         _Node_SessionContext.sendWSMsg(ses.session_id, "get_heromine_infos_res", {res:ServerErrorCode.ResPlayer_HeroNotExist});
         return;
     }
-    if(hero.bindType != "mine") {
+    if(hero.bindType != hero_bind_type.mine) {
         _Node_SessionContext.sendWSMsg(ses.session_id, "get_heromine_infos_res", {res:ServerErrorCode.ResPlayer_HeroNotBindToMine});
         return;
     }
@@ -440,8 +432,8 @@ export async function mine_fetch_heromine_output(s:service, ses:servicesession, 
         _Node_SessionContext.sendWSMsg(ses.session_id, "fetch_heromine_output_res", {res:ServerErrorCode.ResPlayer_HeroNotExist});
         return;
     }
-    if(hero.bindType != "mine") {
-        _Node_SessionContext.sendWSMsg(ses.session_id, "stop_heromine_res", {res:ServerErrorCode.ResPlayer_HeroNotBindToMine});
+    if(hero.bindType != hero_bind_type.mine) {
+        _Node_SessionContext.sendWSMsg(ses.session_id, "fetch_heromine_output_res", {res:ServerErrorCode.ResPlayer_HeroNotBindToMine});
         return;
     }
     if(hero.minnings == undefined) {
@@ -476,29 +468,24 @@ export async function mine_fetch_heromine_output(s:service, ses:servicesession, 
         count:mineply.unfetchedoutput
     }
 
-    mineply.unfetchedoutput = 0;
-    minedc.flush_to_db(false); // sync to cache
-
     let curplyport = pla.get_player_curr_port();
     if(curplyport == undefined){
         _Node_SessionContext.sendWSMsg(ses.session_id, "fetch_heromine_output_res", {res:ServerErrorCode.ResPort_PortNotExist});
         return;
     }
 
-    let addeditems = pla.runtimedata.manulminedrops;
-    pla.runtimedata.manulminedrops = new Map<number, item_data>();
-
     // TO DO : check item load is full
-
-    if(dropeditem.itemid in curplyport.storehouse.items){
-        curplyport.storehouse.items[dropeditem.itemid] += dropeditem.count;
-    }
-    else {
-        curplyport.storehouse.items[dropeditem.itemid] = dropeditem.count;
+    
+    if(!pla.add_player_storehouse_items([dropeditem])){
+        _Node_SessionContext.sendWSMsg(ses.session_id, "fetch_heromine_output_res", {res:ServerErrorCode.ResPort_AddStoreHouseItemFailed});
+        return;
     }
 
-    // TO DO : load item config and read item load
-    curplyport.storehouse.curload += 1;
+    // update db
+    mineply.unfetchedoutput = 0;
+    minedc.flush_to_db(false); // sync to cache
+    
+    pla.pdatas.player_port.flush_to_db(false); // sync to cache
 
     _Node_SessionContext.sendWSMsg(ses.session_id, "storhouse_change", {
         iteminfo:[dropeditem],

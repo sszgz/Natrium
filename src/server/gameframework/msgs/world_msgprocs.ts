@@ -4,6 +4,8 @@
 
 import * as pm from "./procs/player_msgs";
 import * as mm from "./procs/mine_msgs";
+import * as fm from "./procs/factory_msgs";
+import * as sm from "./procs/shop_msgs";
 
 export const procs = {
     "goto":pm.player_goto,
@@ -30,4 +32,12 @@ export const procs = {
     "stop_heromine":mm.mine_stop_heromine,
     "get_heromine_infos":mm.mine_get_heromine_infos,
     "fetch_heromine_output":mm.mine_fetch_heromine_output,
+
+    "make_factory_product":fm.fac_make_factory_product,
+    "set_factory_hero":fm.fac_set_factory_hero,
+    "unset_factory_hero":fm.fac_unset_factory_hero,
+    "fetch_factory_product":fm.fac_fetch_factory_product,
+    
+    "shop_put_onsale":sm.shop_put_onsale,
+    "shop_fetch_gold":sm.shop_fetch_gold,
 }

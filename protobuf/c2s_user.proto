@@ -128,3 +128,43 @@ message get_heromine_infos {
 message fetch_heromine_output {
     required string heronftid = 1; // hero nft id, see in {sc:HeroNFT}
 }
+
+// ----------------------------------------------------------------------------
+
+// factory make product
+message make_factory_product {
+    required uint32 proditemid = 1; // product item id, see in item config
+    required uint32 count = 2; // item count
+    required uint32 lineidx = 3; // line index
+}
+
+// set factory hero
+message set_factory_hero {
+    required string nftid = 1; // hero or pet nft id, see in {sc:HeroNFT}
+    required uint32 lineidx = 2; // line index
+    required bool ispet = 3; // hero or pet
+}
+
+// unset factory hero
+message unset_factory_hero {
+    required string nftid = 1; // hero or pet nft id, see in {sc:HeroNFT}
+    required uint32 lineidx = 2; // line index
+}
+
+// fetch factory output product
+message fetch_factory_product {
+    required uint32 lineidx = 1; // line index
+}
+
+// ----------------------------------------------------------------------------
+
+// put on sale
+message shop_put_onsale {
+    required uint32 proditemid = 1;  // product item id, see in item config
+    required uint32 count = 2; // item count
+}
+
+// fetch shop gold
+message shop_fetch_gold {
+
+}

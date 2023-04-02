@@ -8,7 +8,8 @@ import { datacomp, datacomp_map } from "../../interface/data/datacomp";
 import { rediscache } from "../../interface/data/rediscache";
 import { debug_level_enum } from "../../interface/debug/debug_logger";
 import { servicesession } from "../../interface/service/servicesession";
-import { hero_data, item_data, pet_data, pos2d } from "./datacomponent/define";
+import { ServerErrorCode } from "../../share/msgs/msgcode";
+import { factory_line_data, hero_data, item_data, pet_data, port_data, pos2d } from "./datacomponent/define";
 import { game_map } from "./gameobjects/game_map";
 
 export interface player_behaviour {
@@ -44,6 +45,11 @@ export interface runtimedata {
     ver:number;
     manulmineid:number;
     manulminedrops:Map<number, item_data>;
+}
+
+export enum hero_bind_type {
+    mine = "mine",
+    battle = "battle"
 }
 
 export class player {
@@ -225,6 +231,23 @@ export class player {
         return hero;
     }
 
+    public check_player_hero_usage(hero:hero_data, bindType:hero_bind_type):number {
+        if(hero == null) {
+            return ServerErrorCode.ResPlayer_HeroNotExist;
+        }
+        if(hero.bindType != bindType) {
+            return ServerErrorCode.ResPlayer_HeroNotBindToMine;
+        }
+        if(hero.minnings != undefined) {
+            return ServerErrorCode.ResPlayer_HeroAlreadyInMine;
+        }
+        if(hero.factory != undefined) {
+            return ServerErrorCode.ResPlayer_HeroAlreadyInFactory;
+        }
+
+        return ServerErrorCode.ResOK;
+    }
+
     public get_player_pet(heronftid:string):pet_data|null {
         
         let pets = [];
@@ -243,10 +266,27 @@ export class player {
         return pet;
     }
 
-    public get_player_curr_port() {
+    public check_player_pet_usage(pet:pet_data, bindType:hero_bind_type):number {
+        if(pet == null) {
+            return ServerErrorCode.ResPlayer_HeroNotExist;
+        }
+        if(pet.bindType != bindType) {
+            return ServerErrorCode.ResPlayer_HeroNotBindToMine;
+        }
+        if(pet.minnings != undefined) {
+            return ServerErrorCode.ResPlayer_HeroAlreadyInMine;
+        }
+        if(pet.factory != undefined) {
+            return ServerErrorCode.ResPlayer_HeroAlreadyInFactory;
+        }
+
+        return ServerErrorCode.ResOK;
+    }
+
+    public get_player_curr_port():port_data|undefined {
         // TO DO : create port store house for player
         if(!("player_port" in this._pdatas)){
-            return null;
+            return undefined;
         }
         for(let i=0; i<this._pdatas.player_port.rundata.ports.length; ++i){
             if(this._pdatas.player_port.rundata.ports[i].portid == this.runtimedata.map.portid){
@@ -254,6 +294,91 @@ export class player {
             }
         }
         return undefined;
+    }
+
+    public get_player_curr_factory_line(lineidx:number):factory_line_data|undefined {
+        let curplyport = this.get_player_curr_port();
+        if(curplyport == undefined){
+            return undefined;
+        }
+        if(!("factory" in curplyport)) {
+            return undefined;
+        }
+        if(lineidx >= curplyport.factory.lines.length){
+            return undefined;
+        }
+        return curplyport.factory.lines[lineidx];
+    }
+    
+    // ------------------------------------------------------------------------
+    public add_player_storehouse_items(items:Array<item_data>):boolean {
+        let curplyport = this.get_player_curr_port();
+        if(curplyport == undefined){
+            return false;
+        }
+
+        for(let i=0; i< items.length; ++i){
+
+            if(items[i].itemid in curplyport.storehouse.items){
+                curplyport.storehouse.items[items[i].itemid] += items[i].count;
+            }
+            else {
+                curplyport.storehouse.items[items[i].itemid] = items[i].count;
+            }
+
+            // TO DO : load item config and read item load
+            // for Debug ...
+            curplyport.storehouse.curload += items[i].count;
+        }
+
+        return true;
+    }
+
+    public cost_player_storehouse_items(items:Array<item_data>):boolean{
+        let curplyport = this.get_player_curr_port();
+        if(curplyport == undefined){
+            return false;
+        }
+
+        for(let i=0; i< items.length; ++i){
+            if(!(items[i].itemid in curplyport.storehouse.items)){
+                return false;
+            }
+            if(curplyport.storehouse.items[items[i].itemid] < items[i].count){
+                return false;
+            }
+        }
+
+        for(let i=0; i< items.length; ++i){
+            curplyport.storehouse.items[items[i].itemid] -= items[i].count;
+            if(curplyport.storehouse.items[items[i].itemid] <= 0){
+                delete curplyport.storehouse.items[items[i].itemid];
+            }
+
+            // TO DO : read load from config
+            // for Debug ...
+            curplyport.storehouse.curload -= items[i].count;
+        }
+
+        return true;
+    }
+
+    
+    
+    // ------------------------------------------------------------------------
+    public get_port_factory_conf():any {
+        const facconfs = nat.conf.get_config_data("factory");
+        if(!(this.runtimedata.map.portid.toString() in facconfs)){
+            return undefined;
+        }
+
+        return facconfs[this.runtimedata.map.portid.toString()];
+    }
+
+    public get_heropet_factory_accrate(nftid:string):number {
+        // TO DO : get accrate from config
+
+        return 0.0;
     }
 }
 

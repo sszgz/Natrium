@@ -74,7 +74,8 @@ message hero_data {
     required uint32 battleAttr = 6; // battle attr, see hero config
     required string bindType = 8; // hero usage bind type, see {sc:bindNFTUsage}
     
-    optional minning_data minnings = 9; // current hero minning info
+    optional hero_minning_data minnings = 9; // current hero minning info
+    optional hero_factory_data factory = 10; // current hero working factory info
 }
 
 // pet data
@@ -87,7 +88,8 @@ message pet_data {
     required uint32 battleAttr = 6; // battle attr, see pet config
     required string bindType = 8; // pet usage bind type, see {sc:bindNFTUsage}
     
-    optional minning_data minnings = 9; // current hero minning info
+    optional hero_minning_data minnings = 9; // current hero minning info
+    optional hero_factory_data factory = 10; // current hero working factory info
 }
 
 message ship_data {
@@ -131,14 +133,35 @@ message storehouse_data {
     map<uint32,uint32> items = 4; // goods/commodities in storehouse, itemid=>count map
 }
 
-// minning data
-message minning_data {
+// hero minning data
+message hero_minning_data {
     required uint32 mineid = 1; // current minnng id, see in mine config
     required uint32 startminetms = 2; // start minning time stamp, in second
 }
 
-message factory_data {
+// hero factory working data
+message hero_factory_data {
+    required uint32 portid = 1; // current hero work factory port id
+    required uint32 lineidx = 2; // current hwro work factory line index
+}
 
+// factory line data
+message factory_line_data {
+    required uint32 proditemid = 1; // item id, see in item config
+    required uint32 unfetchedcount = 2; // unfetched output count
+    required uint32 outputcount = 3; // output product count
+    required uint32 targetcount = 4; // target output product count
+    required uint32 starttms = 5; // produce start timestamp in second
+    required uint32 lastoutputtms = 6; // last output timestamp in second
+    required uint32 singleprodtmms = 7; // single product cost time, in millisecond
+    optional string heronftid = 8;  // hero nft id
+    optional string petnftid = 9;  // pet hero nft id (pet & hero use same nft contract)
+}
+
+// factory data
+message factory_data {
+    repeated factory_line_data lines = 1; // factory line array
+    required uint32 level = 2; // factory level
 }
 
 message shop_data {

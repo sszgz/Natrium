@@ -80,6 +80,11 @@ export class httplistener_nodeimpl implements httplistener {
     protected async _on_req(req:http.IncomingMessage, res:http.ServerResponse):Promise<void> {
         if (req.method != undefined && req.method == "OPTIONS")
         {
+            let origin = req.headers.origin;
+            if(origin == undefined){
+                origin = "*";
+            }
+
             res.writeHead(200, {
                 "Access-Control-Allow-Origin":req.headers.origin,
                 "Access-Control-Allow-Methods":"POST",

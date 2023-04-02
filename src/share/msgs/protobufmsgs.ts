@@ -31,6 +31,14 @@ export enum protobuf_c2s {
     stop_heromine = 307,
     get_heromine_infos = 308,
     fetch_heromine_output = 309,
+
+    make_factory_product = 401,
+    set_factory_hero = 402,
+    unset_factory_hero = 403,
+    fetch_factory_product = 404,
+    
+    shop_put_onsale = 501,
+    shop_fetch_gold = 502,
 }
 
 export enum protobuf_s2c {
@@ -67,4 +75,13 @@ export enum protobuf_s2c {
     stop_heromine_res = 10307,
     get_heromine_infos_res = 10308,
     fetch_heromine_output_res = 10309,
+
+    make_factory_product_res = 10401,
+    set_factory_hero_res = 10402,
+    unset_factory_hero_res = 10403,
+    fetch_factory_product_res = 10404,
+    factory_line_change = 10405,
+    
+    shop_put_onsale_res = 10501,
+    shop_fetch_gold_res = 10502,
 }

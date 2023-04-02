@@ -5,6 +5,12 @@
     "mine":{
         "file":"game/mine.json"
     },
+    "factory":{
+        "file":"game/factory.json"
+    },
+    "shop":{
+        "file":"game/shop.json"
+    },
     "drop":{
         "file":"game/drop.json"
     },

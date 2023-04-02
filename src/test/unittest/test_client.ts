@@ -59,6 +59,11 @@ let start_client = async () =>{
     pcodec.register_protobuf_msg(protobuf_s2c.stop_heromine_res, "stop_heromine_res", "s2c_user.stop_heromine_res");
     pcodec.register_protobuf_msg(protobuf_s2c.get_heromine_infos_res, "get_heromine_infos_res", "s2c_user.get_heromine_infos_res");
     pcodec.register_protobuf_msg(protobuf_s2c.fetch_heromine_output_res, "fetch_heromine_output_res", "s2c_user.fetch_heromine_output_res");
+    pcodec.register_protobuf_msg(protobuf_s2c.make_factory_product_res, "make_factory_product_res", "s2c_user.make_factory_product_res");
+    pcodec.register_protobuf_msg(protobuf_s2c.set_factory_hero_res, "set_factory_hero_res", "s2c_user.set_factory_hero_res");
+    pcodec.register_protobuf_msg(protobuf_s2c.unset_factory_hero_res, "unset_factory_hero_res", "s2c_user.unset_factory_hero_res");
+    pcodec.register_protobuf_msg(protobuf_s2c.fetch_factory_product_res, "fetch_factory_product_res", "s2c_user.fetch_factory_product_res");
+    pcodec.register_protobuf_msg(protobuf_s2c.factory_line_change, "factory_line_change", "s2c_user.factory_line_change");
     
     // register client msg
     pcodec.register_protobuf_msg(protobuf_c2s.login, "login", "c2s_user.login");
@@ -86,6 +91,10 @@ let start_client = async () =>{
     pcodec.register_protobuf_msg(protobuf_c2s.stop_heromine, "stop_heromine", "c2s_user.stop_heromine");
     pcodec.register_protobuf_msg(protobuf_c2s.get_heromine_infos, "get_heromine_infos", "c2s_user.get_heromine_infos");
     pcodec.register_protobuf_msg(protobuf_c2s.fetch_heromine_output, "fetch_heromine_output", "c2s_user.fetch_heromine_output");
+    pcodec.register_protobuf_msg(protobuf_c2s.make_factory_product, "make_factory_product", "c2s_user.make_factory_product");
+    pcodec.register_protobuf_msg(protobuf_c2s.set_factory_hero, "set_factory_hero", "c2s_user.set_factory_hero");
+    pcodec.register_protobuf_msg(protobuf_c2s.unset_factory_hero, "unset_factory_hero", "c2s_user.unset_factory_hero");
+    pcodec.register_protobuf_msg(protobuf_c2s.fetch_factory_product, "fetch_factory_product", "c2s_user.fetch_factory_product");
     
     client.on("connected", ()=>{
         // on connect, wait shakehand

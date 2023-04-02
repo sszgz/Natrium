@@ -308,7 +308,7 @@ async function _Node_WorkerRoutine() {
             if(data.cmd == _Main2Worker_MSG._m2w_exit){
     
                 // start shut down
-                worker_thread.start_shutdown();
+                await worker_thread.start_shutdown();
     
                 // finish all task, notify main thread worker exit
                 parentPort?.postMessage({cmd:_Worker2Main_MSG._w2m_exit});

@@ -7,7 +7,7 @@ import { service } from "../../../../interface/service/service";
 import { servicesession } from "../../../../interface/service/servicesession";
 import { _Node_SessionContext } from "../../../../_node_implements/_node/_thread_contexts";
 import { ServerErrorCode } from "../../../../share/msgs/msgcode";
-import { player } from "../../player";
+import { hero_bind_type, player } from "../../player";
 import { worldservice } from "../../../services/worldservice";
 import { game_map } from "../../gameobjects/game_map";
 import { generic_behaviour } from "../../behaviours/generic_behaviour";
@@ -258,7 +258,7 @@ export async function player_get_hero_info(s:service, ses:servicesession, pl:any
             grade:1,
             mineAttr:1,
             battleAttr:2,
-            bindType:"mine",
+            bindType:hero_bind_type.mine,
             heronftid:nat.sys.getTimeStamp().toString(),
         },
         {
@@ -267,7 +267,7 @@ export async function player_get_hero_info(s:service, ses:servicesession, pl:any
             grade:2,
             mineAttr:3,
             battleAttr:4,
-            bindType:"mine",
+            bindType:hero_bind_type.mine,
             heronftid:(nat.sys.getTimeStamp()+1).toString(),
         }];
         player_herodata.mod_rundata({heros:heros});
@@ -311,7 +311,7 @@ export async function player_get_pet_info(s:service, ses:servicesession, pl:any,
             avatarSlots:[1,1,1,1,1,1],
             mineAttr:1,
             battleAttr:2,
-            bindType:"mine",
+            bindType:hero_bind_type.mine,
             heronftid:nat.sys.getTimeStamp().toString(),
         },
         {
@@ -320,7 +320,7 @@ export async function player_get_pet_info(s:service, ses:servicesession, pl:any,
             avatarSlots:[2,2,2,2,2,2],
             mineAttr:3,
             battleAttr:4,
-            bindType:"mine",
+            bindType:hero_bind_type.mine,
             heronftid:(nat.sys.getTimeStamp()+1).toString(),
         }];
         player_petdata.mod_rundata({pets:pets});
