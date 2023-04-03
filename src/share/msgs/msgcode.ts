@@ -9,6 +9,7 @@ export enum ServerErrorCode {
     ResInternalError = -1,
     ResDatacompCreateError = -2,
     ResMsgParamError = -3,
+    ResNotGM = -4,
 
     ResAlreadyLogin = -1001,
     ResCreatePlayerError = -1002,
@@ -55,6 +56,9 @@ export enum ServerErrorCode {
     ResPort_AddStoreHouseItemFailed = -2021,
     ResPort_PlayerActpointNotEnough = -2022,
     ResPort_HeroActpointNotEnough = -2023,
+    ResPort_ManulMineCDing = -2024,
+    ResPort_PlayerAlreadyInMine = -2025,
+    ResPort_MineOutputItemError = -2026,
 
     ResPlayer_PetNotExist = -2101,
     ResPlayer_HeroNotExist = -2102,

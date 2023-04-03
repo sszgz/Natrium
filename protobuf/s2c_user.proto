@@ -155,8 +155,8 @@ message get_mineinfo_res {
 // start manul mine res
 message start_manulmine_res {
     required int32 res = 1; // error code see {ServerErrorCode}
-    required uint32 mineid = 2; // mine id
-    required uint32 actpoint = 3; // player actpoint
+    optional uint32 mineid = 2; // mine id
+    optional uint32 actpoint = 3; // player actpoint
 }
 // stop manul mine res
 message stop_manulmine_res {
@@ -164,8 +164,8 @@ message stop_manulmine_res {
 }
 // performe a manul mine output res
 message manulmine_res {
-    required share.item_data outputitem = 1; // output commodity item info
-    required uint32 actpoint = 2; // player actpoint
+    repeated share.item_data outputitem = 1; // output commodity item info array
+    optional uint32 actpoint = 2; // player actpoint
 }
 // fetch current manulmine res
 // will trigger a {storhouse_change} msg if success
@@ -178,28 +178,28 @@ message start_heromine_res {
     required int32 res = 1; // error code see {ServerErrorCode}
     optional string heronftid = 2; // hero nft id, see in {sc:HeroNFT}
     optional uint32 mineid = 3;
-    required uint32 actpoint = 4; // hero actpoint
-    required uint32 lastAPRecTms = 5; // hero actpoint last recovery timestamp in second
+    optional uint32 actpoint = 4; // hero actpoint
+    optional uint32 lastAPRecTms = 5; // hero actpoint last recovery timestamp in second
 }
 // stop hero mine res
 message stop_heromine_res {
     required int32 res = 1; // error code see {ServerErrorCode}
-    required string heronftid = 2; // hero nft id, see in {sc:HeroNFT}
-    required uint32 actpoint = 3; // hero actpoint
-    required uint32 lastAPRecTms = 4; // hero actpoint last recovery timestamp in second
+    optional string heronftid = 2; // hero nft id, see in {sc:HeroNFT}
+    optional uint32 actpoint = 3; // hero actpoint
+    optional uint32 lastAPRecTms = 4; // hero actpoint last recovery timestamp in second
 }
 // get hero mine infos res
 message get_heromine_infos_res {
     required int32 res = 1; // error code see {ServerErrorCode}
-    required shared.hero_minning_data info = 2; // see in {shared.hero_minning_data}
-    required uint32 unfetchedoutput = 3; // unfetched mine output count
-    required uint32 actpoint = 4; // hero actpoint
+    optional share.hero_minning_data info = 2; // see in {share.hero_minning_data}
+    optional uint32 unfetchedoutput = 3; // unfetched mine output count
+    optional uint32 actpoint = 4; // hero actpoint
 }
 // fetch heromine output res
 // will trigger a {storhouse_change} msg if success
 message fetch_heromine_output_res {
     required int32 res = 1; // error code see {ServerErrorCode}
-    required string heronftid = 2; // hero nft id, see in {sc:HeroNFT}
+    optional string heronftid = 2; // hero nft id, see in {sc:HeroNFT}
 }
 
 // ----------------------------------------------------------------------------
@@ -207,14 +207,14 @@ message fetch_heromine_output_res {
 // factory make product res
 // if success, trigger {storhouse_change} msg
 message make_factory_product_res {
-    required uint32 res = 1; // error code see {ServerErrorCode}
+    required int32 res = 1; // error code see {ServerErrorCode}
     optional uint32 lineidx = 2; // line index
     optional share.factory_line_data linedata = 3; // line data see {share.factory_line_data}
 }
 
 // set factory hero res
 message set_factory_hero_res {
-    required uint32 res = 1; // error code see {ServerErrorCode}
+    required int32 res = 1; // error code see {ServerErrorCode}
     optional string nftid = 2; // hero or pet nft id, see in {sc:HeroNFT}
     optional uint32 lineidx = 3; // line index
     optional uint32 singleprodtmms = 4; // single product cost time, in millisecond
@@ -222,7 +222,7 @@ message set_factory_hero_res {
 
 // unset factory hero res
 message unset_factory_hero_res {
-    required uint32 res = 1; // error code see {ServerErrorCode}
+    required int32 res = 1; // error code see {ServerErrorCode}
     optional string nftid = 2; // hero or pet nft id, see in {sc:HeroNFT}
     optional uint32 lineidx = 3; // line index
     optional uint32 singleprodtmms = 4; // single product cost time, in millisecond
@@ -231,7 +231,7 @@ message unset_factory_hero_res {
 // fetch factory output product res
 // if success, trigger {storhouse_change} msg
 message fetch_factory_product_res {
-    required uint32 res = 1; // error code see {ServerErrorCode}
+    required int32 res = 1; // error code see {ServerErrorCode}
     optional uint32 lineidx = 2; // line index
     optional uint32 unfetchedcount = 3; // unfetched output count
 }
@@ -252,13 +252,13 @@ message factory_line_change {
 
 // put on sale res 
 message shop_put_onsale_res {
-    required uint32 res = 1; // error code see {ServerErrorCode}
-    required uint32 proditemid = 2;  // product item id, see in item config
-    required uint32 count = 3; // item count
+    required int32 res = 1; // error code see {ServerErrorCode}
+    optional uint32 proditemid = 2;  // product item id, see in item config
+    optional uint32 count = 3; // item count
 }
 
 // fetch shop gold res
 message shop_fetch_gold_res {
-    required uint32 res = 1; // error code see {ServerErrorCode}
-    required string txhash = 2; // mint gold transaction hash, see in contract
+    required int32 res = 1; // error code see {ServerErrorCode}
+    optional string txhash = 2; // mint gold transaction hash, see in contract
 }

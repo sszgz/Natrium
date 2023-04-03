@@ -5,7 +5,7 @@
                 "x":100,
                 "y":100,
                 "type":"wood",
-                "maxminner":2,
+                "maxminner":3,
                 "maxoutputcount":100,
                 "recovertms":60,
                 "outputid":1

@@ -95,6 +95,7 @@ let start_client = async () =>{
     pcodec.register_protobuf_msg(protobuf_c2s.set_factory_hero, "set_factory_hero", "c2s_user.set_factory_hero");
     pcodec.register_protobuf_msg(protobuf_c2s.unset_factory_hero, "unset_factory_hero", "c2s_user.unset_factory_hero");
     pcodec.register_protobuf_msg(protobuf_c2s.fetch_factory_product, "fetch_factory_product", "c2s_user.fetch_factory_product");
+    pcodec.register_protobuf_msg(protobuf_c2s.gm_get_storehouse_item, "gm_get_storehouse_item", "c2s_user.gm_get_storehouse_item");
     
     client.on("connected", ()=>{
         // on connect, wait shakehand
@@ -414,6 +415,130 @@ var testcmd = async ()=>{
                     let obj = {
                         c:"fetch_manulmine_output",
                         d:{
+                        }
+                    };
+
+                    let pkt = client.connecter.pcodec.create_protopkt(obj.c, obj.d);
+                    client.connecter.send_packet(pkt);
+                }
+                break;
+            case "start_heromine":
+                {
+                    let obj = {
+                        c:"start_heromine",
+                        d:{
+                            heronftid:cmds[1],
+                            mineid:cmds[2]
+                        }
+                    };
+
+                    let pkt = client.connecter.pcodec.create_protopkt(obj.c, obj.d);
+                    client.connecter.send_packet(pkt);
+                }
+                break;
+            case "stop_heromine":
+                {
+                    let obj = {
+                        c:"stop_heromine",
+                        d:{
+                            heronftid:cmds[1]
+                        }
+                    };
+
+                    let pkt = client.connecter.pcodec.create_protopkt(obj.c, obj.d);
+                    client.connecter.send_packet(pkt);
+                }
+                break;
+            case "get_heromine_infos":
+                {
+                    let obj = {
+                        c:"get_heromine_infos",
+                        d:{
+                            heronftid:cmds[1]
+                        }
+                    };
+
+                    let pkt = client.connecter.pcodec.create_protopkt(obj.c, obj.d);
+                    client.connecter.send_packet(pkt);
+                }
+                break;
+            case "fetch_heromine_output":
+                {
+                    let obj = {
+                        c:"fetch_heromine_output",
+                        d:{
+                            heronftid:cmds[1]
+                        }
+                    };
+
+                    let pkt = client.connecter.pcodec.create_protopkt(obj.c, obj.d);
+                    client.connecter.send_packet(pkt);
+                }
+                break;
+            case "make_factory_product":
+                {
+                    let obj = {
+                        c:"make_factory_product",
+                        d:{
+                            proditemid:cmds[1],
+                            count:cmds[2],
+                            lineidx:cmds[3]
+                        }
+                    };
+
+                    let pkt = client.connecter.pcodec.create_protopkt(obj.c, obj.d);
+                    client.connecter.send_packet(pkt);
+                }
+                break;
+            case "set_factory_hero":
+                {
+                    let obj = {
+                        c:"set_factory_hero",
+                        d:{
+                            nftid:cmds[1],
+                            lineidx:cmds[2],
+                            ispet:(cmds[3] == "1")
+                        }
+                    };
+
+                    let pkt = client.connecter.pcodec.create_protopkt(obj.c, obj.d);
+                    client.connecter.send_packet(pkt);
+                }
+                break;
+            case "unset_factory_hero":
+                {
+                    let obj = {
+                        c:"unset_factory_hero",
+                        d:{
+                            nftid:cmds[1],
+                            lineidx:cmds[2]
+                        }
+                    };
+
+                    let pkt = client.connecter.pcodec.create_protopkt(obj.c, obj.d);
+                    client.connecter.send_packet(pkt);
+                }
+                break;
+            case "fetch_factory_product":
+                {
+                    let obj = {
+                        c:"fetch_factory_product",
+                        d:{
+                            lineidx:cmds[1]
+                        }
+                    };
+
+                    let pkt = client.connecter.pcodec.create_protopkt(obj.c, obj.d);
+                    client.connecter.send_packet(pkt);
+                }
+                break;
+            case "gm_get_storehouse_item":
+                {
+                    let obj = {
+                        c:"gm_get_storehouse_item",
+                        d:{
+                            itemid:cmds[1],
+                            count:cmds[2]
                         }
                     };
 

@@ -46,7 +46,8 @@ export const on_verify_sign = async (req:http_request_like, res:http_response_li
         name:"",
         uid:"",
         token:"132-12-BIG",
-        lastlogintm:nat.sys.getTimeStamp()
+        lastlogintm:nat.sys.getTimeStamp(),
+        isgm:false
     };
 
     let uid = await nat.datas.get_wallet_userid(retdata.wallet);

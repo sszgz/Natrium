@@ -212,7 +212,7 @@ export async function player_chat(s:service, ses:servicesession, pl:any, data:an
                     channel:data.channel, 
                     msg:data.msg,
                     name:(pl as player).pdatas.player_gen.rundata.pname,
-                    instid:(pl as player).pdatas.player_gen.rundata.playerid
+                    playerid:(pl as player).pdatas.player_gen.rundata.playerid
                 });
             }
             break;
@@ -222,7 +222,7 @@ export async function player_chat(s:service, ses:servicesession, pl:any, data:an
                     channel:data.channel, 
                     msg:data.msg,
                     name:(pl as player).pdatas.player_gen.rundata.pname,
-                    instid:(pl as player).pdatas.player_gen.rundata.playerid
+                    playerid:(pl as player).pdatas.player_gen.rundata.playerid
                 });
             }
             break;
@@ -234,7 +234,7 @@ export async function player_chat(s:service, ses:servicesession, pl:any, data:an
                     channel:data.channel, 
                     msg:data.msg,
                     name:(pl as player).pdatas.player_gen.rundata.pname,
-                    instid:(pl as player).pdatas.player_gen.rundata.playerid
+                    playerid:(pl as player).pdatas.player_gen.rundata.playerid
                 });
             }
             break;

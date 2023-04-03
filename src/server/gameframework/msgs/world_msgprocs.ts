@@ -6,6 +6,7 @@ import * as pm from "./procs/player_msgs";
 import * as mm from "./procs/mine_msgs";
 import * as fm from "./procs/factory_msgs";
 import * as sm from "./procs/shop_msgs";
+import * as gm from "./procs/gm_msgs";
 
 export const procs = {
     "goto":pm.player_goto,
@@ -40,4 +41,7 @@ export const procs = {
     
     "shop_put_onsale":sm.shop_put_onsale,
     "shop_fetch_gold":sm.shop_fetch_gold,
+
+
+    "gm_get_storehouse_item":gm.gm_get_storehouse_item,
 }

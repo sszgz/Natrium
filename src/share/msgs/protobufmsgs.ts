@@ -39,6 +39,8 @@ export enum protobuf_c2s {
     
     shop_put_onsale = 501,
     shop_fetch_gold = 502,
+
+    gm_get_storehouse_item = 9001,
 }
 
 export enum protobuf_s2c {

@@ -4,19 +4,19 @@
         "1":[
             {
                 "rate":10,
-                "itemid":1,
+                "itemid":2000003,
                 "count_min":10,
                 "count_max":10
             },
             {
-                "rate":20,
-                "itemid":2,
+                "rate":40,
+                "itemid":2000002,
                 "count_min":10,
                 "count_max":10
             },
             {
-                "rate":70,
-                "itemid":3,
+                "rate":50,
+                "itemid":2000001,
                 "count_min":10,
                 "count_max":10
             }
