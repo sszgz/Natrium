@@ -20,6 +20,7 @@ export interface player_minning_data {
     heronftid:string; // heronftid = "", means manul mine
     startminetms:number;
     unfetchedoutput:number;
+    heroactpoint:number;
 }
 
 export interface mine_mapdata {

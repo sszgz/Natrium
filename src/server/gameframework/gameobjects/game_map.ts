@@ -265,6 +265,12 @@ export class game_map {
                     continue;
                 }
 
+                if(plmine.heroactpoint < 1){
+                    // no actpoint
+                    continue;
+                }
+
+                --plmine.heroactpoint;
                 ++plmine.unfetchedoutput;
 
                 --mapmine.dc.minedata.countleft;

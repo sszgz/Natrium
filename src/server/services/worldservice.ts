@@ -193,7 +193,7 @@ export class worldservice extends servicebase {
     public override async on_remove_session(sid:number):Promise<void> {
 
         nat.dbglog.log(debug_level_enum.dle_debug, `worldservice:${this._service_index} on remove session  ${sid}`);
-
+        
         return super.on_remove_session(sid);
     }
     public override async on_session_close(sid:number):Promise<void> {

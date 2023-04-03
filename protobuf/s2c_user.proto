@@ -121,6 +121,8 @@ message player_change_pet_res {
 message chat_msg {
     required uint32 channel = 1; // chat channel, 1=wolrd, 2=current map, 3=near by
     required string msg = 2; // chat msg
+    required string name = 3; // player name
+    required uint32 playerid = 4; // player id
 }
 // borad cast msg
 message borad_cast_msg {
@@ -153,7 +155,8 @@ message get_mineinfo_res {
 // start manul mine res
 message start_manulmine_res {
     required int32 res = 1; // error code see {ServerErrorCode}
-    required uint32 mineid = 2;
+    required uint32 mineid = 2; // mine id
+    required uint32 actpoint = 3; // player actpoint
 }
 // stop manul mine res
 message stop_manulmine_res {
@@ -162,6 +165,7 @@ message stop_manulmine_res {
 // performe a manul mine output res
 message manulmine_res {
     required share.item_data outputitem = 1; // output commodity item info
+    required uint32 actpoint = 2; // player actpoint
 }
 // fetch current manulmine res
 // will trigger a {storhouse_change} msg if success
@@ -174,17 +178,22 @@ message start_heromine_res {
     required int32 res = 1; // error code see {ServerErrorCode}
     optional string heronftid = 2; // hero nft id, see in {sc:HeroNFT}
     optional uint32 mineid = 3;
+    required uint32 actpoint = 4; // hero actpoint
+    required uint32 lastAPRecTms = 5; // hero actpoint last recovery timestamp in second
 }
 // stop hero mine res
 message stop_heromine_res {
     required int32 res = 1; // error code see {ServerErrorCode}
     required string heronftid = 2; // hero nft id, see in {sc:HeroNFT}
+    required uint32 actpoint = 3; // hero actpoint
+    required uint32 lastAPRecTms = 4; // hero actpoint last recovery timestamp in second
 }
 // get hero mine infos res
 message get_heromine_infos_res {
     required int32 res = 1; // error code see {ServerErrorCode}
     required shared.hero_minning_data info = 2; // see in {shared.hero_minning_data}
     required uint32 unfetchedoutput = 3; // unfetched mine output count
+    required uint32 actpoint = 4; // hero actpoint
 }
 // fetch heromine output res
 // will trigger a {storhouse_change} msg if success

@@ -11,7 +11,7 @@ import { hero_bind_type, player } from "../../player";
 import { worldservice } from "../../../services/worldservice";
 import { game_map } from "../../gameobjects/game_map";
 import { generic_behaviour } from "../../behaviours/generic_behaviour";
-import { item_data } from "../../datacomponent/define";
+import { hero_data, item_data } from "../../datacomponent/define";
 
 export async function mine_get_mineinfo(s:service, ses:servicesession, pl:any, data:any):Promise<void> {
     if(pl == null){
@@ -84,17 +84,23 @@ export async function mine_start_manulmine(s:service, ses:servicesession, pl:any
         return;
     }
 
+    _recover_actpoint(pla.pdatas.player_gen.rundata);
+
     // add minning player
     minedc.minedata.players[pla.pdatas.player_gen.rundata.playerid] = {
         uid:pla.cdatas.ses_base.rundata.uid,
         heronftid:"", // manul mine 
         startminetms:nat.sys.getTimeStamp()/1000,
-        unfetchedoutput:0
+        unfetchedoutput:0,
+        heroactpoint:0
     };
     ++minedc.minedata.curminingplys;
 
     pla.runtimedata.manulmineid = data.mineid;
-    _Node_SessionContext.sendWSMsg(ses.session_id, "start_manulmine_res", {res:ServerErrorCode.ResOK, mineid:data.mineid});
+    _Node_SessionContext.sendWSMsg(ses.session_id, "start_manulmine_res", {res:ServerErrorCode.ResOK, 
+        mineid:data.mineid, 
+        actpoint:pla.pdatas.player_gen.rundata.actpoint
+    });
 }
 
 export async function mine_stop_manulmine(s:service, ses:servicesession, pl:any, data:any):Promise<void> {
@@ -130,6 +136,9 @@ export async function mine_stop_manulmine(s:service, ses:servicesession, pl:any,
         _Node_SessionContext.sendWSMsg(ses.session_id, "stop_manulmine_res", {res:ServerErrorCode.ResPort_PlayerNotInThisManulMine});
         return;
     }
+
+    // mark last actpoint recover time
+    pla.pdatas.player_gen.rundata.lastAPRecTms = nat.sys.getTimeStamp()/1000;
 
     delete minedc.minedata.players[pla.pdatas.player_gen.rundata.playerid];
     --minedc.minedata.curminingplys;
@@ -168,6 +177,13 @@ export async function mine_manulmine(s:service, ses:servicesession, pl:any, data
         return;
     }
 
+    if(pla.pdatas.player_gen.rundata.actpoint < 1){
+        _Node_SessionContext.sendWSMsg(ses.session_id, "server_error", {res:ServerErrorCode.ResPort_PlayerActpointNotEnough});
+        return;
+    }
+
+    --pla.pdatas.player_gen.rundata.actpoint;
+
     // TO DO : drop item
     mineconf.outputid;
 
@@ -184,7 +200,7 @@ export async function mine_manulmine(s:service, ses:servicesession, pl:any, data
         md.count += dropeditem.count;
     }
 
-    _Node_SessionContext.sendWSMsg(ses.session_id, "manulmine_res", {outputitem:dropeditem});
+    _Node_SessionContext.sendWSMsg(ses.session_id, "manulmine_res", {outputitem:dropeditem, actpoint:pla.pdatas.player_gen.rundata.actpoint});
 }
 
 export async function mine_fetch_manulmine_output(s:service, ses:servicesession, pl:any, data:any):Promise<void> {
@@ -279,6 +295,13 @@ export async function mine_start_heromine(s:service, ses:servicesession, pl:any,
         _Node_SessionContext.sendWSMsg(ses.session_id, "start_heromine_res", {res:checkres});
         return;
     }
+    
+    _recover_actpoint(hero);
+
+    if(hero.actpoint < 1){
+        _Node_SessionContext.sendWSMsg(ses.session_id, "start_heromine_res", {res:ServerErrorCode.ResPort_HeroActpointNotEnough});
+        return;
+    }
 
     let currTms = nat.sys.getTimeStamp()/1000;
 
@@ -293,14 +316,20 @@ export async function mine_start_heromine(s:service, ses:servicesession, pl:any,
         uid:pla.cdatas.ses_base.rundata.uid,
         heronftid:data.heronftid, // manul mine 
         startminetms:currTms,
-        unfetchedoutput:0
+        unfetchedoutput:0,
+        heroactpoint:hero.actpoint
     };
     ++minedc.minedata.curminingplys;
     
     minedc.flush_to_db(false); // sync to cache
     pla.pdatas.player_hero.flush_to_db(false); // sync to cache
 
-    _Node_SessionContext.sendWSMsg(ses.session_id, "start_heromine_res", {res:ServerErrorCode.ResOK, heronftid:data.heronftid, mineid:data.mineid});
+    _Node_SessionContext.sendWSMsg(ses.session_id, "start_heromine_res", {res:ServerErrorCode.ResOK, 
+        heronftid:data.heronftid, 
+        mineid:data.mineid,
+        actpoint:hero.actpoint,
+        lastAPRecTms:hero.lastAPRecTms
+    });
 }
 
 export async function mine_stop_heromine(s:service, ses:servicesession, pl:any, data:any):Promise<void> {
@@ -346,6 +375,12 @@ export async function mine_stop_heromine(s:service, ses:servicesession, pl:any, 
         _Node_SessionContext.sendWSMsg(ses.session_id, "stop_heromine_res", {res:ServerErrorCode.ResPlayer_NotInThisMine});
         return;
     }
+    
+    let mineply = minedc.minedata.players[pla.pdatas.player_gen.rundata.playerid];
+    
+    // mark last actpoint recover time
+    hero.lastAPRecTms = nat.sys.getTimeStamp()/1000;
+    hero.actpoint = mineply.heroactpoint;
 
     // TO DO : check unfetched mine?
 
@@ -362,7 +397,11 @@ export async function mine_stop_heromine(s:service, ses:servicesession, pl:any, 
         // minedc will flush on map update
     }
 
-    _Node_SessionContext.sendWSMsg(ses.session_id, "stop_heromine_res", {res:ServerErrorCode.ResOK, heronftid:data.heronftid});
+    _Node_SessionContext.sendWSMsg(ses.session_id, "stop_heromine_res", {res:ServerErrorCode.ResOK, 
+        heronftid:data.heronftid,
+        actpoint:hero.actpoint,
+        lastAPRecTms:hero.lastAPRecTms
+    });
 }
 
 export async function mine_get_heromine_infos(s:service, ses:servicesession, pl:any, data:any):Promise<void> {
@@ -411,7 +450,11 @@ export async function mine_get_heromine_infos(s:service, ses:servicesession, pl:
 
     let mineply = minedc.minedata.players[pla.pdatas.player_gen.rundata.playerid];
 
-    _Node_SessionContext.sendWSMsg(ses.session_id, "get_heromine_infos_res", {res:ServerErrorCode.ResOK, info:mineply, unfetchedoutput:mineply.unfetchedoutput});
+    _Node_SessionContext.sendWSMsg(ses.session_id, "get_heromine_infos_res", {res:ServerErrorCode.ResOK, 
+        info:mineply, 
+        unfetchedoutput:mineply.unfetchedoutput,
+        actpoint:mineply.heroactpoint
+    });
 }
 
 export async function mine_fetch_heromine_output(s:service, ses:servicesession, pl:any, data:any):Promise<void> {
@@ -492,4 +535,38 @@ export async function mine_fetch_heromine_output(s:service, ses:servicesession, 
         curload:curplyport.storehouse.curload
     });
     _Node_SessionContext.sendWSMsg(ses.session_id, "fetch_heromine_output_res", {res:ServerErrorCode.ResOK, heronftid:data.heronftid});
+}
+
+interface actpoint_recover_like {
+    actpoint:number;
+    lastAPRecTms:number;
+}
+
+function _recover_actpoint(data:actpoint_recover_like){
+    let cur_tm_s = nat.sys.getTimeStamp()/1000;
+    let recover_tm_s = cur_tm_s - data.lastAPRecTms;
+    if(recover_tm_s <= 0){
+        return;
+    }
+    
+    let init_ac = nat.conf.get_config_data("game").port.init_actpoint;
+
+    let old_ap = data.actpoint;
+    if(old_ap >= init_ac){
+        return;
+    }
+
+    let single_rec_tm_s = nat.conf.get_config_data("game").port.actpoint_recove_tm_s;
+
+    let ap = recover_tm_s / single_rec_tm_s;
+    if(ap < 1){
+        return;
+    }
+
+    data.lastAPRecTms = cur_tm_s;
+
+    data.actpoint += ap;
+    if(data.actpoint > init_ac) {
+        data.actpoint = init_ac;
+    }
 }

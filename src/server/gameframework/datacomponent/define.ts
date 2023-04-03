@@ -36,6 +36,8 @@ export interface generic_playerdata {
     readonly pname:number;
     readonly speed?:number;
     readonly petava?:pet_showdata;
+    actpoint:number;
+    lastAPRecTms:number;
     pos?:pos2d;
 }
 
@@ -51,6 +53,10 @@ export interface hero_data {
     readonly battleAttr:number;
     readonly bindType:string;
     readonly heronftid:string;
+    level:number;
+    starLevel:number;
+    actpoint:number;
+    lastAPRecTms:number;
 
     minnings?:hero_mining_data;
     factory?:hero_factory_data;
@@ -71,7 +77,10 @@ export interface pet_data {
     readonly battleAttr:number;
     readonly bindType:string;
     readonly heronftid:string;
-    
+    level:number;
+    actpoint:number;
+    lastAPRecTms:number;
+
     minnings?:hero_mining_data;
     factory?:hero_factory_data;
 }

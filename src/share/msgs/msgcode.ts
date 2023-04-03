@@ -53,6 +53,8 @@ export enum ServerErrorCode {
     ResPort_FactoryHeroNotSet = -2019,
     ResPort_FactoryNothingToFetch = -2020,
     ResPort_AddStoreHouseItemFailed = -2021,
+    ResPort_PlayerActpointNotEnough = -2022,
+    ResPort_HeroActpointNotEnough = -2023,
 
     ResPlayer_PetNotExist = -2101,
     ResPlayer_HeroNotExist = -2102,

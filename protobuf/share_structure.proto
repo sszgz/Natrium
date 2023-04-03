@@ -73,9 +73,13 @@ message hero_data {
     required uint32 mineAttr = 5; // mine attr, see hero config
     required uint32 battleAttr = 6; // battle attr, see hero config
     required string bindType = 8; // hero usage bind type, see {sc:bindNFTUsage}
-    
-    optional hero_minning_data minnings = 9; // current hero minning info
-    optional hero_factory_data factory = 10; // current hero working factory info
+    required uint32 level = 9; // hero level
+    required uint32 starLevel = 10; // hero star level
+    required uint32 actpoint = 11; // hero act point
+    required uint32 lastAPRecTms = 12; // hero actpoint last recovery timestamp in second
+
+    optional hero_minning_data minnings = 13; // current hero minning info
+    optional hero_factory_data factory = 14; // current hero working factory info
 }
 
 // pet data
@@ -87,9 +91,12 @@ message pet_data {
     required uint32 mineAttr = 5; // mine attr, see pet config
     required uint32 battleAttr = 6; // battle attr, see pet config
     required string bindType = 8; // pet usage bind type, see {sc:bindNFTUsage}
+    required uint32 level = 9; // pet level
+    required uint32 actpoint = 10; // hero act point
+    required uint32 lastAPRecTms = 11; // hero actpoint last recovery timestamp in second
     
-    optional hero_minning_data minnings = 9; // current hero minning info
-    optional hero_factory_data factory = 10; // current hero working factory info
+    optional hero_minning_data minnings = 12; // current hero minning info
+    optional hero_factory_data factory = 13; // current hero working factory info
 }
 
 message ship_data {

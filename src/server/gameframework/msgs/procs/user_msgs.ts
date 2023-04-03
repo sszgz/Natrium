@@ -142,7 +142,9 @@ export async function user_createplayer(s:service, ses:servicesession, pl:any, d
         mapid:1, // TO DO : init map id
         heroava:data.gender, // TO DO : get heroava from gender
         gender:data.gender,
-        pname:data.pname
+        pname:data.pname,
+        actpoint:nat.conf.get_config_data("game").port.init_actpoint,
+        lastAPRecTms:nat.sys.getTimeStamp()/1000
     };
     player_gendata.mod_rundata(player_generic_data);
     await player_gendata.flush_to_db(true); // write back

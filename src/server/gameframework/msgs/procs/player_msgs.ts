@@ -200,7 +200,7 @@ export async function player_chat(s:service, ses:servicesession, pl:any, data:an
         return;
     }
 
-    const MAX_CHAT_MSG_LENGTH = 10;
+    const MAX_CHAT_MSG_LENGTH = 256;
     if(data.msg.length > MAX_CHAT_MSG_LENGTH){
         data.msg = data.msg.slice(0, MAX_CHAT_MSG_LENGTH);
     }
@@ -208,19 +208,34 @@ export async function player_chat(s:service, ses:servicesession, pl:any, data:an
     switch(data.channel){
         case 1: // world
             {
-                _Node_SessionContext.broadCastMsg("chat_msg", data);
+                _Node_SessionContext.broadCastMsg("chat_msg", {
+                    channel:data.channel, 
+                    msg:data.msg,
+                    name:(pl as player).pdatas.player_gen.rundata.pname,
+                    instid:(pl as player).pdatas.player_gen.rundata.playerid
+                });
             }
             break;
         case 2: // current map
             {
-                _Node_SessionContext.broadCastMsgWith(0, map.player_sessionids, "chat_msg", data);
+                _Node_SessionContext.broadCastMsgWith(0, map.player_sessionids, "chat_msg", {
+                    channel:data.channel, 
+                    msg:data.msg,
+                    name:(pl as player).pdatas.player_gen.rundata.pname,
+                    instid:(pl as player).pdatas.player_gen.rundata.playerid
+                });
             }
             break;
         case 3: // near by
             {
                 let cid_ary = map.get_player_nearby_sids(pl, 100, 100);
                 cid_ary.push(ses.session_id);
-                _Node_SessionContext.broadCastMsgWith(0, cid_ary, "chat_msg", data);
+                _Node_SessionContext.broadCastMsgWith(0, cid_ary, "chat_msg", {
+                    channel:data.channel, 
+                    msg:data.msg,
+                    name:(pl as player).pdatas.player_gen.rundata.pname,
+                    instid:(pl as player).pdatas.player_gen.rundata.playerid
+                });
             }
             break;
     }
@@ -259,6 +274,10 @@ export async function player_get_hero_info(s:service, ses:servicesession, pl:any
             mineAttr:1,
             battleAttr:2,
             bindType:hero_bind_type.mine,
+            level:1,
+            starLevel:1,
+            actpoint:nat.conf.get_config_data("game").port.init_actpoint,
+            lastAPRecTms:nat.sys.getTimeStamp()/1000,
             heronftid:nat.sys.getTimeStamp().toString(),
         },
         {
@@ -268,6 +287,10 @@ export async function player_get_hero_info(s:service, ses:servicesession, pl:any
             mineAttr:3,
             battleAttr:4,
             bindType:hero_bind_type.mine,
+            level:1,
+            starLevel:1,
+            actpoint:nat.conf.get_config_data("game").port.init_actpoint,
+            lastAPRecTms:nat.sys.getTimeStamp()/1000,
             heronftid:(nat.sys.getTimeStamp()+1).toString(),
         }];
         player_herodata.mod_rundata({heros:heros});
@@ -312,6 +335,9 @@ export async function player_get_pet_info(s:service, ses:servicesession, pl:any,
             mineAttr:1,
             battleAttr:2,
             bindType:hero_bind_type.mine,
+            level:1,
+            actpoint:nat.conf.get_config_data("game").port.init_actpoint,
+            lastAPRecTms:nat.sys.getTimeStamp()/1000,
             heronftid:nat.sys.getTimeStamp().toString(),
         },
         {
@@ -321,6 +347,9 @@ export async function player_get_pet_info(s:service, ses:servicesession, pl:any,
             mineAttr:3,
             battleAttr:4,
             bindType:hero_bind_type.mine,
+            level:1,
+            actpoint:nat.conf.get_config_data("game").port.init_actpoint,
+            lastAPRecTms:nat.sys.getTimeStamp()/1000,
             heronftid:(nat.sys.getTimeStamp()+1).toString(),
         }];
         player_petdata.mod_rundata({pets:pets});

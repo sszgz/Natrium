@@ -11,6 +11,9 @@
     "shop":{
         "file":"game/shop.json"
     },
+    "storehouse":{
+        "file":"game/storehouse.json"
+    },
     "drop":{
         "file":"game/drop.json"
     },

@@ -332,6 +332,8 @@ export async function fac_fetch_factory_product(s:service, ses:servicesession, p
         _Node_SessionContext.sendWSMsg(ses.session_id, "fetch_factory_product_res", {res:ServerErrorCode.ResPort_FactoryLineIndexError});
         return;
     }
+    const cur_tm_s = nat.sys.getTimeStamp()/1000;
+    _output_products(ses, pla, data.lineidx, linedata, cur_tm_s);
 
     if(linedata.unfetchedcount <= 0){
         _Node_SessionContext.sendWSMsg(ses.session_id, "fetch_factory_product_res", {res:ServerErrorCode.ResPort_FactoryNothingToFetch});

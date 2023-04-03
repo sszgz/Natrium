@@ -7,6 +7,8 @@
     "port":{
         "maxminning_herocount":10,
         "minning_cds":5,
+        "init_actpoint":100,
+        "actpoint_recove_tm_s":10,
         "init_repoload":10000
     }
 }

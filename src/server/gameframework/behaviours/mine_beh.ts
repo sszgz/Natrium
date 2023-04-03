@@ -2,6 +2,7 @@
 // license : MIT
 // author : Sean Chen
 
+import { nat } from "../../../natrium";
 import { player_behaviour_base, player, player_behaviour } from "../player";
 
 export class mine_beh extends player_behaviour_base {
@@ -30,13 +31,46 @@ export class mine_beh extends player_behaviour_base {
         return true;
     }
     public override async fin():Promise<void> {
-
+        await this._try_remove_manulmine();
     }
     public override  on_update(): void {
         
     }
 
     // ------------------------------------------------------------------------
+    protected async _try_remove_manulmine():Promise<void> {
+        if(this._player.runtimedata.manulmineid == undefined || this._player.runtimedata.manulmineid == 0){
+            return;
+        }
+        // remove manulmine
+        let mineconf = this._player.runtimedata.map.get_mine_conf(this._player.runtimedata.manulmineid);
+        if(mineconf == null){
+            return;
+        }
+
+        let minedc = await this._player.runtimedata.map.get_mapmine_datacomp(this._player.runtimedata.manulmineid, mineconf);
+        if(minedc == null){
+            return;
+        }
+
+        if(!(this._player.pdatas.player_gen.rundata.playerid in minedc.minedata.players)) {
+            return;
+        }
+
+        // mark last actpoint recover time
+        this._player.pdatas.player_gen.rundata.lastAPRecTms = nat.sys.getTimeStamp()/1000;
+
+        delete minedc.minedata.players[this._player.pdatas.player_gen.rundata.playerid];
+        --minedc.minedata.curminingplys;
+        this._player.runtimedata.manulmineid = 0;
+
+        if(minedc.minedata.curminingplys <= 0){
+            minedc.flush_to_db(true);
+        }
+        else {
+            // minedc will flush on map update
+        }
+    }
     public get_mineinfo(mineid:string):void {
         
     }
