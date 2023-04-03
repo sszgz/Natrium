@@ -95,4 +95,5 @@ export let start_server = async (svrconffile:string) =>{
     pcodec.register_protobuf_msg(protobuf_c2s.fetch_factory_product, "fetch_factory_product", "c2s_user.fetch_factory_product");
     pcodec.register_protobuf_msg(protobuf_c2s.shop_put_onsale, "shop_put_onsale", "c2s_user.shop_put_onsale");
     pcodec.register_protobuf_msg(protobuf_c2s.shop_fetch_gold, "shop_fetch_gold", "c2s_user.shop_fetch_gold");
+    pcodec.register_protobuf_msg(protobuf_c2s.gm_get_storehouse_item, "gm_get_storehouse_item", "c2s_user.gm_get_storehouse_item");
 }

@@ -53,7 +53,7 @@ export class worldservice extends servicebase {
         return super.startup();
     }
     public override async shutdown():Promise<boolean> {
-        return super.startup();
+        return super.shutdown();
     }
 
     public get_mapconf(mapid:number):gamemap_conf|undefined {

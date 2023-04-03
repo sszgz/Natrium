@@ -17,7 +17,7 @@ export interface map_mine {
 
 export class game_map {
 
-    protected static _minning_cds:number = 0;
+    public static minning_cds:number = 0;
 
     protected _instid_seed = 1;
     protected _free_instid_list = new Array<number>();
@@ -49,11 +49,11 @@ export class game_map {
     public init_map(mapconf:any):void {
         this._mapconf = mapconf;
 
-        if(game_map._minning_cds == 0){
+        if(game_map.minning_cds == 0){
             // read from config
-            game_map._minning_cds = nat.conf.get_config_data("game").port.minning_cds;
-            if(game_map._minning_cds == undefined){
-                game_map._minning_cds = 5;
+            game_map.minning_cds = nat.conf.get_config_data("game").port.minning_cds;
+            if(game_map.minning_cds == undefined){
+                game_map.minning_cds = 5;
             }
         }
     }
@@ -244,7 +244,7 @@ export class game_map {
 
             // check update time
             const updateinterval = curtm_s - mapmine.dc.minedata.lastoutputtms;
-            if(updateinterval < game_map._minning_cds){
+            if(updateinterval < game_map.minning_cds){
                 return;
             }
             mapmine.dc.minedata.lastoutputtms = curtm_s;

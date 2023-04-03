@@ -168,3 +168,14 @@ message shop_put_onsale {
 message shop_fetch_gold {
 
 }
+
+
+
+
+// ----------------------------------------------------------------------------
+
+// gm get item
+message gm_get_storehouse_item {
+    required uint32 itemid = 1;  // product/commidity item id, see in item config
+    required uint32 count = 2; // item count
+}

@@ -25,4 +25,8 @@ export class sys_nodeimpl implements sys {
     public random(): number {
         return random(0, Number.MAX_VALUE);
     }
+    
+    public random_between(s:number, e:number, floating:boolean): number {
+        return random(s, e, floating);
+    }
 }

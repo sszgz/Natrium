@@ -16,7 +16,6 @@ export class configs_nodeimpl implements configs {
     protected _serverconf:serverconf_nodeimpl|null = null;
     protected _svrconfigfile:string = "";
     protected _contractconf:contractconf_nodeimpl|null = null;
-    protected _contractconfigfile:string = "";
     
 
     public get svrconfigfile() {
@@ -42,7 +41,6 @@ export class configs_nodeimpl implements configs {
             const contractconfigfile = "../../../config/blockchain/contract.json";
         // }
         let contractconf_name = path.resolve(__dirname, contractconfigfile);
-        this._svrconfigfile = contractconfigfile;
 
         natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_system, `configs_nodeimpl init server conf from ${contractconf_name}`);
 

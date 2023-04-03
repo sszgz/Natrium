@@ -118,9 +118,9 @@ export abstract class servicebase implements service {
     public async on_remove_session(sid:number):Promise<void> {
         const pl = this._players.get(sid);
         if(pl != undefined) {
+            await pl.fin();
             await this._do_remove_player(pl);
             await pl.flush_data_to_dbobj(false);
-            pl.fin();
             this._players.delete(sid);
         }
         else {
@@ -136,9 +136,9 @@ export abstract class servicebase implements service {
     public async on_session_close(sid:number):Promise<void> {
         const pl = this._players.get(sid);
         if(pl != undefined) {
+            await pl.fin();
             await this._do_remove_player(pl);
             await pl.flush_data_to_dbobj(true);
-            pl.fin();
             this._players.delete(sid);
         }
         else {

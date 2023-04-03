@@ -14,6 +14,7 @@ export interface user_basedata {
     uid:string;
     token:string;
     lastlogintm:number;
+    isgm:boolean;
 }
 
 export interface session_basedata {

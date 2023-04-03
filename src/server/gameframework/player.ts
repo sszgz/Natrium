@@ -44,6 +44,7 @@ export interface runtimedata {
     map:game_map|null;
     ver:number;
     manulmineid:number;
+    lastmanulminetms:number;
     manulminedrops:Map<number, item_data>;
 }
 
@@ -84,6 +85,7 @@ export class player {
             map:null,
             lastmvmsgtm:0,
             manulmineid:0,
+            lastmanulminetms:0,
             inzoneplayer:new Array<player>,
             manulminedrops:new Map<number, item_data>()
         }

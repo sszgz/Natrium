@@ -84,6 +84,11 @@ export async function mine_start_manulmine(s:service, ses:servicesession, pl:any
         return;
     }
 
+    if(pla.pdatas.player_gen.rundata.playerid in minedc.minedata.players){
+        _Node_SessionContext.sendWSMsg(ses.session_id, "start_manulmine_res", {res:ServerErrorCode.ResPort_PlayerAlreadyInMine});
+        return;
+    }
+
     _recover_actpoint(pla.pdatas.player_gen.rundata);
 
     // add minning player
@@ -181,26 +186,46 @@ export async function mine_manulmine(s:service, ses:servicesession, pl:any, data
         _Node_SessionContext.sendWSMsg(ses.session_id, "server_error", {res:ServerErrorCode.ResPort_PlayerActpointNotEnough});
         return;
     }
+    
+    let minedc = await map.get_mapmine_datacomp(pla.runtimedata.manulmineid, mineconf);
+    if(minedc == null){
+        _Node_SessionContext.sendWSMsg(ses.session_id, "server_error", {res:ServerErrorCode.ResDatacompCreateError});
+        return;
+    }
 
+    if(!(pla.pdatas.player_gen.rundata.playerid in minedc.minedata.players)) {
+        _Node_SessionContext.sendWSMsg(ses.session_id, "server_error", {res:ServerErrorCode.ResPort_PlayerNotInThisManulMine});
+        return;
+    }
+
+    let cur_tm_s = nat.sys.getTimeStamp()/1000;
+    if(cur_tm_s - pla.runtimedata.lastmanulminetms < game_map.minning_cds){
+        _Node_SessionContext.sendWSMsg(ses.session_id, "server_error", {res:ServerErrorCode.ResPort_ManulMineCDing});
+        return;
+    }
+    const dropeditems = _drop_mine_item(mineconf.outputid, 1);
+    if(dropeditems.length <= 0){
+        _Node_SessionContext.sendWSMsg(ses.session_id, "server_error", {res:ServerErrorCode.ResPort_MineOutputItemError});
+        return;
+    }
+
+    pla.runtimedata.lastmanulminetms = cur_tm_s;
+
+    --minedc.minedata.countleft;
     --pla.pdatas.player_gen.rundata.actpoint;
 
-    // TO DO : drop item
-    mineconf.outputid;
+    for(let i=0; i<dropeditems.length; ++i){
 
-    const dropeditem = {
-        itemid:1,
-        count:1
+        let md = pla.runtimedata.manulminedrops.get(dropeditems[i].itemid);
+        if(md == undefined){
+            pla.runtimedata.manulminedrops.set(dropeditems[i].itemid, dropeditems[i]);
+        }
+        else {
+            md.count += dropeditems[i].count;
+        }
     }
 
-    let md = pla.runtimedata.manulminedrops.get(dropeditem.itemid);
-    if(md == undefined){
-        pla.runtimedata.manulminedrops.set(dropeditem.itemid, dropeditem);
-    }
-    else {
-        md.count += dropeditem.count;
-    }
-
-    _Node_SessionContext.sendWSMsg(ses.session_id, "manulmine_res", {outputitem:dropeditem, actpoint:pla.pdatas.player_gen.rundata.actpoint});
+    _Node_SessionContext.sendWSMsg(ses.session_id, "manulmine_res", {outputitem:dropeditems, actpoint:pla.pdatas.player_gen.rundata.actpoint});
 }
 
 export async function mine_fetch_manulmine_output(s:service, ses:servicesession, pl:any, data:any):Promise<void> {
@@ -285,6 +310,11 @@ export async function mine_start_heromine(s:service, ses:servicesession, pl:any,
 
     if(minedc.minedata.curminingplys >= mineconf.maxminner){
         _Node_SessionContext.sendWSMsg(ses.session_id, "start_heromine_res", {res:ServerErrorCode.ResPort_MapMinePlyaerFull});
+        return;
+    }
+    
+    if(pla.pdatas.player_gen.rundata.playerid in minedc.minedata.players){
+        _Node_SessionContext.sendWSMsg(ses.session_id, "start_manulmine_res", {res:ServerErrorCode.ResPort_PlayerAlreadyInMine});
         return;
     }
     
@@ -451,7 +481,7 @@ export async function mine_get_heromine_infos(s:service, ses:servicesession, pl:
     let mineply = minedc.minedata.players[pla.pdatas.player_gen.rundata.playerid];
 
     _Node_SessionContext.sendWSMsg(ses.session_id, "get_heromine_infos_res", {res:ServerErrorCode.ResOK, 
-        info:mineply, 
+        info:hero.minnings, 
         unfetchedoutput:mineply.unfetchedoutput,
         actpoint:mineply.heroactpoint
     });
@@ -503,12 +533,10 @@ export async function mine_fetch_heromine_output(s:service, ses:servicesession, 
 
     let mineply = minedc.minedata.players[pla.pdatas.player_gen.rundata.playerid];
 
-    // TO DO : give item by output id
-    //mineconf.outputid;
-
-    const dropeditem = {
-        itemid:2,
-        count:mineply.unfetchedoutput
+    const dropeditems = _drop_mine_item(mineconf.outputid, mineply.unfetchedoutput);
+    if(dropeditems.length <= 0){
+        _Node_SessionContext.sendWSMsg(ses.session_id, "fetch_heromine_output_res", {res:ServerErrorCode.ResPort_MineOutputItemError});
+        return;
     }
 
     let curplyport = pla.get_player_curr_port();
@@ -519,7 +547,7 @@ export async function mine_fetch_heromine_output(s:service, ses:servicesession, 
 
     // TO DO : check item load is full
     
-    if(!pla.add_player_storehouse_items([dropeditem])){
+    if(!pla.add_player_storehouse_items(dropeditems)){
         _Node_SessionContext.sendWSMsg(ses.session_id, "fetch_heromine_output_res", {res:ServerErrorCode.ResPort_AddStoreHouseItemFailed});
         return;
     }
@@ -531,7 +559,7 @@ export async function mine_fetch_heromine_output(s:service, ses:servicesession, 
     pla.pdatas.player_port.flush_to_db(false); // sync to cache
 
     _Node_SessionContext.sendWSMsg(ses.session_id, "storhouse_change", {
-        iteminfo:[dropeditem],
+        iteminfo:dropeditems,
         curload:curplyport.storehouse.curload
     });
     _Node_SessionContext.sendWSMsg(ses.session_id, "fetch_heromine_output_res", {res:ServerErrorCode.ResOK, heronftid:data.heronftid});
@@ -551,6 +579,12 @@ function _recover_actpoint(data:actpoint_recover_like){
     
     let init_ac = nat.conf.get_config_data("game").port.init_actpoint;
 
+    if(data.actpoint == undefined){
+        data.actpoint = init_ac;
+        data.lastAPRecTms = cur_tm_s;
+        return;
+    }
+
     let old_ap = data.actpoint;
     if(old_ap >= init_ac){
         return;
@@ -569,4 +603,53 @@ function _recover_actpoint(data:actpoint_recover_like){
     if(data.actpoint > init_ac) {
         data.actpoint = init_ac;
     }
+}
+
+function _drop_mine_item(mine_output_id:number, count:number):Array<item_data> {
+    let ret = new Array<item_data>();
+    let mine_outputconf = nat.conf.get_config_data("drop").mine_output[mine_output_id.toString()];
+    if(mine_outputconf == undefined){
+        return ret;
+    }
+
+    let totalrate = 0;
+    for(let i=0; i< mine_outputconf.length; ++i){
+        totalrate += mine_outputconf[i].rate;
+    }
+
+    if(count > 10){
+
+        for(let i=0; i< mine_outputconf.length; ++i){
+            let ic = Math.round(count * mine_outputconf[i].rate / totalrate);
+            if(ic < 1){
+                continue;
+            }
+
+            ret.push({
+                itemid:mine_outputconf[i].itemid,
+                count:ic*nat.sys.random_between(mine_outputconf[i].count_min, mine_outputconf[i].count_max, false)
+            });
+        }
+    }
+    else {
+        // random every count
+        for(let n=0; n< count;++n){
+            let r = nat.sys.random() % totalrate;
+            let cur_r = 0;
+            for(let i=0; i< mine_outputconf.length; ++i){
+                cur_r += mine_outputconf[i].rate;
+                if(r<cur_r){
+
+                    ret.push({
+                        itemid:mine_outputconf[i].itemid,
+                        count:nat.sys.random_between(mine_outputconf[i].count_min, mine_outputconf[i].count_max, false)
+                    });
+
+                    break;
+                }
+            }
+        }
+    }
+    
+    return ret;
 }
