@@ -57,8 +57,28 @@ export interface serverconf {
     get_httplistener_conf():httplistenerconf|null;
 }
 
+export interface abiconf {
+    readonly deployer: string;
+    readonly addr: string;
+    readonly abi: string[];
+}
+
+export type contractconf_map = {
+    [key:string]:abiconf;
+}
+
+export interface contractconf {
+    readonly contracts_confs: contractconf_map;
+    readonly contract_confs: contractconf_map;
+
+    get_contract_conf(cntract_addr:string): string[]|null;
+    get_all_contract_conf(): contractconf_map|null;
+    get_contract_addrs(): string[]|null;
+}
+
 export interface configs {
     init(svrconfigfile:string):void;
     get_config_data(config_name:string):any;
     get_serverconf():serverconf|null;
+    get_contractconf():contractconf|null;
 }

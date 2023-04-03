@@ -17,6 +17,7 @@
     "clienttestserver": "npx ts-node ./src/test/clienttest_server.ts",
     "testclient": "npx ts-node ./src/test/unittest/test_client.ts",
     "testmonserver": "npx ts-node ./src/test/test_chainmonserver.ts",
+    "testmonimplserver": "npx ts-node ./src/test/test_chainmonimpl.ts",
     "start:dev": "npx nodemon",
     "build": "rimraf ./build && tsc",
     "start": "npm run build && node build/index.js"

@@ -2,6 +2,7 @@
 // license : MIT
 // author : Sean Chen
 
+import { nat } from "..";
 import { http_request_like, http_response_like } from "../interface/network/httplistener";
 import { network } from "../interface/network/network";
 
@@ -22,8 +23,10 @@ export const on_reg_evt_mon = async (req:http_request_like, res:http_response_li
         return;
     }
 
-
     // TO DO : regist event monitor 
+    // var conn = nat.create_httpconnecter(false);
+    // var url = "http://127.0.0.1:8090";
+    // await conn.post(url+"/register_event_monitor", params)
 }
 
 export const on_get_tx_byhash = async (req:http_request_like, res:http_response_like):Promise<void> => {
