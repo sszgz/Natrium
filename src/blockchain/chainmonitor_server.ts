@@ -8,7 +8,6 @@ import { nat } from "../natrium";
 import { http_interal_json, http_unknown_cmd_json, on_get_tx_byhash, on_reg_evt_mon } from "./chainmonitor_server_httpmsg";
 
 export class chainmonitor_server implements httplistener_handler {
-    
     protected _httplistener:httplistener|null = null;
 
     protected _httpmsgprocs:httpmsgproc_map_type = {};
