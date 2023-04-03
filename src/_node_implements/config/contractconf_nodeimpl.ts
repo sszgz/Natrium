@@ -12,6 +12,7 @@ export class contractconf_nodeimpl implements contractconf {
 
     protected _contract_confs:any = {};
     protected _contract_addrs:string[] = [];
+    protected _contract_names:string[] = [];
 
     constructor(d:any) {
         this._data = d;
@@ -29,6 +30,7 @@ export class contractconf_nodeimpl implements contractconf {
         for (const key in this._data.contracts) {
             if (Object.prototype.hasOwnProperty.call(this._data.contracts, key)) {
                 this._contract_confs[this._data.contracts[key].addr.toLocaleLowerCase()] = this._data.contracts[key].abi
+                this._contract_names[key] = this._data.contracts[key].addr.toLocaleLowerCase()
                 this._contract_addrs.push(this._data.contracts[key].addr.toLocaleLowerCase())
             }
         }
@@ -42,11 +44,23 @@ export class contractconf_nodeimpl implements contractconf {
         return this._contract_confs[contract_addr];
     }
 
+    public get_contract_name(contract_name: string):string|null {
+        if(!(contract_name in this._contract_names)) {
+            natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `contractconf_nodeimpl get_contract_name:${contract_name} not exist`);
+            return null;
+        }
+        return this._contract_names[contract_name];
+    }
+
     public get_all_contract_conf():contractconf_map|null {
         return this._contract_confs;
     }
 
     public get_contract_addrs(): string[]|null {
         return this._contract_addrs;
+    }
+
+    public get_contract_names(): string[]|null {
+        return this._contract_names;
     }
 }

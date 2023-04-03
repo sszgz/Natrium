@@ -71,9 +71,11 @@ export interface contractconf {
     readonly contracts_confs: contractconf_map;
     readonly contract_confs: contractconf_map;
 
-    get_contract_conf(cntract_addr:string): string[]|null;
+    get_contract_conf(contract_addr:string): string[]|null;
+    get_contract_name(contract_name:string): string|null;
     get_all_contract_conf(): contractconf_map|null;
     get_contract_addrs(): string[]|null;
+    get_contract_names(): string[]|null;
 }
 
 export interface configs {
