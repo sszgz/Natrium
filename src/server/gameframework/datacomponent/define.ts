@@ -95,6 +95,18 @@ export interface ship_playerdata {
     readonly ships:Array<ship_data>
 }
 
+export interface warrant_data {
+    readonly warrantnftid:number;
+    readonly portID:number;
+    storehouseLv:number;
+    factoryLv:number;
+    shopLv:number;
+    shipyardLv:number;
+}
+export interface warrant_playerdata {
+    readonly warrants:Array<warrant_data>
+}
+
 export interface item_data {
     readonly itemid:number;
     count:number;

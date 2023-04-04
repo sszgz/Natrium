@@ -103,6 +103,16 @@ message ship_data {
 
 }
 
+// warrant data
+message warrant_data {
+    required string warrantnftid = 1; // warrant nft id
+    uint32 portID = 2;  // port id
+    uint32 storehouseLv = 3; 
+    uint32 factoryLv = 4;
+    uint32 shopLv = 5;
+    uint32 shipyardLv = 6;
+}
+
 // item data
 message item_data {
     required uint32 itemid = 1; // item id, see in item config

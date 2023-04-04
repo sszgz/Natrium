@@ -26,6 +26,15 @@ export type redisconf_map = {
     [key:string]:redisconf;
 }
 
+export interface listernconf {
+    readonly host:string;
+    readonly port:number;
+}
+export interface chainwatcherconf {
+    readonly eventcb_listener:listernconf;
+    readonly contractjson:string;
+}
+
 export interface serviceconf {
     readonly service_name:string;
     readonly service_file:string;
@@ -49,6 +58,7 @@ export interface serverconf {
     readonly db_confs:dbconf_map;
     readonly redis_confs:redisconf_map;
     readonly service_confs:serviceconf_map;
+    readonly chainwatcher_confs:chainwatcherconf;
     
     get_db_conf(dbname:string):dbconf|null;
     get_redis_conf(dbname:string):redisconf|null;
@@ -67,20 +77,8 @@ export type contractconf_map = {
     [key:string]:abiconf;
 }
 
-export interface contractconf {
-    readonly contracts_confs: contractconf_map;
-    readonly contract_confs: contractconf_map;
-
-    get_contract_conf(contract_addr:string): string[]|null;
-    get_contract_name(contract_name:string): string|null;
-    get_all_contract_conf(): contractconf_map|null;
-    get_contract_addrs(): string[]|null;
-    get_contract_names(): string[]|null;
-}
-
 export interface configs {
     init(svrconfigfile:string):void;
     get_config_data(config_name:string):any;
     get_serverconf():serverconf|null;
-    get_contractconf():contractconf|null;
 }

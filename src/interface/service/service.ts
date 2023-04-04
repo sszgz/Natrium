@@ -35,6 +35,8 @@ export interface service {
     on_broadcast_session_msg(command:string, data:any):Promise<void>;
     on_session_message(sid:number, command:string, data:any):Promise<void>;
 
+    on_session_mod_data(sid:number, uid:string, datamsg:string, data:any):Promise<void>;
+
     //on_session_rpc_sync(sid:number, cmd:string, data:any):any;
 
     on_service_update():Promise<void>;

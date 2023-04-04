@@ -103,6 +103,12 @@ message get_ship_info_res {
     repeated ship_data ships = 2; // player ships
 }
 
+// get palyer warrant info (self or others)
+message get_warrant_info_res {
+    required uint32 playerid = 1; // to get info player id
+    repeated warrant_data warrants = 2; // player ships
+}
+
 // player changed avatar info
 message player_change_ava_res {
     required uint32 playerid = 1; // change avatar player id

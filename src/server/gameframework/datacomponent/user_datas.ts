@@ -3,7 +3,7 @@
 // author : Sean Chen
 
 import { datacomp_redis } from "../../../interface/data/datacomp";
-import { generic_playerdata, hero_playerdata, pet_playerdata, port_playerdata, ship_playerdata, user_basedata } from "./define";
+import { generic_playerdata, hero_playerdata, pet_playerdata, port_playerdata, ship_playerdata, user_basedata, warrant_playerdata } from "./define";
 
 export class user_basedatacomp extends datacomp_redis {
     
@@ -60,6 +60,18 @@ export class player_shipdatacomp extends datacomp_redis {
     }
 
     public get sihpdata():ship_playerdata {
+        return this._rundata;
+    }
+
+}
+
+export class player_warrantdatacomp extends datacomp_redis {
+    
+    override get name():string{
+        return "player_warrant";
+    }
+
+    public get warrants():warrant_playerdata {
         return this._rundata;
     }
 

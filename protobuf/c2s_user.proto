@@ -68,6 +68,11 @@ message get_ship_info {
     required uint32 playerid = 1; // to get info player id
 }
 
+// get palyer warrant info (self or others)
+message get_warrant_info {
+    required uint32 playerid = 1; // to get info player id
+}
+
 // change player avatar info by HeroNFT
 message change_avatar {
     required string heronftid = 1; // hero nft id, see in {sc:HeroNFT}

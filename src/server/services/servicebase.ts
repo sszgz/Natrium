@@ -11,6 +11,7 @@ import { service } from "../../interface/service/service";
 import { servicesession } from "../../interface/service/servicesession";
 import { msg_proc_func_map_type } from "../../interface/service/service_msgproc";
 import { nat } from "../../natrium";
+import { globaldatas } from '../gameframework/datacomponent/globaldata';
 import { game } from "../gameframework/game";
 import { player } from "../gameframework/player";
 
@@ -162,7 +163,7 @@ export abstract class servicebase implements service {
         }
 
         // delete base session data
-        await nat.datas.memcaches.session.delete_data("base", sid);
+        await nat.datas.memcaches.session.delete_data("base", sid, ".");
     }
 
     protected async _do_remove_player(pl:player):Promise<void> {
@@ -194,6 +195,18 @@ export abstract class servicebase implements service {
         const pl = this._players.get(sid);
 
         await this._msg_procs[command](this, ses, pl, data);
+    }
+    
+    public async on_session_mod_data(sid:number, uid:string, datamsg:string, data:any):Promise<void>
+    {
+        const ses = this._sessions.get(sid);
+        if(ses == undefined) {
+            nat.dbglog.log(debug_level_enum.dle_error, `on_session_mod_data session ${sid} m:${datamsg} u:${uid} d:${data}, session not exist`);
+            return;
+        }
+        const pl = this._players.get(sid);
+
+        await globaldatas._do_service_mod(pl, datamsg, data);
     }
 
     //on_session_rpc_sync(sid:number, cmd:string, data:any):any;

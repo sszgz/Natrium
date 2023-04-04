@@ -10,6 +10,7 @@ import { natrium_nodeimpl } from "../natrium_nodeimpl";
 import { _Main2Worker_MSG, _Service_W2M_MSG, _Worker2Main_MSG } from "./_threads_msgs";
 import { _Node_ThreadContext } from "./_thread_contexts";
 import { _Node_Worker } from "./_worker";
+import { globaldatas } from '../../server/gameframework/datacomponent/globaldata';
 
 export class _Node_MainTrhead {
 
@@ -139,6 +140,11 @@ export class _Node_WorkerThread extends EventEmitter {
                     other_worker._worker.postMessage({cmd:_Main2Worker_MSG._m2w_setup_channel, from:this._uname, port:port2, udata:msg.udata}, [port2]);
                 }
                 break;
+            // case _Worker2Main_MSG._w2m_user_data_change:
+            //     {
+            //         globaldatas.on_user_data_change(msg.uid, msg.datamsg, msg.data);
+            //     }
+            //     break;
             case _Worker2Main_MSG._w2m_exit:
                 {
                     this._worker.terminate();

@@ -36,6 +36,10 @@ export class _Node_ThreadContext {
         natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_system, `_Node_Thread request createChannelWith fromworker:${fromworker} toworker:${toworker}`);
     }
 
+    public static postOnUserDataChange(uid:string, datamsg:string, data:any):void {
+        parentPort?.postMessage({cmd:_Worker2Main_MSG._w2m_user_data_change, uid, datamsg, data});
+    }
+
     public static postParentMessage(msg:any):void{
         parentPort?.postMessage(msg);
     }

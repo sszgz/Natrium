@@ -375,6 +375,28 @@ export async function player_get_ship_info(s:service, ses:servicesession, pl:any
 
     // TO DO : get ship info
 }
+export async function player_get_warrant_info(s:service, ses:servicesession, pl:any, data:any):Promise<void> {
+    if(pl == null){
+        _Node_SessionContext.sendWSMsg(ses.session_id, "server_error", {res:ServerErrorCode.ResServicePlayerNotExist});
+        return;
+    }
+    let pla = pl as player;
+    let gipl = pla.runtimedata.map.get_player_bypid(data.playerid);
+    if(gipl == null) {
+        _Node_SessionContext.sendWSMsg(ses.session_id, "server_error", {res:ServerErrorCode.ResTargetPlayerNotExist});
+        return;
+    }
+    
+    let warrants = [];
+    if("player_warrant" in gipl.pdatas){
+        warrants = gipl.pdatas.player_warrant.rundata.warrants;
+    }
+
+    _Node_SessionContext.sendWSMsg(ses.session_id, "get_warrant_info_res", {
+        playerid:gipl.pdatas.player_gen.rundata.playerid,
+        warrants:warrants
+    });
+}
 export async function player_change_avatar(s:service, ses:servicesession, pl:any, data:any):Promise<void> {
     if(pl == null){
         _Node_SessionContext.sendWSMsg(ses.session_id, "server_error", {res:ServerErrorCode.ResServicePlayerNotExist});

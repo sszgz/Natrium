@@ -19,6 +19,7 @@ export const procs = {
     "get_hero_info":pm.player_get_hero_info,
     "get_pet_info":pm.player_get_pet_info,
     "get_ship_info":pm.player_get_ship_info,
+    "get_warrant_info":pm.player_get_warrant_info,
     "change_avatar":pm.player_change_avatar,
     "change_pet":pm.player_change_pet,
     

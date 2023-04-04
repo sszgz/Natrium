@@ -93,7 +93,7 @@ export class httpconnecter_nodeimpl implements httpconnecter {
                 });
             });
 
-            request.write(JSON.stringify(postdata));
+            request.write(JSON.stringify(postdata, (_, v) => typeof v === 'bigint' ? v.toString() : v));
             request.end();
 
             request.on('error', (err) => {

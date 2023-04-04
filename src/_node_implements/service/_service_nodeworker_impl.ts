@@ -105,6 +105,9 @@ export class _Service_Node_Worker_Impl implements _Node_Worker {
             case _Service_M2W_MSG._m2w_bcast_msg:
                 await this._service.on_broadcast_session_msg(data.command, data.data);
                 break;
+            case _Service_M2W_MSG._m2w_session_mod_data:
+                await this._service.on_session_mod_data(data.sid, data.uid, data.datamsg, data.data);
+                break;
             // case _Service_M2W_MSG._m2w_rpc_sync:
             //     this._service.on_session_rpc_sync(data.sid, data.command, data.data);
             //     break;

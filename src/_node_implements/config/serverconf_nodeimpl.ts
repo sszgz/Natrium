@@ -25,6 +25,9 @@ export class serverconf_nodeimpl implements serverconf {
     public get service_confs(){
         return this._service_confs;
     }
+    public get chainwatcher_confs(){
+        return this._data.chainwatcher;
+    }
 
     public format_server_conf(){
         for(let i=0; i<this._data.services.length; ++i){

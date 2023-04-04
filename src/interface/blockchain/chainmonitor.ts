@@ -31,8 +31,4 @@ export interface chainmonitor {
 
     on(contract_addr:string, event:string, cb: (this:chainmonitor, ...args) => void);
     off(contract_addr:string, event:string, cb: (this:chainmonitor, ...args) => void);
-
-    register_event_monitor(contract_addr:string, event:string);
-
-    get_transaction_byhash(hash:string):Promise<transaction_like>;
 }

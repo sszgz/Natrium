@@ -4,20 +4,17 @@
 
 import * as fs from "node:fs";
 import * as path from 'path';
-import { configs, serverconf, contractconf } from "../../interface/config/configs";
+import { configs, serverconf } from "../../interface/config/configs";
 import { debug_level_enum } from "../../interface/debug/debug_logger";
 import { natrium_nodeimpl } from "../natrium_nodeimpl";
 import { serverconf_nodeimpl } from './serverconf_nodeimpl';
-import { contractconf_nodeimpl } from './contractconf_nodeimpl';
 
 export class configs_nodeimpl implements configs {
 
     protected _conf_map:Map<string, any> = new Map<string, any>();
     protected _serverconf:serverconf_nodeimpl|null = null;
     protected _svrconfigfile:string = "";
-    protected _contractconf:contractconf_nodeimpl|null = null;
     
-
     public get svrconfigfile() {
         return this._svrconfigfile;
     }
@@ -35,19 +32,6 @@ export class configs_nodeimpl implements configs {
         let scd = JSON.parse(scf);
         this._serverconf = new serverconf_nodeimpl(scd);
         this._serverconf.format_server_conf();
-
-        // contract config
-        // if(contractconfigfile == undefined || contractconfigfile.length == 0){
-            const contractconfigfile = "../../../config/blockchain/contract.json";
-        // }
-        let contractconf_name = path.resolve(__dirname, contractconfigfile);
-
-        natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_system, `configs_nodeimpl init server conf from ${contractconf_name}`);
-
-        let ccf = fs.readFileSync(contractconf_name, "utf-8");
-        let ccd = JSON.parse(ccf);
-        this._contractconf = new contractconf_nodeimpl(ccd);
-        this._contractconf.format_contract_conf()
 
         // game config
         let mainconf_name = path.resolve(__dirname, "../../../config/main.json");
@@ -76,9 +60,5 @@ export class configs_nodeimpl implements configs {
 
     public get_serverconf():serverconf|null {
         return this._serverconf;
-    }
-
-    public get_contractconf():contractconf|null {
-        return this._contractconf;
     }
 }

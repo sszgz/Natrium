@@ -14,5 +14,5 @@ export interface rediscache {
     update_data(table:string, key:string|number, data:any, path:string) : Promise<boolean>;
     clear_datas():Promise<boolean>;
     insert_data(table:string, key:string|number, data:any) : Promise<boolean>;
-    delete_data(table:string, key:string|number) : Promise<boolean>;
+    delete_data(table:string, key:string|number, path:string) : Promise<boolean>;
 }

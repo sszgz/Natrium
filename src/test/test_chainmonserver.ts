@@ -11,7 +11,9 @@ export let start_server = async (svrconffile:string) =>{
 
     await server.startup(svrconffile);
 
-    server.open_httplistener("", 8080);
+    server.open_httplistener("", 8091);
+
+    server.start_sync_block();
 }
 
-start_server("");
+start_server("config/blockchain/chainmonitor_server.json");

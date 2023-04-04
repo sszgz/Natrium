@@ -187,7 +187,7 @@ export class _redis_client {
         });
     }
 
-    public async delete_json(key:string):Promise<boolean> {
+    public async delete_json(key:string, path:string):Promise<boolean> {
         if(this._client == null) {
             natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `_redis ${this._conf.name}-${this._conf.database} delete_json key:${key} client is null`);
             return false;
@@ -197,7 +197,7 @@ export class _redis_client {
             return false;
         }
         
-        await this._client.json.del(key);
+        await this._client.json.del(key, path);
 
         return true;
     }

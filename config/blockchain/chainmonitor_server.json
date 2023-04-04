@@ -1,0 +1,16 @@
+{
+    "chainId":421613,
+    "chainType":"ethereum",
+    "rpchost":"https://goerli-rollup.arbitrum.io/rpc",
+    "start_height":14912662,
+    "contractjson":"config/blockchain/contract.json",
+    "watcher_url":"http://127.0.0.1:8090/event_cb",
+    "redis":{
+        "url":"redis://127.0.0.1:6379",
+        "username":"",
+        "password":"",
+        "name":"chainmonitor",
+        "database":15,
+        "persist":true
+    }
+}

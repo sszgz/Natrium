@@ -36,6 +36,10 @@ export class servicechannel_nodeimpl implements servicechannel {
         this._worker_port?.postMessage({cmd:_Service_M2W_MSG._m2w_bcast_msg, command:command, data:data});
     }
     
+    public dispatch_session_mod_data(sid:number, uid:string, datamsg:string, data:any):void {
+        this._worker_port?.postMessage({cmd:_Service_M2W_MSG._m2w_session_mod_data, sid, uid, datamsg, data});
+    }
+
     // public session_rpc_sync(sid:number, command:string, data:any):any {
     //     // this._worker_port?.postMessage({cmd:_woker_cmds.wc_rpc_sync, sid:sid, command:command, data:data});
     //     return null;

@@ -15,7 +15,7 @@ import { mine_beh } from "../gameframework/behaviours/mine_beh";
 import { product_beh } from "../gameframework/behaviours/product_beh";
 import { ship_beh } from "../gameframework/behaviours/ship_beh";
 import { session_basedatacomp } from "../gameframework/datacomponent/session_datas";
-import { player_genericdatacomp, player_herodatacomp, player_petdatacomp, player_portdatacomp, player_shipdatacomp, user_basedatacomp } from "../gameframework/datacomponent/user_datas";
+import { player_genericdatacomp, player_herodatacomp, player_petdatacomp, player_portdatacomp, player_shipdatacomp, player_warrantdatacomp, user_basedatacomp } from "../gameframework/datacomponent/user_datas";
 import { game } from "../gameframework/game";
 import { game_map } from "../gameframework/gameobjects/game_map";
 import { player } from "../gameframework/player";
@@ -77,6 +77,7 @@ export class worldservice extends servicebase {
         await new_pl.sync_redis_data(player_petdatacomp, "player", "pet", new_pl.cdatas.ses_base.rundata.uid, true);
         await new_pl.sync_redis_data(player_shipdatacomp, "player", "ship", new_pl.cdatas.ses_base.rundata.uid, true);
         await new_pl.sync_redis_data(player_portdatacomp, "player", "port", new_pl.cdatas.ses_base.rundata.uid, true);
+        await new_pl.sync_redis_data(player_warrantdatacomp, "player", "warrant", new_pl.cdatas.ses_base.rundata.uid, true);
 
         // for Debug ...
         new_pl.pdatas.player_gen.rundata.speed = nat.conf.get_config_data("game").base.movspeed;

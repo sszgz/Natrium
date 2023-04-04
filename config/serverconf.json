@@ -52,7 +52,22 @@
             "name":"global",
             "database":6,
             "persist":true
+        },
+        "txreceipts":{
+            "url":"redis://127.0.0.1:6379",
+            "username":"",
+            "password":"",
+            "name":"txreceipts",
+            "database":7,
+            "persist":true
         }
+    },
+    "chainwatcher":{
+        "eventcb_listener":{
+            "host":"127.0.0.1",
+            "port":8090
+        },
+        "contractjson":"config/blockchain/contract.json"
     },
     "services":[
         {

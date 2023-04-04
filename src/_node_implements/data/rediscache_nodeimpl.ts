@@ -76,7 +76,7 @@ export class rediscache_nodeimpl implements rediscache {
         
         return await this._rc.insert_json(dkey, data);
     }
-    public async delete_data(table:string, key:string|number) : Promise<boolean> {
+    public async delete_data(table:string, key:string|number, path:string) : Promise<boolean> {
         if(this._rc == null) {
             natrium_nodeimpl.impl.dbglog.log(debug_level_enum.dle_error, `rediscache_nodeimpl delete_data redis db [${this.dbname}] not exist`);
             return false;
@@ -84,6 +84,6 @@ export class rediscache_nodeimpl implements rediscache {
 
         let dkey = `${table}_${key}`;
         
-        return await this._rc.delete_json(dkey);
+        return await this._rc.delete_json(dkey, path);
     }
 }

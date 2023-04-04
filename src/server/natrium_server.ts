@@ -3,6 +3,7 @@
 // author : Sean Chen
 
 import { nat } from "..";
+import { _chainwatcher_impl } from "../blockchain/_chainwatcher_impl";
 import { serverconf } from "../interface/config/configs";
 import { debug_level_enum } from "../interface/debug/debug_logger";
 import { httplistener, httplistener_handler, httpmsgproc_map_type, httpmsgproc_type, http_request_like, http_response_like } from "../interface/network/httplistener";
@@ -16,10 +17,14 @@ import { http_interal_json, http_unknown_cmd_json, on_broadcast_msg, on_verify_s
 
 export class natrium_server implements wslistener_handler, httplistener_handler {
 
+    protected static _curr_inst:natrium_server;
+
     protected _wslistener:wslistener|null = null;
     protected _httplistener:httplistener|null = null;
 
-    protected _sessions:sessionmgr = nat.create_sessionmgr();;
+    protected _chainwatcher:_chainwatcher_impl = new _chainwatcher_impl();
+
+    protected _sessions:sessionmgr = nat.create_sessionmgr();
 
     protected _outgameServices:Array<serviceworker> = new Array<serviceworker>();
     protected _worldServices:Array<serviceworker> = new Array<serviceworker>();
@@ -27,7 +32,12 @@ export class natrium_server implements wslistener_handler, httplistener_handler 
 
     protected _httpmsgprocs:httpmsgproc_map_type = {};
 
+    public static get inst() {
+        return this._curr_inst;
+    }
+
     constructor() {
+        natrium_server._curr_inst = this;
     }
 
     public get wslistener() {
@@ -35,6 +45,9 @@ export class natrium_server implements wslistener_handler, httplistener_handler 
     }
     public get httplistener() {
         return this._httplistener;
+    }
+    public get sessions() {
+        return this._sessions;
     }
 
     public async startup(svrconfigfile:string) {
@@ -109,6 +122,13 @@ export class natrium_server implements wslistener_handler, httplistener_handler 
         nat.dbglog.log(debug_level_enum.dle_system, `natrium_server start service [${scs.length}] outgame[${this._outgameServices.length}] world[${this._worldServices.length}] level[${this._levelInstanceServices.length}]`);
 
         // init session mgr
+
+        // init chain watcher 
+        succ = await this._chainwatcher.startup();
+        if(!succ){
+            return;
+        }
+        this._chainwatcher.open_httplistener();
 
         // reg http msg
         this.reg_httpmsg_proc("/verify", on_verify_sign);
